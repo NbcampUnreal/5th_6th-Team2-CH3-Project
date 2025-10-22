@@ -2,11 +2,19 @@
 
 
 #include "LockonTarget/LockonComponent.h"
+
+#include "Components/SphereComponent.h"
 #include "Controller/MyPlayerController.h"
 
-ULockonComponent::ULockonComponent()
+ULockonComponent::ULockonComponent():
+	OwnerController(nullptr),
+	bIsActivated(true),FalloffRange(100),AutoTargetRadius(120)
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	TargetSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	TargetSphere->SetSphereRadius(AutoTargetRadius);
+	TargetSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
@@ -34,7 +42,8 @@ void  ULockonComponent::UpdateCameraBoomLocation()
 
 void  ULockonComponent::UpdateCursorProjection()
 {
-{
-void  ULockonComponent::DetectTarget()
+}
+
+void ULockonComponent::DetectTarget()
 {
 }

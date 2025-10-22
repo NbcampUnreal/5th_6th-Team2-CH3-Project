@@ -8,6 +8,32 @@
 #include "LockonComponent.generated.h"
 
 
+USTRUCT(blueprintable)
+struct FTargetInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AActor* TargetActor;// for later possible casting
+	
+	/*UPROPERTY()
+	FVector WorldLocation;*///--> just get it from the Actor
+	
+	UPROPERTY()
+	FVector2D ScreenCoord;// to compare with the 
+	
+	UPROPERTY()
+	bool bIsTargeted;
+
+};
+
+
+
+
+
+
+
+
 //forward declaration
 class USphereComponent;
 class AMyPlayerController;
@@ -28,23 +54,22 @@ protected:
 	AMyPlayerController* OwnerController;
 	
 	// Confirmation //
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Lockon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
 	bool bIsActivated;
 
-	bool bIsGamePad=false;// for now, just with the pc controll
+	//bool bIsGamePad=false;// for now, just with the pc controll
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Lockon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
 	float FalloffRange;// auto retargeting condition
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Lockon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
 	float AutoTargetRadius;
-
-	//PC
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Lockon")
-	USphereComponent* TargetRange;// spwan this in the cursor porjection location and auto lock on to the target that collides with
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lockon | Detection")
+	USphereComponent* TargetSphere;// spwan this in the cursor porjection location and auto lock on to the target that collides with
+	
 	FVector OwnerLocation;// to set attatch for the origin point of the targetting system
 
 	FVector CursorWorldLocation;// to know where to locate sphere collision
+	FVector CursorScreenLocation;
 
 //-----------------------Fucntions -----------------------------------------------------------------------------------//
 protected:
@@ -52,7 +77,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-
+	UFUNCTION()
 	void SwitchingTargettingSystem(bool bIsOn){bIsActivated=bIsOn;}
 
 	// Called every frame
