@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "Perception/AIPerceptionTypes.h"
 #include "EnemyAIController.generated.h"
 
-class UAISenseConfig_Sight;
+
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemyAIController : public AAIController
@@ -20,12 +19,6 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
-	TObjectPtr<UAIPerceptionComponent> AIPerception;
-
-	UPROPERTY(VisibleAnywhere, Category = "AI")
-	TObjectPtr<UAISenseConfig_Sight> SightConfig;
-
-	UPROPERTY(VisibleAnywhere, Category = "AI")
 	TObjectPtr<UBlackboardComponent> BlackboardComp;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
@@ -34,13 +27,11 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 
-
-	UFUNCTION()
-	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
-
 private:
-
 	void StartBehaviorTree();
 
+public:
+
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }
+	
 };
