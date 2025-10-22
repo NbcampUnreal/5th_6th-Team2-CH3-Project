@@ -36,7 +36,7 @@ class UInterfaceHP : public UInterface
 	GENERATED_BODY()
 };
 
-/**
+/*
  * 
  */
 class TEAMASSIGNMENTFPS_API IInterfaceHP
@@ -47,6 +47,6 @@ public:
 	void GetDamage(FDamageInfo Damage);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
 	void RecoverHealth(float HealAmount);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
-	float GetCurrentHealth()const;
+	/*UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
+	float GetCurrentHealth()const;*///--> for component
 };
