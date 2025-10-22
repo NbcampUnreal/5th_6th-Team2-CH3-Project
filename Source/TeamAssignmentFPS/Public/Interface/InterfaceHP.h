@@ -6,7 +6,30 @@
 #include "UObject/Interface.h"
 #include "InterfaceHP.generated.h"
 
-// This class does not need to be modified.
+USTRUCT(BlueprintType)
+struct FDamageInfo
+{
+	GENERATED_BODY()
+
+	float DamageAmount;
+	FVector DamageDirection;
+	//buff debuff added later
+};
+
+/*
+USTRUCT(BlueprintType)
+struct FHealInfo
+{
+	GENERATED_BODY()
+	float HealAmount;
+	//add additional info here
+};
+*/ //----> seperate params by heal amount and effect(additional for later)
+
+
+
+
+
 UINTERFACE(MinimalAPI)
 class UInterfaceHP : public UInterface
 {
@@ -19,7 +42,11 @@ class UInterfaceHP : public UInterface
 class TEAMASSIGNMENTFPS_API IInterfaceHP
 {
 	GENERATED_BODY()
-
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
+	void GetDamage(FDamageInfo Damage);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
+	void RecoverHealth(float HealAmount);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="HP")
+	float GetCurrentHealth()const;
 };
