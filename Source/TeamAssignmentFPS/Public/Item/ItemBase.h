@@ -6,6 +6,24 @@
 #include "GameFramework/Actor.h"
 #include "ItemBase.generated.h"
 
+USTRUCT()
+struct FItemStr
+{
+	GENERATED_BODY()
+
+	FName ItemName;
+
+	UStaticMeshComponent* StaticMesh;
+	
+};
+
+
+
+
+
+
+
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AItemBase : public AActor
 {
