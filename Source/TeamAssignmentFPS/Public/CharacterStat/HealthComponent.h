@@ -4,15 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Interface/InterfaceHP.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)// trigger this when character dies
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChanged, float NewHP);
-//--> multicast to send more than one listner
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UHealthComponent : public UActorComponent, public IInterfaceHP
+class TEAMASSIGNMENTFPS_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -21,32 +17,12 @@ public:
 	UHealthComponent();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
-	float MaxHeath;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
-	float CurrentHealth;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Health")
-	bool bIsAlive;
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	void SetMaxHealth(float HP);
-	float GetMaxHealth()const	{return MaxHeath;}
-	
-	void SetCurrentHealth(float HP);
-	float GetCurrentHealth()const	{return CurrentHealth;}
-	
-	void KilledBySettingIsAlive(bool Dead);
-	void KilledByDamage();
-	bool CheckIfIsDead()const	{return bIsAlive;};
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
-	FOnHPChanged OnHPChanged;
-	FOnDeath OnDeath;
-	
-	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	virtual void GetDamage_Implementation(FDamageInfo Damage) override;
-	virtual void RecoverHealth_Implementation(float HealAmount) override;
 		
 };

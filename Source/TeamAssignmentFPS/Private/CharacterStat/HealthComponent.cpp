@@ -3,59 +3,32 @@
 
 #include "CharacterStat/HealthComponent.h"
 
-
-UHealthComponent::UHealthComponent():
-	MaxHeath(100),
-	CurrentHealth(MaxHeath)
+// Sets default values for this component's properties
+UHealthComponent::UHealthComponent()
 {
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-	PrimaryComponentTick.bCanEverTick = false;
-	bIsAlive = CurrentHealth>0;
+	// ...
 }
 
-void UHealthComponent::SetMaxHealth(float HP)
+
+// Called when the game starts
+void UHealthComponent::BeginPlay()
 {
-	MaxHeath = FMath::Max(0,HP);
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-void UHealthComponent::SetCurrentHealth(float HP)
-{
-	CurrentHealth =  FMath::Clamp(HP,0,MaxHeath);
-}
 
-void UHealthComponent::KilledBySettingIsAlive(bool Dead)
-{
-	bIsAlive = Dead;
-	if (!bIsAlive)
-	{
-		OnDeath.Broadcast();	
-	}
-}
-
-void UHealthComponent::KilledByDamage()
-{
-	bIsAlive = false;
-	OnDeath.Broadcast();
-}
-
-/*void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
+// Called every frame
+void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}*/ //--> maybe for poison damage. or could just use timer handle
 
-void UHealthComponent::GetDamage_Implementation(FDamageInfo Damage)// for now, just the damage amount
-{
-	CurrentHealth = FMath::Clamp(CurrentHealth-Damage.DamageAmount,0,MaxHeath);
-	OnHPChanged.Broadcast(CurrentHealth);
-	if (CurrentHealth<=0 && bIsAlive)
-	{
-		KilledByDamage();
-	}
+	// ...
 }
 
-void UHealthComponent::RecoverHealth_Implementation(float HealAmount)
-{
-	CurrentHealth = FMath::Clamp(CurrentHealth+HealAmount,0,MaxHeath);
-	OnHPChanged.Broadcast(CurrentHealth);
-}
