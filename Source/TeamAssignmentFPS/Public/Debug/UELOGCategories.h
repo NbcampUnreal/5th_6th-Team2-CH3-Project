@@ -8,3 +8,4 @@
 
 // 현 API + Log Declare + 이름
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(UI_Log,Log, All);// UI 관련 디버깅 카테고리
+ TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(Enemy_Log, Warning, All); // Enemy
