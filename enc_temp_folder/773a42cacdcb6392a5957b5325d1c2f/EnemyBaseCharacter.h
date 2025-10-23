@@ -15,6 +15,7 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	// Sets default values for this character's properties
 	AEnemyBaseCharacter();
 
 	FOnEnemyDead OnEnemyDead;
@@ -23,16 +24,11 @@ protected:
 
 private:
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	TObjectPtr<UDataTable> EnemyDataTable;
-
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
-	EEnemyState EnemyState;
+	EEnemyState EnmeyStats;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
-
-	void LoadEnemyDataRow();
 
 };
 

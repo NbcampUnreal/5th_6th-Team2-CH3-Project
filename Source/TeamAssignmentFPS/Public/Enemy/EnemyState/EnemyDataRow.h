@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enemy/EnemyState/EnemyTypes.h"
 #include "EnemyDataRow.generated.h"
+
 
 USTRUCT(BlueprintType)
 struct FEnemyDataRow : public FTableRowBase
@@ -11,11 +13,12 @@ struct FEnemyDataRow : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	/*UPROPERTY(EditAnywhere, Category = "Enemy")
-	EEnemyType EnemyType;*/
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	int32 HP;
+	EEnemyType EnemyType;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxHP;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float MoveSpeed;
@@ -24,13 +27,16 @@ public:
 	float HeightMinRatio;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float HeigthMaxRatio;
+	float HeightMaxRatio;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Damage;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float Range;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float Delay;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Score;
