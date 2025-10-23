@@ -18,6 +18,9 @@ public:
 	EEnemyType EnemyType;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
+	TSubclassOf<AActor> EnemyClass;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 MaxHP;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")

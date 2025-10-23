@@ -13,5 +13,11 @@ UCLASS()
 class TEAMASSIGNMENTFPS_API ARangeEnemyCharacter : public AEnemyBaseCharacter
 {
 	GENERATED_BODY()
-	
+
+public:
+	ARangeEnemyCharacter();
+
+protected:
+	virtual void LoadEnemyDataRow() override;
+
 };

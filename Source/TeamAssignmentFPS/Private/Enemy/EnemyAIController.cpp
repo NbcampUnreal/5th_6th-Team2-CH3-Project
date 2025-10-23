@@ -3,8 +3,6 @@
 
 #include "Enemy/EnemyAIController.h"
 #include "NavigationSystem.h"
-#include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -38,10 +36,7 @@ void AEnemyAIController::StartBehaviorTree()
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Not Exist BehaviorTree"));
+
 	}
 }
 
