@@ -14,4 +14,10 @@ class TEAMASSIGNMENTFPS_API AMeleeEnemyCharacter : public AEnemyBaseCharacter
 {
 	GENERATED_BODY()
 	
+public:
+	AMeleeEnemyCharacter();
+
+protected:
+	virtual void LoadEnemyDataRow() override;
+
 };

@@ -21,8 +21,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	TObjectPtr<UDataTable> EnemyDataTable;
 
@@ -32,7 +30,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
 
-	void LoadEnemyDataRow();
+	FEnemyDataRow* EnemyData;
+
+	virtual void LoadEnemyDataRow();
+
+	virtual void Attack() PURE_VIRTUAL(AEnemyBaseCharacter::Attack,);
+
+public:
+
+	FORCEINLINE float GetEnemyAttackRange() const { return EnemyData->Range; }
 
 };
 
