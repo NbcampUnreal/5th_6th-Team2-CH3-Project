@@ -4,7 +4,7 @@
 #include "LockonTarget/LockonComponent.h"
 
 #include "Components/SphereComponent.h"
-#include "Controller/MyPlayerController.h"
+#include "Controller/PlayerController/MyPlayerController.h"
 
 ULockonComponent::ULockonComponent():
 	OwnerController(nullptr),
