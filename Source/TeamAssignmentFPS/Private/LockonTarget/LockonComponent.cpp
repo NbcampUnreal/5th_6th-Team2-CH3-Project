@@ -12,9 +12,9 @@ ULockonComponent::ULockonComponent():
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	TargetSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	/*TargetSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	TargetSphere->SetSphereRadius(AutoTargetRadius);
-	TargetSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	TargetSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
 
 }
 
@@ -24,7 +24,7 @@ void ULockonComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	/*OwnerActor->GetActorLocation()*/
 	
 }
 

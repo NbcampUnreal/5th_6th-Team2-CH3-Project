@@ -14,12 +14,12 @@
 class AMyPlayerController;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class TEAMASSIGNMENTFPS_API UIMCManagerComponent : public UActorComponent
+class TEAMASSIGNMENTFPS_API UIMCManagerComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UIMCManagerComponent();
+	UIMCManagerComp();
 
 private:
 	UPROPERTY()

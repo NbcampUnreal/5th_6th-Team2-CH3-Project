@@ -10,13 +10,13 @@ class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UCameraManager : public UActorComponent
+class TEAMASSIGNMENTFPS_API UCameraManagerComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCameraManager();
+	UCameraManagerComp();
 
 protected:
 

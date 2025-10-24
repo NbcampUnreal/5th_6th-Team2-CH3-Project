@@ -7,7 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-UCameraManager::UCameraManager()
+UCameraManagerComp::UCameraManagerComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -20,7 +20,7 @@ UCameraManager::UCameraManager()
 }
 
 
-void UCameraManager::BeginPlay()
+void UCameraManagerComp::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -28,14 +28,14 @@ void UCameraManager::BeginPlay()
 }
 
 
-void UCameraManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCameraManagerComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
 }
 
-void UCameraManager::UpdateCameraTransform()
+void UCameraManagerComp::UpdateCameraTransform()
 {
 	
 }

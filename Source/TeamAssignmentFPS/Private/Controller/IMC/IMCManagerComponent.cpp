@@ -8,7 +8,7 @@
 #include "Controller/PlayerController/MyPlayerController.h"
 #include "Debug/UELOGCategories.h"
 
-UIMCManagerComponent::UIMCManagerComponent():
+UIMCManagerComp::UIMCManagerComp():
 	Subsystem(nullptr),
 	EnhancedInputComp(nullptr),
 	CurrentPlayerController(nullptr)
@@ -21,7 +21,7 @@ UIMCManagerComponent::UIMCManagerComponent():
 
 
 // Called when the game starts
-void UIMCManagerComponent::BeginPlay()
+void UIMCManagerComp::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -29,7 +29,7 @@ void UIMCManagerComponent::BeginPlay()
 	
 }
 
-void UIMCManagerComponent::GetSubsystemFromOwnerController()
+void UIMCManagerComp::GetSubsystemFromOwnerController()
 {
 	AActor* Owner=GetOwner();
 	if (!Owner)
@@ -74,7 +74,7 @@ void UIMCManagerComponent::GetSubsystemFromOwnerController()
 	UE_LOG(IMC_Log,Log,TEXT("FIMC_Bundle::BindActions->Setting all done"));
 }
 
-void UIMCManagerComponent::AddMappingContext(const FIMC_Bundle& IMCB)
+void UIMCManagerComp::AddMappingContext(const FIMC_Bundle& IMCB)
 {
 	if (!IsValidIMC(IMCB,"UIMCManagerComponent::AddMappingContext")) return;
 
@@ -84,7 +84,7 @@ void UIMCManagerComponent::AddMappingContext(const FIMC_Bundle& IMCB)
 	UE_LOG(IMC_Log, Log, TEXT("%s->mapping is added"),*IMCB.IMC_B_Name.ToString());
 }
 
-void UIMCManagerComponent::RemoveMappingContext(const FIMC_Bundle& IMCB)
+void UIMCManagerComp::RemoveMappingContext(const FIMC_Bundle& IMCB)
 {
 	if (!IsValidIMC(IMCB,"UIMCManagerComponent::RemoveMappingContext")) return;
 	
@@ -94,7 +94,7 @@ void UIMCManagerComponent::RemoveMappingContext(const FIMC_Bundle& IMCB)
 	UE_LOG(IMC_Log, Log, TEXT("%s->mapping is removed"),*IMCB.IMC_B_Name.ToString());
 }
 
-void UIMCManagerComponent::BindInputActions(const FIMC_Bundle& IMCB)
+void UIMCManagerComp::BindInputActions(const FIMC_Bundle& IMCB)
 {
 	if (!IsValidIMC(IMCB,"UIMCManagerComponent::BindInputActions")) return;
 	
@@ -103,7 +103,7 @@ void UIMCManagerComponent::BindInputActions(const FIMC_Bundle& IMCB)
 	
 }
 
-void UIMCManagerComponent::BindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const// do that in here now
+void UIMCManagerComp::BindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const// do that in here now
 {
 	FIMC_Module SelectedIMCModule=IsGamePad?  IMCB.GP_IMC: IMCB.PC_IMC;
 	
@@ -123,7 +123,7 @@ void UIMCManagerComponent::BindInputActionByInputType(const FIMC_Bundle& IMCB, b
 	}
 }
 
-void UIMCManagerComponent::UnBindInputActions(const FIMC_Bundle& IMCB)
+void UIMCManagerComp::UnBindInputActions(const FIMC_Bundle& IMCB)
 {
 	if (!IsValidIMC(IMCB,"UIMCManagerComponent::UnBindInputActions")) return;
 	
@@ -132,7 +132,7 @@ void UIMCManagerComponent::UnBindInputActions(const FIMC_Bundle& IMCB)
 
 }
 
-void UIMCManagerComponent::UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const
+void UIMCManagerComp::UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const
 {
 	FIMC_Module SelectedIMCModule=IsGamePad?  IMCB.GP_IMC: IMCB.PC_IMC;
 	
@@ -150,13 +150,13 @@ void UIMCManagerComponent::UnBindInputActionByInputType(const FIMC_Bundle& IMCB,
 	}
 }
 
-void UIMCManagerComponent::AddMappincAndBind(const FIMC_Bundle& IMCB)// do both at once
+void UIMCManagerComp::AddMappincAndBind(const FIMC_Bundle& IMCB)// do both at once
 {
 	AddMappingContext(IMCB);
 	BindInputActions(IMCB);
 }
 
-void UIMCManagerComponent::ClearIMCB(const FIMC_Bundle& IMCB)
+void UIMCManagerComp::ClearIMCB(const FIMC_Bundle& IMCB)
 {
 	if (!IsValidIMC(IMCB,"UIMCManagerComponent::ClearIMCB")) return;
 
@@ -166,12 +166,12 @@ void UIMCManagerComponent::ClearIMCB(const FIMC_Bundle& IMCB)
 	UE_LOG(IMC_Log, Log, TEXT("%s is Cleared"), *IMCB.IMC_B_Name.ToString())
 }
 
-void UIMCManagerComponent::ClearAllIMCB()
+void UIMCManagerComp::ClearAllIMCB()
 {
 
 }
 
-bool UIMCManagerComponent::IsValidIMC(const FIMC_Bundle& IMCB, FString DebuggingFunction) const
+bool UIMCManagerComp::IsValidIMC(const FIMC_Bundle& IMCB, FString DebuggingFunction) const
 {
 	bool bIsValid=true;
 

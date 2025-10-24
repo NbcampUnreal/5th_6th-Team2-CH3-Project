@@ -63,12 +63,20 @@ protected:
 	float FalloffRange;// auto retargeting condition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
 	float AutoTargetRadius;
+	/*
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lockon | Detection")
 	USphereComponent* TargetSphere;// spwan this in the cursor porjection location and auto lock on to the target that collides with
+	*/
+	//---> not using 3d sphere, using 2d circle on screen which is 3d world projected on screen
 	
-	FVector OwnerLocation;// to set attatch for the origin point of the targetting system
+	//FVector OwnerLocation;// to set attatch for the origin point of the targetting system
+	//AActor* OwnerActor;// not saving location, but as an Actor*
+	USceneComponent* LockonBaseRoot;
 
-	FVector CursorWorldLocation;// to know where to locate sphere collision
+	USceneComponent* LockonTargeRoot;
+	
+
+	FVector CursorWorldLocation;// to know where to shoot if it is not on any 
 	FVector CursorScreenLocation;
 
 //-----------------------Fucntions -----------------------------------------------------------------------------------//

@@ -4,25 +4,113 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "UIManager.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "UIManagerComponent.generated.h"
 
+//-------- UI Type -----------//
+
+UENUM(BlueprintType)
+enum class EUIMode : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Menu UMETA(DisplayName = "Menu"),// main menu, settings 
+	Gameplay UMETA(DisplayName = "Gameplay")// like hud
+};
+//----- Widget Data -----//
+USTRUCT(BlueprintType)
+struct FWidgetData
+{
+	GENERATED_BODY()
+
+	FWidgetData():
+	WidgetClass(nullptr),WidgetInstance(nullptr),bIsVisible(false)
+	{}
+	FWidgetData(TSubclassOf<UUserWidget> Class):	
+	WidgetClass(Class),WidgetInstance(nullptr),bIsVisible(false)
+	{}
+	
+	UPROPERTY()
+	TSubclassOf<UUserWidget> WidgetClass;
+	UPROPERTY()
+	UUserWidget* WidgetInstance;
+	UPROPERTY()
+	bool bIsVisible;// to filter out the visibility (be shown in vieport or not)
+};
+//----- Widget Storage -----//
+USTRUCT(BlueprintType)
+struct FWidgetStorage
+{
+	GENERATED_BODY()
+
+	FWidgetStorage():
+	UIMode(EUIMode::None)
+	{}
+	FWidgetStorage(EUIMode Mode):
+	UIMode(Mode)
+	{}
+	
+	UPROPERTY()
+	EUIMode UIMode;
+	UPROPERTY()
+	TMap <FName, FWidgetData> StoredWidgets;
+};
+
+
+
+
+//forward Declare
+
+class AMyPlayerController;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UUIManager : public UActorComponent
+class PCGSTUDY_API UUIManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
-	UUIManager();
+	UUIManagerComponent();
 
+protected:
+	UPROPERTY()
+	AMyPlayerController* OwnerController;
+
+	UPROPERTY()
+	FWidgetStorage HUDWidgets;
+
+	UPROPERTY()
+	FWidgetStorage Menuidgets;
+	
+	UPROPERTY()
+	EUIMode CurrentUIMode;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+
+	void AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass);
+	void RemoveWidget(EUIMode Mode,FName WidgetName);
+
+	void ShowWidget(EUIMode Mode,FName WidgetName, int32 Order=0/*default*/);
+	void HideWidget(EUIMode Mode,FName WidgetName);
+
+	void ClearWidgetsByMode(EUIMode Mode);
+	void ClearAllWidgets();
+
+	bool GetwidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage);
+	bool IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage);
+
+
+	//---- controller activation ----//
+	void ActivateUIManager(AMyPlayerController* MyController);
+	void DeactivateUIManager();
+	
+	EUIMode GetCurrentUIMode()const {return CurrentUIMode;}
+
+private:
+	void ApplyInputModeByCurrentUIMode();//sets the imcb by the ui mode
 
 		
 };
+

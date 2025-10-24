@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "InputAction.h"
-#include "InputMappingContext.h"
 #include "MyPlayerController.generated.h"
 
-class UCameraManager;
-class UIMCManagerComponent;
+class UCameraManagerComp;
+class UIMCManagerComp;
+class UUIManagerComp;
 
 
 UCLASS()
@@ -23,31 +22,48 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
+
+	//==== ManagerComp ====//
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controller")
+	UCameraManagerComp* CameraManager;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Controller")
+	UIMCManagerComp* IMCManager;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Controller")
+	UUIManagerComp* UIManager;
 	
 	//=== Confirmations ===//
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
 	bool bIsInMenu;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
-	bool bIsGamePad;
+	bool bIsGamepad;
 	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Controller")
-	UCameraManager* CameraManagerComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Controller")
-	UCameraManager* IMCManagerComp;
+
 
 
 
 	
 	
 public:
-	void SetIsInMenu(bool bIsInMenu);
+
+
+	//----- InputControl ---------//
+	//=== InputType Checking ===//
+	virtual void SetupInputComponent() override;// set the mapping component
+    void OnAnyInputPressed(FKey Key);// check if the input is from pc or gamepad( will return (is Gamepad?))
+	void OnMouseAxisMoved(float Value);
+	void OnGamePadControllerAxisMoved(float Value);
+	
+	void SetIsInMenu(bool bIsMenu);
 	void SetIsGamePad(bool bIsGamePad);
 	
 	UFUNCTION(BlueprintPure)
-	bool IsUsingGamePad()const {return bIsGamePad;};
+	bool IsUsingGamePad()const {return bIsGamepad;};
 
 	UFUNCTION(BlueprintPure)
 	bool IsInMenu()const {return bIsInMenu;};
+	//------------------------------------------------------------------//
+
+	//=== 
 	
 };
