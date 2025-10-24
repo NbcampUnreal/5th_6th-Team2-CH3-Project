@@ -12,9 +12,7 @@ ULockonComponent::ULockonComponent():
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	/*TargetSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	TargetSphere->SetSphereRadius(AutoTargetRadius);
-	TargetSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
+
 
 }
 

@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Item/ItemManager.h"
+#include "Item/InventoryManager.h"
 
 // Sets default values for this component's properties
-UItemManager::UItemManager()
+UInventoryManager::UInventoryManager()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -15,7 +15,7 @@ UItemManager::UItemManager()
 
 
 // Called when the game starts
-void UItemManager::BeginPlay()
+void UInventoryManager::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,7 +25,7 @@ void UItemManager::BeginPlay()
 
 
 // Called every frame
-void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInventoryManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

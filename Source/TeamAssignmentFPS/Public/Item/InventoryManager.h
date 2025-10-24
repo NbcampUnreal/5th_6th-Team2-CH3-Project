@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ItemManager.generated.h"
+#include "InventoryManager.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UItemManager : public UActorComponent
+class TEAMASSIGNMENTFPS_API UInventoryManager : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UItemManager();
+	UInventoryManager();
 
 protected:
 	// Called when the game starts
