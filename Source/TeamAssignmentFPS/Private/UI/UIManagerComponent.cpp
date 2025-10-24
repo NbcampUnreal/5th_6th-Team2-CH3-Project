@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/UIManager.h"
+#include "UI/UIManagerComponent.h"
 #include "Controller/PlayerController/MyPlayerController.h"
 #include "Debug/UELOGCategories.h"
 
 // Sets default values for this component's properties
-UUIManagerComponent::UUIManagerComponent():
+UUIManagerComp::UUIManagerComp():
 	HUDWidgets(FWidgetStorage(EUIMode::Gameplay)),
-	Menuidgets(FWidgetStorage(EUIMode::Menu)),
-
-	CurrentUIMode(EUIMode::None)
+	MenuWidgets(FWidgetStorage(EUIMode::Menu)),
+	CurrentUIMode(EUIMode::None),
+	//Controller
+	OwnerController(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
@@ -18,18 +19,18 @@ UUIManagerComponent::UUIManagerComponent():
 
 
 // Called when the game starts
-void UUIManagerComponent::BeginPlay()
+void UUIManagerComp::BeginPlay()
 {
 	Super::BeginPlay();
 
 	
 }
 
-void UUIManagerComponent::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass)
+void UUIManagerComp::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass)
 {
 	//=== Valid Check ===//
 	FWidgetStorage* Storage=nullptr;
-	if (!GetwidgetStorageByMode(Mode,Storage)) return;
+	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	if (!IsWidgetValid(WidgetName,WidgetClass,*Storage)) return;
 
@@ -45,11 +46,11 @@ void UUIManagerComponent::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<
 	Storage->StoredWidgets.Add(WidgetName,NewW_Data);
 }
 
-void UUIManagerComponent::RemoveWidget(EUIMode Mode, FName WidgetName)
+void UUIManagerComp::RemoveWidget(EUIMode Mode, FName WidgetName)
 {
 	//===== Valid Check
 	FWidgetStorage* Storage=nullptr;
-	if (!GetwidgetStorageByMode(Mode,Storage)) return;
+	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data)
@@ -73,10 +74,10 @@ void UUIManagerComponent::RemoveWidget(EUIMode Mode, FName WidgetName)
 	UE_LOG(UI_Log,Log, TEXT(" UUIManagerComponent::RemoveWidget-> %s removed"), *WidgetName.ToString());
 }
 
-void UUIManagerComponent::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
+void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
 {
 	FWidgetStorage* Storage=nullptr;
-	if (!GetwidgetStorageByMode(Mode,Storage)) return;
+	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data)
@@ -102,10 +103,10 @@ void UUIManagerComponent::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order
 	}
 }
 
-void UUIManagerComponent::HideWidget(EUIMode Mode, FName WidgetName)
+void UUIManagerComp::HideWidget(EUIMode Mode, FName WidgetName)
 {
 	FWidgetStorage* Storage=nullptr;
-	if (!GetwidgetStorageByMode(Mode,Storage)) return;
+	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data->bIsVisible)
@@ -118,10 +119,10 @@ void UUIManagerComponent::HideWidget(EUIMode Mode, FName WidgetName)
 	Data->bIsVisible = false;
 }
 
-void UUIManagerComponent::ClearWidgetsByMode(EUIMode Mode)
+void UUIManagerComp::ClearWidgetsByMode(EUIMode Mode)
 {
 	FWidgetStorage* Temp=nullptr;
-	if (!GetwidgetStorageByMode(Mode,Temp)) return;
+	if (!GetWidgetStorageByMode(Mode,Temp)) return;
 	
 	
 	for (TPair<FName, FWidgetData>&Pair : Temp->StoredWidgets)
@@ -135,13 +136,13 @@ void UUIManagerComponent::ClearWidgetsByMode(EUIMode Mode)
 	Temp->StoredWidgets.Empty();
 }
 
-void UUIManagerComponent::ClearAllWidgets()
+void UUIManagerComp::ClearAllWidgets()
 {
 	ClearWidgetsByMode(EUIMode::Gameplay);
 	ClearWidgetsByMode(EUIMode::Menu);
 }
 
-bool UUIManagerComponent::GetwidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage)
+bool UUIManagerComp::GetWidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage)
 {
 	switch (Mode)
 	{
@@ -149,7 +150,7 @@ bool UUIManagerComponent::GetwidgetStorageByMode(EUIMode Mode, FWidgetStorage*& 
 		WidgetStorage=&HUDWidgets;
 		return true;
 	case EUIMode::Menu:
-		WidgetStorage=&Menuidgets;
+		WidgetStorage=&MenuWidgets;
 		return true;
 	case EUIMode::None:
 	default:
@@ -161,7 +162,7 @@ bool UUIManagerComponent::GetwidgetStorageByMode(EUIMode Mode, FWidgetStorage*& 
 
 
 
-bool UUIManagerComponent::IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage)
+bool UUIManagerComp::IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage)
 {
 	if (!WidgetClass)
 	{
@@ -182,7 +183,7 @@ bool UUIManagerComponent::IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidge
 	return true;
 }
 
-void UUIManagerComponent::ActivateUIManager(AMyPlayerController* MyController)
+void UUIManagerComp::ActivateUIManager(AMyPlayerController* MyController)
 {
 	if (!MyController)
 	{
@@ -193,13 +194,26 @@ void UUIManagerComponent::ActivateUIManager(AMyPlayerController* MyController)
 	OwnerController = MyController;
 }
 
-void UUIManagerComponent::DeactivateUIManager()
+void UUIManagerComp::DeactivateUIManager()
 {
 	ClearAllWidgets();
 	OwnerController = nullptr;
 }
 
-void UUIManagerComponent::ApplyInputModeByCurrentUIMode()
+void UUIManagerComp::SwitchUIMode(EUIMode Mode)
+{
+	if (CurrentUIMode==Mode)
+	{
+		UE_LOG(UI_Log, Error, TEXT("UUIManagerComp::SwitchUIMode-> Already in %s mode"),
+		*StaticEnum<EUIMode>()->GetDisplayNameTextByValue(static_cast<int64>(Mode)).ToString());
+	}
+
+	CurrentUIMode=Mode;
+	//open and close menu
+	
+}
+
+void UUIManagerComp::ApplyInputModeByCurrentUIMode()
 {
 	if (!OwnerController)
 	{

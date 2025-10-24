@@ -46,6 +46,13 @@ protected:
 	
 public:
 
+	//Manager Comp Getter
+	UFUNCTION(BlueprintPure, Category = "Manager")
+	UCameraManagerComp* GetCameraManager()const {return CameraManager;}
+	UFUNCTION(BlueprintPure, Category = "Manager")
+	UIMCManagerComp* GetIMCManager()const {return IMCManager;}
+	UFUNCTION(BlueprintPure, Category = "Manager")
+	UUIManagerComp* GetUIManager()const {return UIManager;}
 
 	//----- InputControl ---------//
 	//=== InputType Checking ===//

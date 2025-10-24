@@ -63,12 +63,12 @@ struct FWidgetStorage
 class AMyPlayerController;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PCGSTUDY_API UUIManagerComponent : public UActorComponent
+class TEAMASSIGNMENTFPS_API UUIManagerComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UUIManagerComponent();
+	UUIManagerComp();
 
 protected:
 	UPROPERTY()
@@ -78,7 +78,7 @@ protected:
 	FWidgetStorage HUDWidgets;
 
 	UPROPERTY()
-	FWidgetStorage Menuidgets;
+	FWidgetStorage MenuWidgets;
 	
 	UPROPERTY()
 	EUIMode CurrentUIMode;
@@ -89,6 +89,7 @@ protected:
 
 public:
 
+	//=== UI Storage Management ===//
 	void AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass);
 	void RemoveWidget(EUIMode Mode,FName WidgetName);
 
@@ -98,15 +99,19 @@ public:
 	void ClearWidgetsByMode(EUIMode Mode);
 	void ClearAllWidgets();
 
-	bool GetwidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage);
+	bool GetWidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage);
 	bool IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage);
 
+	EUIMode GetCurrentUIMode()const {return CurrentUIMode;}
+//--------------------------------------------------------------------------------------------------------------------//
 
 	//---- controller activation ----//
 	void ActivateUIManager(AMyPlayerController* MyController);
 	void DeactivateUIManager();
-	
-	EUIMode GetCurrentUIMode()const {return CurrentUIMode;}
+//--------------------------------------------------------------------------------------------------------------------//	
+
+	//=== UI Display ===//
+	void SwitchUIMode(EUIMode Mode);// this will switch the ui displayed on the screen. this will be done when entering and exiting
 
 private:
 	void ApplyInputModeByCurrentUIMode();//sets the imcb by the ui mode

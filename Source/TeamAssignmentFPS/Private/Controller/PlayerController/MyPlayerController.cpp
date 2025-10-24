@@ -6,7 +6,7 @@
 //=== Managers ===//
 #include "Camera/CameraManager.h"
 #include "Controller/IMC/IMCManagerComponent.h"
-#include "UI/UIManager.h"
+#include "UI/UIManagerComponent.h"
 
 //=== Debug ===//
 #include "Debug/UELOGCategories.h"
