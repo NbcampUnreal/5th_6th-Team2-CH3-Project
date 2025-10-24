@@ -3,7 +3,7 @@
 
 #include "UI/TargetWidgetDisplayer.h"
 
-#include "Debug/
+#include "Debug/UELOGCategories.h"
 
 // Sets default values for this component's properties
 UTargetWidgetDisplayer::UTargetWidgetDisplayer()
@@ -15,12 +15,6 @@ UTargetWidgetDisplayer::UTargetWidgetDisplayer()
 void UTargetWidgetDisplayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-}
-
-void UTargetWidgetDisplayer::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 }
 
