@@ -1,5 +1,9 @@
 #include "UI/TargetWidgetDisplayer.h"
+
+
+#include "Blueprint/WidgetBlueprintLibrary.h"//aslnkfasln.jk asfdlhjk fasdlhjk
 #include "Blueprint/UserWidget.h"
+#include "Engine/World.h"
 #include "Debug/UELOGCategories.h"
 
 UTargetWidgetDisplayer::UTargetWidgetDisplayer()
@@ -12,7 +16,7 @@ void UTargetWidgetDisplayer::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UTargetWidgetDisplayer::CreateWidget(FName StorageName, FName WidgetName)
+void UTargetWidgetDisplayer::CreateFoundWidget(FName StorageName, FName WidgetName)
 {
 	FWidgetStorage* Storage = WidgetLists.Find(StorageName);
 	if (!Storage)
@@ -34,16 +38,19 @@ void UTargetWidgetDisplayer::CreateWidget(FName StorageName, FName WidgetName)
 
 	// Get the widget class
 	TSubclassOf<UUserWidget>* ClassPtr = Storage->WidgetClasses.Find(WidgetName);
-	if (!ClassPtr || !(*ClassPtr))
+	if (!ClassPtr || !(*ClassPtr))// did find it || is found class valid
 	{
 		UE_LOG(UI_Log, Error, TEXT(
 			"UTargetWidgetDisplayer::CreateWidget -> Widget class %s not found or invalid in %s"),
 			*WidgetName.ToString(), *StorageName.ToString());
 		return;
 	}
-
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create widget instance
-	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GetOwner(), *ClassPtr);
+	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GetWorld(), *ClassPtr);
 	if (!NewWidget)
 	{
 		UE_LOG(UI_Log, Error, TEXT(
@@ -51,7 +58,10 @@ void UTargetWidgetDisplayer::CreateWidget(FName StorageName, FName WidgetName)
 			*WidgetName.ToString());
 		return;
 	}
-
+	//----> why this is causeing the problem?
+	// Answer : The Original name of this function "CreateWidget" shared same name with "CreateWidget<UUserWidget>" and it seems like it shadowed the function. fuck
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
 	// Store the instance
 	Storage->WidgetInstances.Add(WidgetName, NewWidget);
 

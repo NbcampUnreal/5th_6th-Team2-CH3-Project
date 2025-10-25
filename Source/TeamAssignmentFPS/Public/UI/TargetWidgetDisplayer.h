@@ -59,7 +59,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI | Widget")
 	TMap<FName, FWidgetStorage> WidgetLists;
 
-	void CreateWidget(FName StorageName, FName WidgetName);
+	void CreateFoundWidget(FName StorageName, FName WidgetName);
 	void ShowWidget(FName StorageName,  FName WidgetName, int32 Order=0);
 	void HideWidget(FName StorageName,  FName WidgetName);
 	void RemoveWidget(FName StorageName,  FName WidgetName);
