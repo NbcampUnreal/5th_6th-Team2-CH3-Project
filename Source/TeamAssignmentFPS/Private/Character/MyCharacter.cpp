@@ -13,7 +13,7 @@ AMyCharacter::AMyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("LockonComponent"));
-	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComp>(TEXT("CameraManagerComponent"));
+	//CameraManagerComp=CreateDefaultSubobject<UCameraManagerComp>(TEXT("CameraManagerComponent"));
 }
 
 // Called when the game starts or when spawned

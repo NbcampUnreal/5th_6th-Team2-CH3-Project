@@ -51,7 +51,7 @@ public:
 	void UnBindInputActions(const FIMC_Bundle& IMCB);
 
 	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
-	void AddMappincAndBind(const FIMC_Bundle& IMCB);//do both!
+	void AddMappingAndBind(const FIMC_Bundle& IMCB);//do both!
 
 	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
 	void ClearIMCB(const FIMC_Bundle& IMCB);//do both!

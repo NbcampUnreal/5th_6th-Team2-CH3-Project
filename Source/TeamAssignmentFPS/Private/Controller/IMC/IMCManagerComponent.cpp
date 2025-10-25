@@ -150,7 +150,7 @@ void UIMCManagerComp::UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool
 	}
 }
 
-void UIMCManagerComp::AddMappincAndBind(const FIMC_Bundle& IMCB)// do both at once
+void UIMCManagerComp::AddMappingAndBind(const FIMC_Bundle& IMCB)// do both at once
 {
 	AddMappingContext(IMCB);
 	BindInputActions(IMCB);
