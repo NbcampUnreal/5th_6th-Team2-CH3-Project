@@ -38,14 +38,14 @@ struct FWidgetData
 };
 //----- Widget Storage -----//
 USTRUCT(BlueprintType)
-struct FWidgetStorage
+struct FWidgetDataStorage
 {
 	GENERATED_BODY()
 
-	FWidgetStorage():
+	FWidgetDataStorage():
 	UIMode(EUIMode::None)
 	{}
-	FWidgetStorage(EUIMode Mode):
+	FWidgetDataStorage(EUIMode Mode):
 	UIMode(Mode)
 	{}
 	
@@ -56,7 +56,8 @@ struct FWidgetStorage
 };
 
 
-
+// === Delegate to signal widgets what type of input is used
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputTypeChanged, bool/*bIsGamepad*/)
 
 //forward Declare
 
@@ -70,15 +71,18 @@ class TEAMASSIGNMENTFPS_API UUIManagerComp : public UActorComponent
 public:	
 	UUIManagerComp();
 
+	// Delegate
+	FOnInputTypeChanged OnInputTypeChanged;// to notify the widgets
+	
 protected:
 	UPROPERTY()
 	AMyPlayerController* OwnerController;
 
 	UPROPERTY()
-	FWidgetStorage HUDWidgets;
+	FWidgetDataStorage HUDWidgets;
 
 	UPROPERTY()
-	FWidgetStorage MenuWidgets;
+	FWidgetDataStorage MenuWidgets;
 	
 	UPROPERTY()
 	EUIMode CurrentUIMode;
@@ -99,8 +103,8 @@ public:
 	void ClearWidgetsByMode(EUIMode Mode);
 	void ClearAllWidgets();
 
-	bool GetWidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage);
-	bool IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage);
+	bool GetWidgetStorageByMode(EUIMode Mode, FWidgetDataStorage*& WidgetStorage);
+	bool IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetDataStorage& WidgetStorage);
 
 	EUIMode GetCurrentUIMode()const {return CurrentUIMode;}
 //--------------------------------------------------------------------------------------------------------------------//
@@ -112,6 +116,9 @@ public:
 
 	//=== UI Display ===//
 	void SwitchUIMode(EUIMode Mode);// this will switch the ui displayed on the screen. this will be done when entering and exiting
+
+	//=== UI Update by input
+	void NotifyInputTypeChange(bool bIsGamePad) const {OnInputTypeChanged.Broadcast(bIsGamePad);};
 
 private:
 	void ApplyInputModeByCurrentUIMode();//sets the imcb by the ui mode

@@ -95,22 +95,27 @@ void AMyPlayerController::SetIsInMenu(bool bIsMenu)
  	//IMCManager-> change imc to menu or game
 }
 
-void AMyPlayerController::SetIsGamePad(bool bIsGamePad)
+void AMyPlayerController::SetIsGamePad(bool NewbIsGamePad)
 {
- 	if (bIsGamepad==true)
- 	{
- 		bIsGamepad=true;
- 		UE_LOG(IMC_Log,Log,TEXT("GamePad"));
- 	}
- 	else// not gp -> pc or mouse
- 	{
- 		bIsGamepad=false;
- 		UE_LOG(IMC_Log,Log,TEXT("PC or Mouse"));
- 	}
-
-
+ 	FString InputType=bIsGamepad? TEXT("Gamepad"):TEXT("PC/Keyboard");
  	
- 	//TODO : make un ui widget to change the setting of the ui
- 	//UIManager->change ui setting
+ 	if (bIsGamepad==NewbIsGamePad)
+ 	{
+ 		UE_LOG(IMC_Log,Error,TEXT("Already using %s"),*InputType);
+ 	}
+
+ 	bIsGamepad=NewbIsGamePad;
+ 	UE_LOG(IMC_Log,Log,TEXT("Setted to %s"),*InputType);
+
+ 	if (UIManager)
+ 	{
+ 		UIManager->NotifyInputTypeChange(bIsGamepad);
+ 	}
+ 	/*if (IMCManager)
+ 	{
+ 		//IMCManager->Switch the imc for controll
+ 		//--> isnt gamepad and pc controll imc is already added and binded?--> no need for change when input type is changed
+ 	}*/
+ 	//OnInputTypeChanged.Broadcast(bIsGamepad);// broadcast to send signal to widgets to change the ui, and imc//--> already has the comp, give order directly for few confusion(for now)
 }
 

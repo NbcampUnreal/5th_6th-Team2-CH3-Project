@@ -20,6 +20,7 @@ public:
 
 	static constexpr float MaxDilation=10.0f;// to prevent insanley fast movement that physics could not follow and fails
 	//static const float MaxDlation=10.0f; --> Static data member MaxDlation cannot have an in-class initializer
+	// use constexpr to define value during complie time so that it can be used in helper class
 	
 	UFUNCTION(BlueprintPure, Category = "Time")
 	static float GetGameTime(UObject* WorldContextObject);

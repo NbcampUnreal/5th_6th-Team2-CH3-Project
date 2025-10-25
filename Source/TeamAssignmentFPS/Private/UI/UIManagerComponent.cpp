@@ -4,11 +4,14 @@
 #include "UI/UIManagerComponent.h"
 #include "Controller/PlayerController/MyPlayerController.h"
 #include "Debug/UELOGCategories.h"
+#include "Blueprint/UserWidget.h"
+#include "Time/TimeControlHelper.h"// for pause and unpause, speed control
+#include "UI/InputTypeReactInterface.h"
 
 // Sets default values for this component's properties
 UUIManagerComp::UUIManagerComp():
-	HUDWidgets(FWidgetStorage(EUIMode::Gameplay)),
-	MenuWidgets(FWidgetStorage(EUIMode::Menu)),
+	HUDWidgets(FWidgetDataStorage(EUIMode::Gameplay)),
+	MenuWidgets(FWidgetDataStorage(EUIMode::Menu)),
 	CurrentUIMode(EUIMode::None),
 	//Controller
 	OwnerController(nullptr)
@@ -29,7 +32,7 @@ void UUIManagerComp::BeginPlay()
 void UUIManagerComp::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass)
 {
 	//=== Valid Check ===//
-	FWidgetStorage* Storage=nullptr;
+	FWidgetDataStorage* Storage=nullptr;
 	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	if (!IsWidgetValid(WidgetName,WidgetClass,*Storage)) return;
@@ -49,7 +52,7 @@ void UUIManagerComp::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUser
 void UUIManagerComp::RemoveWidget(EUIMode Mode, FName WidgetName)
 {
 	//===== Valid Check
-	FWidgetStorage* Storage=nullptr;
+	FWidgetDataStorage* Storage=nullptr;
 	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
@@ -76,7 +79,7 @@ void UUIManagerComp::RemoveWidget(EUIMode Mode, FName WidgetName)
 
 void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
 {
-	FWidgetStorage* Storage=nullptr;
+	FWidgetDataStorage* Storage=nullptr;
 	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
@@ -105,7 +108,7 @@ void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
 
 void UUIManagerComp::HideWidget(EUIMode Mode, FName WidgetName)
 {
-	FWidgetStorage* Storage=nullptr;
+	FWidgetDataStorage* Storage=nullptr;
 	if (!GetWidgetStorageByMode(Mode,Storage)) return;
 
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
@@ -121,7 +124,7 @@ void UUIManagerComp::HideWidget(EUIMode Mode, FName WidgetName)
 
 void UUIManagerComp::ClearWidgetsByMode(EUIMode Mode)
 {
-	FWidgetStorage* Temp=nullptr;
+	FWidgetDataStorage* Temp=nullptr;
 	if (!GetWidgetStorageByMode(Mode,Temp)) return;
 	
 	
@@ -142,7 +145,7 @@ void UUIManagerComp::ClearAllWidgets()
 	ClearWidgetsByMode(EUIMode::Menu);
 }
 
-bool UUIManagerComp::GetWidgetStorageByMode(EUIMode Mode, FWidgetStorage*& WidgetStorage)
+bool UUIManagerComp::GetWidgetStorageByMode(EUIMode Mode, FWidgetDataStorage*& WidgetStorage)
 {
 	switch (Mode)
 	{
@@ -162,7 +165,7 @@ bool UUIManagerComp::GetWidgetStorageByMode(EUIMode Mode, FWidgetStorage*& Widge
 
 
 
-bool UUIManagerComp::IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetStorage& WidgetStorage)
+bool UUIManagerComp::IsWidgetValid(FName WidgetName, TSubclassOf<UUserWidget> WidgetClass, FWidgetDataStorage& WidgetStorage)
 {
 	if (!WidgetClass)
 	{
@@ -206,12 +209,31 @@ void UUIManagerComp::SwitchUIMode(EUIMode Mode)
 	{
 		UE_LOG(UI_Log, Error, TEXT("UUIManagerComp::SwitchUIMode-> Already in %s mode"),
 		*StaticEnum<EUIMode>()->GetDisplayNameTextByValue(static_cast<int64>(Mode)).ToString());
+		return;
 	}
 
 	CurrentUIMode=Mode;
 	//open and close menu
+
+	switch (Mode)
+	{
+	case EUIMode::Gameplay:
+		UTimeControlHelper::SetGlobalTimeDilation(this,1);// set to normal speed
+		break;
+
+	case EUIMode::Menu:
+
+		UTimeControlHelper::SetGlobalTimeDilation(this,0);//pause
+		break;
+
+	default:// when it is none//--> should this be a setting when there are absolutely no widgets?
+		break;
+
+	}
 	
+	ApplyInputModeByCurrentUIMode();
 }
+
 
 void UUIManagerComp::ApplyInputModeByCurrentUIMode()
 {
@@ -221,7 +243,7 @@ void UUIManagerComp::ApplyInputModeByCurrentUIMode()
 		return;
 	}
 
-	//TODO--> Set inputmode for menu and hud. also differenciate them by input type gamepad or pc
+	
 }
 
 

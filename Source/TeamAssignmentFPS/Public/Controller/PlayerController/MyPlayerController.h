@@ -10,6 +10,7 @@ class UCameraManagerComp;
 class UIMCManagerComp;
 class UUIManagerComp;
 
+//DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputTypeChanged, bool /*bIsGamepad*/);
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyPlayerController : public APlayerController
@@ -19,8 +20,11 @@ class TEAMASSIGNMENTFPS_API AMyPlayerController : public APlayerController
 public:
     AMyPlayerController();
 
-	virtual void BeginPlay() override;
+	
+	//Declare for input update
+	//FOnInputTypeChanged OnInputTypeChanged;--> for now, only widget needs the update. so widget has the delegate for now
 
+	
 protected:
 
 	//==== ManagerComp ====//
@@ -45,7 +49,7 @@ protected:
 	
 	
 public:
-
+	virtual void BeginPlay() override;
 	//Manager Comp Getter
 	/*UFUNCTION(BlueprintPure, Category = "Manager")
 	UCameraManagerComp* GetCameraManager()const {return CameraManager;}*/
@@ -62,7 +66,7 @@ public:
 	void OnGamePadControllerAxisMoved(float Value);
 	
 	void SetIsInMenu(bool bIsMenu);
-	void SetIsGamePad(bool bIsGamePad);
+	void SetIsGamePad(bool NewbIsGamePad);
 	
 	UFUNCTION(BlueprintPure)
 	bool IsUsingGamePad()const {return bIsGamepad;};
