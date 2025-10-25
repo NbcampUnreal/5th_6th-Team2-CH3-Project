@@ -26,6 +26,9 @@ struct FWidgetStorage
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Widget")
 	USceneComponent* AnchorPoint=nullptr;// this is for asigning the anchorpoint for widget so that the widget knows where to be spawned and settled
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Widget")
+	bool bIsAttatched=false;// is the widget attatched to the anchor or only use the location to spawn
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -40,7 +43,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:	
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI | Widget")
@@ -65,4 +68,7 @@ public:
 	void RemoveWidget(FName StorageName,  FName WidgetName);
 	
 	void SetAnchorForWidgets(FName StorageName, USceneComponent* NewAnchor);// widgets shares the same anchor if they are in same storage
+
+	void UpdateWidgetCoord(FName StorageName);
+	void UpdateAllWidgetCoords();
 };

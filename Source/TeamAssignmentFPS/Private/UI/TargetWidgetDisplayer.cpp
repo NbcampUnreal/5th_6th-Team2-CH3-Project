@@ -3,17 +3,26 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"//aslnkfasln.jk asfdlhjk fasdlhjk
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Engine/World.h"
 #include "Debug/UELOGCategories.h"
 
 UTargetWidgetDisplayer::UTargetWidgetDisplayer()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UTargetWidgetDisplayer::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UTargetWidgetDisplayer::TickComponent(float DeltaTime, enum ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UpdateAllWidgetCoords();
 }
 
 void UTargetWidgetDisplayer::CreateFoundWidget(FName StorageName, FName WidgetName)
@@ -184,4 +193,68 @@ void UTargetWidgetDisplayer::SetAnchorForWidgets(FName StorageName, USceneCompon
 	UE_LOG(UI_Log, Log, TEXT(
 		"UTargetWidgetDisplayer::SetAnchorForWidgets -> Anchor set for %s"),
 		*StorageName.ToString());
+}
+
+void UTargetWidgetDisplayer::UpdateWidgetCoord(FName StorageName)// for singular
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);
+	if (!Storage || !Storage->bIsAttatched || !Storage->AnchorPoint)//storage not found || it is not attached || Anchor point to attach is null
+		return;
+
+	FVector WorldLocation = Storage->AnchorPoint->GetComponentLocation();
+	FVector2D ScreenCoord;
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();//get player controller
+	if (!PC)//invalid controller
+		return;
+
+	if (PC->ProjectWorldLocationToScreen(WorldLocation, ScreenCoord))
+	{
+		for (auto& WidgetPair : Storage->WidgetInstances)
+		{
+			UUserWidget* Widget = WidgetPair.Value;
+			if (!Widget)
+				continue;
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Widget->Slot))
+			{
+				CanvasSlot->SetPosition(ScreenCoord);
+			}
+		}
+	}
+}
+
+void UTargetWidgetDisplayer::UpdateAllWidgetCoords()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC) return;
+	
+	for (auto& CurrentWidgetStorage : WidgetLists)
+	{
+		FWidgetStorage& Storage = CurrentWidgetStorage.Value;
+		
+		if (!Storage.bIsAttatched || !Storage.AnchorPoint)// Is not attatched || anchor is invalid
+			continue;
+
+		FVector WorldLocation = Storage.AnchorPoint->GetComponentLocation();
+		//TODO: after making curved world shader, apply custom code to here, to apply offset change--> and then project to the screen
+		FVector2D ScreenCoord;
+
+		// Project world location to screen
+		if (!PC->ProjectWorldLocationToScreen(WorldLocation, ScreenCoord))
+			continue;
+
+		// Update only visible widgets
+		for (auto& WidgetPair : Storage.WidgetInstances)
+		{
+			UUserWidget* Widget = WidgetPair.Value;
+			if (!Widget || !Widget->IsInViewport())// invalid widget or is not on viewport
+				continue;
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Widget->Slot))
+			{
+				CanvasSlot->SetPosition(ScreenCoord);
+			}
+		}
+	}
 }
