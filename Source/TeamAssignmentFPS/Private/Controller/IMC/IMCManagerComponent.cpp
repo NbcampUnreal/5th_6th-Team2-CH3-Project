@@ -111,7 +111,7 @@ void UIMCManagerComp::BindInputActionByInputType(const FIMC_Bundle& IMCB, bool I
 	{
 		if (!Data.InputAction)
 		{
-			UE_LOG(IMC_Log, Error, TEXT("invalid InputAction"))
+			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::BindInputActionByInputType->invalid InputAction"))
 			continue;
 		}
 

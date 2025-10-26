@@ -12,6 +12,9 @@
 //=== Debug ===//
 #include "Debug/UELOGCategories.h"
 
+//Time Helper
+#include "Time/TimeControlHelper.h"
+
 
 
  AMyPlayerController::AMyPlayerController():
@@ -106,14 +109,15 @@ void AMyPlayerController::SetIsInMenu(bool bIsMenu)
 
 void AMyPlayerController::SetIsGamePad(bool NewbIsGamePad)
 {
- 	FString InputType=bIsGamepad? TEXT("Gamepad"):TEXT("PC/Keyboard");
- 	
  	if (bIsGamepad==NewbIsGamePad)
  	{
- 		UE_LOG(IMC_Log,Error,TEXT("Already using %s"),*InputType);
+ 		//UE_LOG(IMC_Log,Error,TEXT("AMyPlayerController::SetIsGamePad->Already using %s"),*InputType);
+ 		return;
  	}
-
  	bIsGamepad=NewbIsGamePad;
+ 	
+ 	FString InputType=bIsGamepad? TEXT("Gamepad"):TEXT("PC/Keyboard");
+
  	UE_LOG(IMC_Log,Log,TEXT("Setted to %s"),*InputType);
 
  	if (UIManager)

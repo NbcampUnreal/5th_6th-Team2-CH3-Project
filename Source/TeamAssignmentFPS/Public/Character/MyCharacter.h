@@ -9,6 +9,7 @@
 
 
 
+
 UENUM(BlueprintType)// for informing character movement state
 enum class ECharacterMovementState:uint8
 {
@@ -25,6 +26,10 @@ enum class ECharacterMovementState:uint8
 //Forward Declare
 class ULockonComponent;// to update the forward rotaion that character needs to update
 class UCameraManagerComp;
+//binding function
+struct FInputActionValue;
+
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
 {
@@ -39,8 +44,15 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
 	ULockonComponent* LockonComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
 	UCameraManagerComp* CameraManagerComp;
+
+
+	//==Stat
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float MovementSpeed=600;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float SprintSpeed=1000;
 
 	
 	bool bIsLockedOnTarget=false;
@@ -58,19 +70,26 @@ public:
 
 
 	//Movement
-	void MoveForwardAndRight(FVector2D Value);
+	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float Value);
-
-	void Dodge(bool Value);
+	
+	void StartSprinting();
+	void StopSprinting();
+	
+	void Dodge(const FInputActionValue& Value);
 	void DirectionalDodge();
 	void BackDash();
 
 	//Attack
-	void SwitchWeapon(float Value);
-	void UseWeaponOrItem(bool Value);
+	void TriggerBattleAction();// this can be differ by the current equipped weapon or item(ex. Itme-> use item, weapon-> use weapon)
+	void SwitchWeapon(const FInputActionValue& Value);// use mouse wheel(pc)or face button?(gamepad)
+	void UseWeapon();// not so sure should i use interface for both weapon and item?
+	void UseItem();// inventory related action
 	
 	//UseItem
-	void SelectItem();
-	void SwtichToWeapon();
+	void SelectItem();// inventory related action
+	void SwtichToWeapon();// itme to weapon--> same input of switch weapon, but when using item+input-> equip previously used weapon
+	
+	void LockonTarget();//gamepad only?
 };

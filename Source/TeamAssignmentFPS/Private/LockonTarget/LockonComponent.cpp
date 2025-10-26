@@ -81,8 +81,11 @@ void ULockonComponent::UpdateCameraBoomLocation()
 	// Use CameraManager to move current camera rig
 	if (CameraManager->GetCurrentCameraRig())
 	{
-		CameraManager->TransitionToTargetRig(CameraManager->GetCurrentCameraRig(), 0.f);
-		CameraManager->GetCurrentCameraRig()->SetActorLocation(DesiredLocation);
+		ACameraRig* CameraRig = CameraManager->GetCurrentCameraRig();
+
+		//if (CameraRig)--> TODO-> bIsTransitioning -> stop updating the transition when the transition is over
+		//CameraManager->TransitionToTargetRig(CameraRig, 0.f);// this is only for swithcing camera rig
+		CameraRig->SetActorLocation(DesiredLocation);
 	}
 
 	if (bIsDebugDrawOn)
