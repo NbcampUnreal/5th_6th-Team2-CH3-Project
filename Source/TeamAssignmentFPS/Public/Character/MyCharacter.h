@@ -52,10 +52,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float MovementSpeed=600;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
-	float SprintSpeed=1000;
+	float SprintSpeedMultiplier=1.5;
 
-	
-	bool bIsLockedOnTarget=false;
+	float CurrentMaxSpeed=600.f;//default
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -70,25 +70,31 @@ public:
 
 
 	//Movement
+	UFUNCTION()// must put ufunction for binding fuck
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float Value);
-	
+	UFUNCTION()
 	void StartSprinting();
+	UFUNCTION()
 	void StopSprinting();
-	
+	UFUNCTION()
 	void Dodge(const FInputActionValue& Value);
 	void DirectionalDodge();
 	void BackDash();
 
 	//Attack
+	UFUNCTION()
 	void TriggerBattleAction();// this can be differ by the current equipped weapon or item(ex. Itme-> use item, weapon-> use weapon)
-	void SwitchWeapon(const FInputActionValue& Value);// use mouse wheel(pc)or face button?(gamepad)
+	UFUNCTION()
+	void SwitchAction(const FInputActionValue& Value);// use mouse wheel(pc)or face button?(gamepad)
+	//trigger battle action-->
 	void UseWeapon();// not so sure should i use interface for both weapon and item?
 	void UseItem();// inventory related action
 	
 	//UseItem
 	void SelectItem();// inventory related action
+	void SwitchToNewWeapon();// weapon to weapon swtich
 	void SwtichToWeapon();// itme to weapon--> same input of switch weapon, but when using item+input-> equip previously used weapon
 	
 	void LockonTarget();//gamepad only?

@@ -34,6 +34,8 @@ protected:
 
 	void BindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const;
 	void UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool IsGamePad) const;
+
+	bool TryBindAction(FInputActionData& Data, const FIMC_Bundle& IMCB) const;
 	
 public:
 	

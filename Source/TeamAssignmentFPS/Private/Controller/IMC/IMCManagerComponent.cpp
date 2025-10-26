@@ -109,17 +109,27 @@ void UIMCManagerComp::BindInputActionByInputType(const FIMC_Bundle& IMCB, bool I
 	
 	for (FInputActionData& Data: SelectedIMCModule.IA_Data)
 	{
-		if (!Data.InputAction)
+		if (!TryBindAction(Data,IMCB)) continue;
+		/*if (!Data.InputAction)
 		{
-			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::BindInputActionByInputType->invalid InputAction"))
+			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::BindInputActionByInputType->invalid InputAction"));
 			continue;
 		}
 
 		FEnhancedInputActionEventBinding& Binding=
-			EnhancedInputComp->BindAction(Data.InputAction, Data.TriggerEvent, EnhancedInputComp, Data.FunctionName);
+			EnhancedInputComp->BindAction(Data.InputAction, Data.TriggerEvent, IMCB.FunctionOwner, Data.FunctionName);
+
+		if (Binding.GetHandle() ==INDEX_NONE)
+		{
+			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::BindInputActionByInputType->Binding failed"));
+			continue;
+		}
+		
+		UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::BindInputActionByInputType-> %s binding is done"),*Data.FunctionName.ToString());
+		
 		Data.SetCurrentIAHandle(Binding.GetHandle());
 
-		Data.SetCurrentIAHandle(Binding.GetHandle());
+		Data.SetCurrentIAHandle(Binding.GetHandle());*/
 	}
 }
 
@@ -148,6 +158,47 @@ void UIMCManagerComp::UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool
 		uint32 HandleID=Data.GetCurrentIAHandle();
 		EnhancedInputComp->RemoveBindingByHandle(HandleID);
 	}
+}
+
+bool UIMCManagerComp::TryBindAction(FInputActionData& Data, const FIMC_Bundle& IMCB) const
+{
+	if (!EnhancedInputComp)
+	{
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> EnhancedInputComp is nullptr"));
+		return false;
+	}
+
+	if (!Data.InputAction)
+	{
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Invalid InputAction for %s"),
+			*Data.FunctionName.ToString());
+		return false;
+	}
+
+	if (!IMCB.FunctionOwner || !IMCB.FunctionOwner->FindFunction(Data.FunctionName))
+	{
+		FString Owner=IMCB.FunctionOwner?*IMCB.FunctionOwner->GetName() : TEXT("nullptr");
+		
+		UE_LOG(IMC_Log, Error,
+			TEXT("UIMCManagerComp::TryBindAction -> Function not found: %s (Owner: %s)"),
+			*Data.FunctionName.ToString(), *Owner);
+		return false;
+	}
+
+	FEnhancedInputActionEventBinding& Binding =
+		EnhancedInputComp->BindAction(Data.InputAction, Data.TriggerEvent, IMCB.FunctionOwner, Data.FunctionName);
+
+	if (Binding.GetHandle() == INDEX_NONE)// binding failed
+	{
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Failed to bind %s"),
+			*Data.FunctionName.ToString());
+		return false;
+	}
+
+	Data.SetCurrentIAHandle(Binding.GetHandle());
+	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::TryBindAction -> Bound %s successfully (Handle: %d)"),
+		*Data.FunctionName.ToString(),Binding.GetHandle());
+	return true;
 }
 
 void UIMCManagerComp::AddMappingAndBind(const FIMC_Bundle& IMCB)// do both at once

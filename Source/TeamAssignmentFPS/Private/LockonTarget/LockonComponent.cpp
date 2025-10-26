@@ -240,3 +240,9 @@ void ULockonComponent::SwitchTarget(FVector2D SwitchInputDirection)
 		LockonTarget = NextTarget;
 	}
 }
+
+void ULockonComponent::SetCameraBlendAlpha(float BlendAlpha)
+{
+	float ClampedAlpha=FMath::Clamp(BlendAlpha,0.f,1.f);
+	BaseRootToTargetAlpha=BlendAlpha;
+}

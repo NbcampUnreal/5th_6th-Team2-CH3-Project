@@ -120,6 +120,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Lockon")
 	AActor* GetLockonTarget()const {return LockonTarget;}
+
+	void SetCameraBlendAlpha(float BlendAlpha);
 	
 
 		
