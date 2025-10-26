@@ -31,7 +31,7 @@ struct FTargetInfo
 
 
 //forward declaration
-class USphereComponent;
+//class USphereComponent;// without sphere collision
 class AMyPlayerController;
 class UCameraManagerComp;
 
@@ -44,7 +44,7 @@ public:
 	// Sets default values for this component's properties
 	ULockonComponent();
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Debug")
 	bool bIsDebugDrawOn=false;
 	
 protected:
@@ -61,19 +61,19 @@ protected:
 	//bool bIsGamePad=false;// for now, just with the pc controll
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
-	float FalloffRange;// auto retargeting condition
+	float FalloffRange=100;// auto retargeting condition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
 	float AutoTargetRadius=200.f;//default radius
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lockon | Detection")
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lockon | Detection")
 	USphereComponent* TargetSphere;
-	//set sphere on the cusror deprojectec location. the detected targetalbe actors will be traced by this
+	//set sphere on the cusror deprojectec location. the detected targetalbe actors will be traced by this*/
 	
 	// or need a way to store every visible targetalbes using camera frustum(?) and filter out the targetables which are not in the cursor's range
 	//	--> this will be compatable with not only keyboard/mouse, but also with gamepad lock on system
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category="Lockon | Location")
-	USceneComponent* LockonBaseRoot;
+	USceneComponent* LockonBaseRoot=nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category="Lockon | Location")
 	AActor* LockonTarget=nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category="Lockon | Location")
@@ -112,6 +112,8 @@ protected:
 	// / or
 	// / when target swtich thumbstick is pressed-> find nearest targetable on the direction of the thumbstick
 
+	void CollectCandidatesByCameraView();
+	// this will collect the actors on the view port and filterout to find targetables on the screen
 public:
 	UFUNCTION(BlueprintCallable, Category="Lockon")
 	void SetLockonActive(bool bActive){bIsActivated=bActive;}

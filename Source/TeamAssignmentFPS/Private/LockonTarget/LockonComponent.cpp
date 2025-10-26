@@ -14,7 +14,9 @@
 #include "Kismet/GameplayStatics.h"
 
 ULockonComponent::ULockonComponent():
-	OwnerController(nullptr)
+	OwnerController(nullptr),
+	CameraManager(nullptr)
+
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -28,13 +30,25 @@ void ULockonComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LockonBaseRoot=GetOwner()->GetRootComponent();//set the base root
+
+	//--> set owner controller
 	OwnerController = Cast<AMyPlayerController>(GetOwner()->GetInstigatorController());
 	if (!OwnerController)
 	{
-		UE_LOG(Camera_Log, Warning, TEXT("ULockonComponent::BeginPlay-> OwnerController not found"));
+		UE_LOG(Camera_Log, Error, TEXT("ULockonComponent::BeginPlay-> OwnerController not found"));
+	}
+	else// when the OwnerController is valid
+	{
+		// Get Camera Manager from Controller
+		CameraManager=OwnerController->GetCameraManager();
+		if (!CameraManager)
+		{
+			UE_LOG(Camera_Log, Error, TEXT("ULockonComponent::BeginPlay -> CameraManager not found in controller"));
+		}
 	}
 
-	LockonBaseRoot=GetOwner()->GetRootComponent();
+	
 }
 
 
@@ -53,7 +67,12 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void ULockonComponent::UpdateCameraBoomLocation()
 {
-	if (!CameraManager || !LockonBaseRoot) return;
+	if (!CameraManager || !LockonBaseRoot)//return; //temp log print --> 
+	{
+		UE_LOG(LockonTarget_Log, Error, TEXT("ULockonComponent::UpdateCameraBoomLocation-> Invalid Camera manager or lock on base root"));
+		return;
+	}
+	
 
 	FVector TargetLocation = LockonTarget ? LockonTarget->GetActorLocation() : CursorWorldLocation;
 	FVector BaseLocation = LockonBaseRoot->GetComponentLocation();
@@ -65,14 +84,78 @@ void ULockonComponent::UpdateCameraBoomLocation()
 		CameraManager->TransitionToTargetRig(CameraManager->GetCurrentCameraRig(), 0.f);
 		CameraManager->GetCurrentCameraRig()->SetActorLocation(DesiredLocation);
 	}
+
+	if (bIsDebugDrawOn)
+	{
+
+		// Draw Debug Sphere at where Camera rig base is
+		DrawDebugSphere
+	(GetWorld(),DesiredLocation,25.f,12,FColor::Blue,false,-1.f);
+	}
 }
 
 void ULockonComponent::UpdateCursor()
 {
-	OwnerController->GetMousePosition(CursorScreenLocation.X, CursorScreenLocation.Y);
+	if (!OwnerController || !GetOwner()) return;
+	
+	if (!OwnerController->GetMousePosition(CursorScreenLocation.X, CursorScreenLocation.Y)) return;
+	/*{
+		UE_LOG(LogTemp, Warning, TEXT("ULockonComponent::UpdateCursor -> Failed to get mouse position"));
+	}*///--> no log for the tick--> too much
 	FVector WorldOrigin, WorldDir;
-	OwnerController->DeprojectScreenPositionToWorld(CursorScreenLocation.X, CursorScreenLocation.Y, WorldOrigin, WorldDir);
-	CursorWorldLocation = WorldOrigin + WorldDir * 10000.f; //Temp max 
+	if (!OwnerController->DeprojectScreenPositionToWorld(CursorScreenLocation.X, CursorScreenLocation.Y, WorldOrigin, WorldDir))
+		return;
+		/*{
+		UE_LOG(LogTemp, Warning, TEXT("ULockonComponent::UpdateCursor -> Failed to deproject screen to world"));
+		return;
+	}*/
+	FHitResult HitResult;
+	FVector TraceEnd = WorldOrigin + (WorldDir * 1000000.f);
+
+
+	FCollisionObjectQueryParams ObjectParams;
+	/*ObjectParams.AddObjectTypesToQuery(ECC_EngineTraceChannel1);*/
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner()); // ignore self
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult,WorldOrigin,TraceEnd,ECC_Visibility,Params);//only visibility
+	/*GetWorld()->LineTraceSingleByObjectType(HitResult,WorldOrigin,TraceEnd,ObjectParams,Params);//*///--> this is only for seting cursor
+	// targetting not done like this(2d coord comparison)
+	
+	if (bHit)
+	{
+		CursorWorldLocation = HitResult.Location;
+	}
+	else
+	{
+		// If no hit, set Base as the location
+		if (USceneComponent* RootComp = GetOwner()->GetRootComponent())
+		{
+			CursorWorldLocation = RootComp->GetComponentLocation();
+		}
+		else
+		{
+			CursorWorldLocation = TraceEnd;
+		}
+	}
+
+	if (OwnerController->ProjectWorldLocationToScreen(CursorWorldLocation, CursorScreenLocation))
+	{
+		// CursorScreenLocation updated successfully
+	}
+	
+	if (bIsDebugDrawOn)
+    	{
+    		// Draw the trace line
+    		/*DrawDebugLine
+		(GetWorld(),WorldOrigin,CursorWorldLocation,bHit ? FColor::Green : FColor::Red,false,-1.f,0,1.0f);
+		*/
+		// the square is too big--> the square size gets bigger when the field of view is small. fuck
+    
+    		// Draw debug sphere at the hit or fallback location
+    		DrawDebugSphere
+		(GetWorld(),CursorWorldLocation,25.f,12,FColor::Red,false,-1.f);
+    	}
 }
 
 void ULockonComponent::DetectTarget()

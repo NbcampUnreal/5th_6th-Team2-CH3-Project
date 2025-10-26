@@ -58,20 +58,19 @@ public:
 
 
 	//Movement
-	/*void MoveForward(float Value);
-	void MoveRight(float Value);
+	void MoveForwardAndRight(FVector2D Value);
 
 	void RotateTowardTarget(float Value);
 
-	void Dodge();
+	void Dodge(bool Value);
 	void DirectionalDodge();
 	void BackDash();
 
 	//Attack
 	void SwitchWeapon(float Value);
-	void UseWeaponOrItem();
+	void UseWeaponOrItem(bool Value);
 	
 	//UseItem
 	void SelectItem();
-	void SwtichToWeapon();*/
+	void SwtichToWeapon();
 };
