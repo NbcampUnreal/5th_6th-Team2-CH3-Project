@@ -30,7 +30,9 @@ public:
 	// Sets default values for this actor's properties
 	ACameraRig();
 protected:
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Camera Rig | ID")
+	FName CameraRigName=NAME_None;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig | Activation")
 	bool bIsActivated;// is currently using for viewtarget
 
@@ -65,6 +67,7 @@ public:
 	USceneComponent* GetCameraRoot() const {return CameraBaseRoot;}
 	UCameraComponent* GetCamera() const {return CameraComponent;}
 	USpringArmComponent* GetSpringArm() const {return CameraBoom;}
+	FName GetCameraRigName() const {return CameraRigName;}
 
 	void SetLandingTarget(USceneComponent* NewLandingTarget, float InMoveSpeed);
 	void MoveToTarget(float DeltaTime);

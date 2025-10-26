@@ -3,131 +3,103 @@
 
 #include "Camera/CameraManager.h"
 
-#include "MovieSceneTracksComponentTypes.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraRig.h" //
 #include "GameFramework/SpringArmComponent.h"
-#include "Debug/UELOGCategories.h"
-#include "Kismet/GameplayStatics.h"// to get currently using camera as view port
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Debug/UELOGCategories.h"
 
 
 UCameraManagerComp::UCameraManagerComp()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;// no need to use tick any more
 
-	CameraRoot=CreateDefaultSubobject<USceneComponent>(TEXT("CameraRoot"));
-	Camera=CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraBoom =CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-
-	
-	CameraBoom->SetupAttachment(CameraRoot);
-	CameraBoom->bUsePawnControlRotation=false;// no rotation by controller
-	// rotation lock
-	CameraBoom->bInheritPitch = false;
-	CameraBoom->bInheritYaw = false;
-	CameraBoom->bInheritRoll = false;
-	
-	
-	Camera->SetupAttachment(CameraBoom);
-	Camera->bUsePawnControlRotation=false;// no rotation for camera
 }
-
 
 void UCameraManagerComp::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-	// the way display location is made 
-	
 }
 
-
-void UCameraManagerComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (bIsTransitioning)
-	{
-		MoveToTarget(DeltaTime);
-	}
-}
 
 void UCameraManagerComp::ActivateCameraManager()
 {
-	SetComponentTickEnabled(true);
-	bIsActivated=true;
+	bIsActivated = true;
+
+	UE_LOG(Camera_Log,Log, TEXT("UCameraManagerComp::ActivateCameraManager->CameraManager Activated"))
 }
 
 void UCameraManagerComp::DeactivateCameraManager()
 {
-	SetComponentTickEnabled(false);
-	bIsActivated=false;
+	bIsActivated = false;
+	UE_LOG(Camera_Log, Log, TEXT("UCameraManagerComp::ActivateCameraManagerCamera Manager Deactivated."));
 }
 
-
-void UCameraManagerComp::SetLandingTarget(USceneComponent* NewLandingTarget, float MoveSpeed)
+void UCameraManagerComp::SetActiveCameraRig(ACameraRig* NewRig)
 {
-	if (!NewLandingTarget)
+	if (!bIsActivated || !NewRig)
 	{
-		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::MoveToTarget-> Invalid LandingTarget"));
-		return;
-	}
-	if (!Camera)
-	{
-		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::MoveToTarget-> Invalid Camera"));
+		UE_LOG(Camera_Log, Warning, TEXT("UCameraManagerComp::SetActiveCameraRig-> Manager inactive or invalid rig"));
 		return;
 	}
 
-	// detatch camera from root for linear transition( no curved path by spring arm rotation)
-	if (Camera->GetAttachParent()==CameraRoot || Camera->GetAttachParent()==CameraBoom)// if camera's parent is camera boom or camera root
+	// Get player controller
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!PC)
 	{
-		Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);//detach and put it in the world
+		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::SetActiveCameraRig-> PlayerController not found"));
+		return;
 	}
 
-	//Set Variables for moving
-	LandingTarget = NewLandingTarget;
-	LocationUpdateSpeed = MoveSpeed;
-	bIsTransitioning=true;
+	// Immediately set view target
+	PC->SetViewTarget(NewRig);
+
+	// Update reference
+	CurrentCameraRig = NewRig;
+
+	UE_LOG(Camera_Log, Log, TEXT("UCameraManagerComp::SetActiveCameraRig-> Active CameraRig set: %s"),
+		*NewRig->GetCameraRigName().ToString());
 }
 
-void UCameraManagerComp::MoveToTarget(float DeltaTime)
+void UCameraManagerComp::TransitionToTargetRig(ACameraRig* NewRig, float BlendTime)
 {
-	if (!bIsTransitioning || !LandingTarget || !CameraRoot)// condition for no movement
-		return;
-
-	const FVector TargetLocation=LandingTarget->GetComponentLocation();
-	const FVector CurrentLocation=CameraRoot->GetComponentLocation();
-
-	const FVector NewLocation= FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime,LocationUpdateSpeed);
-	CameraRoot->SetWorldLocation(NewLocation);
-
-	if (FVector::DistSquared(NewLocation, TargetLocation) <=FMath::Square(1))// acceptable distance to end transition
+	if (!bIsActivated)
 	{
-		CameraRoot->SetWorldLocation(NewLocation);
-		bIsTransitioning=false;
-		LandingTarget=nullptr;
-
-		if (Camera&&CameraBoom&&Camera->GetAttachParent() !=CameraBoom)
-		{
-			Camera->AttachToComponent(CameraBoom, FAttachmentTransformRules::KeepWorldTransform);
-		}
-
-		UE_LOG(Camera_Log, Log, TEXT("UCameraManagerComp::MoveToTarget-> Move Update completed"));
-	}
-}
-
-void UCameraManagerComp::AttatchCameraBaseToTarget(USceneComponent* Target)
-{
-	if (!Target)
-	{
-		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::AttatchCameraBaseToTarget-> Invalid Target"));
-		// for possible time when the target is null--> if there is default scene comp for controller, attatch to that
+		UE_LOG(Camera_Log, Warning, TEXT("CameraManagerComp::TransitionToTargetRig-> Camera manager is not activated"));
 		return;
 	}
 
-	CameraRoot->AttachToComponent(Target, FAttachmentTransformRules::KeepWorldTransform);
+	if (!NewRig)
+	{
+		UE_LOG(Camera_Log, Warning, TEXT("CameraManagerComp::TransitionToTargetRig-> Invalid Target Rig"));
+		return;
+	}
+
+	if (CurrentCameraRig == NewRig)
+	{
+		UE_LOG(Camera_Log, Log, TEXT("CameraManagerComp::TransitionToTargetRig-> Already using this rig"));
+		return;
+	}
+
+	// Get player controller
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!PC)
+	{
+		UE_LOG(Camera_Log, Error, TEXT("CameraManagerComp::TransitionToTargetRig-> PlayerController not found"));
+		return;
+	}
+
+	// Switch viewport to new rig
+	PC->SetViewTargetWithBlend(NewRig, BlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
+
+	// Update references
+	CurrentCameraRig = NewRig;
+	UE_LOG(Camera_Log, Log, TEXT("CameraManagerComp::TransitionToTargetRig-> View target switched to: %s"),
+		*NewRig->GetCameraRigName().ToString());
 }
+
+
 
 bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
 {
@@ -140,7 +112,7 @@ bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityD
 	APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 	if (!PlayerCameraManager)
 	{
-		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::GetVectorsByCameraAndGravityDirection->Invalid PlayerCameramanager"));
+		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::GetVectorsByCameraAndGravityDirection->Invalid PlayerCameraManager"));
 		return false;
 	}
 	

@@ -75,6 +75,10 @@ public:
 	bool IsInMenu()const {return bIsInMenu;};
 	//------------------------------------------------------------------//
 
+	//===== Activation ====//
+
+	void ActivateCameraManager();
+
 	//=== 
 	
 };

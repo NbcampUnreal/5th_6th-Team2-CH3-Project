@@ -5,6 +5,7 @@
 
 //=== Managers ===//
 #include "Camera/CameraManager.h"
+#include "Camera/CameraRig.h"
 #include "Controller/IMC/IMCManagerComponent.h"
 #include "UI/UIManagerComponent.h"
 
@@ -24,7 +25,7 @@
 	bIsGamepad(false),
 	bIsInMenu(true)// start from the game menu so true, it is menu
  {
- 	//CameraManager=CreateDefaultSubobject<UCameraManagerComp>(TEXT("Camera Manager Component"));
+ 	CameraManager=CreateDefaultSubobject<UCameraManagerComp>(TEXT("Camera Manager Component"));
  	IMCManager=CreateDefaultSubobject<UIMCManagerComp>(TEXT("IMC Manager Component"));
  	UIManager=CreateDefaultSubobject<UUIManagerComp>(TEXT("UI Manager Component"));
  }
@@ -32,6 +33,14 @@
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+ 	//==== Manager Comp Activate ===//
+
+ 	//Camera
+ 	ActivateCameraManager();
+ 	
+		
+ 	
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -117,5 +126,47 @@ void AMyPlayerController::SetIsGamePad(bool NewbIsGamePad)
  		//--> isnt gamepad and pc controll imc is already added and binded?--> no need for change when input type is changed
  	}*/
  	//OnInputTypeChanged.Broadcast(bIsGamepad);// broadcast to send signal to widgets to change the ui, and imc//--> already has the comp, give order directly for few confusion(for now)
+}
+
+void AMyPlayerController::ActivateCameraManager()
+{
+ 	if (!CameraManager)
+ 	{
+ 		UE_LOG(Controller_Log, Error, TEXT("AMyPlayerController::ActivateCameraManager-> CameraManager is null. Activation Failed"));
+ 		return;
+ 	}
+
+ 	
+ 	CameraManager->ActivateCameraManager();
+
+ 	//Activate the camera of controlled pawn
+ 		
+ 	APawn* ControlledPawn = GetPawn();
+ 	if (!ControlledPawn)
+ 	{
+ 		UE_LOG(Camera_Log, Warning, TEXT("AMyPlayerController::ActivateCameraManager-> invalid Controlled pawn "));
+ 		return;
+ 	}
+
+ 	TArray<UChildActorComponent*> ChildActorComponents;// storage of what character has for childactorcomponents
+ 	ControlledPawn->GetComponents<UChildActorComponent>(ChildActorComponents);
+
+ 	for (UChildActorComponent* ChildActorComp : ChildActorComponents)//loop till it find the camera rig actor
+ 	{
+ 		if (!ChildActorComp) continue;
+ 		
+ 		ACameraRig* CameraRig = Cast<ACameraRig>(ChildActorComp->GetChildActor());
+ 		if (CameraRig)// if casting is successful, it is camera rig
+ 		{
+ 			CameraManager->SetActiveCameraRig(CameraRig);// set that as active camera rig
+ 			UE_LOG(Camera_Log, Log, TEXT("AMyPlayerController::ActivateCameraManager->Found CameraRig in ChildActorComponent, set as active."));
+ 			return;
+ 		}
+ 	}
+ 	//What if there is more that one camera rig? how can i set the starting camera?
+ 	//fuck
+
+ 	UE_LOG(Camera_Log, Warning, TEXT("AMyPlayerController::ActivateCameraManager->No CameraRig found on spawned pawn."));
+
 }
 

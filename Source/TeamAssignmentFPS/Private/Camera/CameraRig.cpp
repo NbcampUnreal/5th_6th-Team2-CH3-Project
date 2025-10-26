@@ -3,7 +3,7 @@
 
 #include "Camera/CameraRig.h"
 
-#include "MovieSceneTracksComponentTypes.h"
+
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"

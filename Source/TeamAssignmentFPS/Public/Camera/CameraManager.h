@@ -6,8 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "CameraManager.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
+class ACameraRig;
 
 /*USTRUCT(BlueprintType)
 struct FCameraStateData// this will hold the camera information to be kept (ex. charcter camera--> location= character, 
@@ -36,51 +35,40 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float TransitionSpeed=600.f;
+	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")//currently using camera rig
+	ACameraRig* CurrentCameraRig=nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")// target rig to be transitioned
+	ACameraRig* TargetCameraRig=nullptr;
 
-	UPROPERTY()
-	USceneComponent* LandingTarget = nullptr;// where to put the target during repositioning
-	
-	
-	UPROPERTY()
-	UObject* RootOwner;// not the controller, but the parent location of the camera root
-	
-	//===== Camera ====//
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")// put it and adjust the transform with offset
-	USceneComponent* CameraRoot;// base root comp
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	USpringArmComponent* CameraBoom;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	UCameraComponent* Camera;
-	
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	FVector RootWorldLocation;//where to place the CameraBoom root--> the location will be updated */
-	//just use cameraroot->getworldlocation()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	float LocationUpdateSpeed;
+	float TransitionBlendAlpha=0.f;// for transition between rigs
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	//=== Activation ===//--> turn on and off of camera manager
 	void ActivateCameraManager();
 	void DeactivateCameraManager();
-	
-	USceneComponent* GetRootComponent() const {return CameraRoot;}// these will be used to change the params like length, view sight, lag speed etc
-	UCameraComponent* GetCameraComponent() const {return Camera;}
-	USpringArmComponent* GetSpringArmComponent() const {return CameraBoom;}
 
-	void SetLandingTarget(USceneComponent* NewLandingTarget, float MoveSpeed);
-	void MoveToTarget(float DeltaTime);
-	void AttatchCameraBaseToTarget(USceneComponent* Target);
+	UFUNCTION(BlueprintCallable, Category = "CameraManager")
+	void SetActiveCameraRig(ACameraRig* NewRig);
+
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	ACameraRig* GetCurrentCameraRig() const {return CurrentCameraRig;}
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	ACameraRig* GetTargetCameraRig() const {return TargetCameraRig;}
+
+	UFUNCTION(BlueprintCallable, Category = "CameraManager")
+	void TransitionToTargetRig(ACameraRig* NewRig, float BlendTime = 1.0f);//default time
+
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	bool IsTransitioning() const { return bIsTransitioning; }
 
 	bool GetVectorsByCameraAndGravityDirection
 	(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const;// with default z -1.0

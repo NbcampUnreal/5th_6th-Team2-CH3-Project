@@ -21,8 +21,6 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//CameraManagerComp=CreateDefaultSubobject<UCameraManagerComp>(TEXT("LockonComponent"));
-	
 }
 
 // Called every frame
