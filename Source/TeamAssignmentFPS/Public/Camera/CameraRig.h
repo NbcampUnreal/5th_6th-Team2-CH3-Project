@@ -17,8 +17,9 @@
 	
 	*/
 
-class UCameraComponent;
-class USpringArmComponent;
+class UCameraComponent;//camera 
+class USpringArmComponent;//camera boom
+class USceneComponent;//base, target location
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API ACameraRig : public AActor
@@ -33,14 +34,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig | Activation")
 	bool bIsActivated;// is currently using for viewtarget
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig | Activation")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig")
+	bool bIsMoving=false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig")
 	USceneComponent* CameraBaseRoot;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig | Activation")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category ="Camera Rig")
 	UCameraComponent* CameraComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig | Activation")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig")
 	USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera Rig")
+	USceneComponent* MoveTarget=nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Camera Rig")
+	float MoveSpeed=500.0f;// when movemnt is triggered
 	
 protected:
 	// Called when the game starts or when spawned
@@ -50,13 +60,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetActive(bool bIsActive);
+	void SetActive(bool bNewIsActive);
 
 	USceneComponent* GetCameraRoot() const {return CameraBaseRoot;}
 	UCameraComponent* GetCamera() const {return CameraComponent;}
 	USpringArmComponent* GetSpringArm() const {return CameraBoom;}
 
-	void SetLandingTarget(USceneComponent* NewLandingTarget, float MoveSpeed);
+	void SetLandingTarget(USceneComponent* NewLandingTarget, float InMoveSpeed);
 	void MoveToTarget(float DeltaTime);
 	void AttatchCameraBaseToTarget(USceneComponent* Target);
 
