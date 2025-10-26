@@ -18,3 +18,5 @@
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(Movement_Log, Log, All);// Character Movement
 
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(TimeManager_Log, Log, All);// Character Movement
+
+TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN( LockonTarget_Log, Log, All);// LockonTarget
