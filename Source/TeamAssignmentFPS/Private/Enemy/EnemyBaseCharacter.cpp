@@ -91,7 +91,7 @@ void AEnemyBaseCharacter::EnemyDead()
 
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
-	EnemyState = EEnemyState::EES_Chase;
+	EnemyState = NewEnemyState;
 
 	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
 }
