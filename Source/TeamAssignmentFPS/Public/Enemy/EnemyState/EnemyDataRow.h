@@ -21,10 +21,10 @@ public:
 	TSubclassOf<AActor> EnemyClass;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	int32 MaxHP;
+	float MoveSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float MoveSpeed;
+	int32 MaxHP;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float HeightMinRatio;

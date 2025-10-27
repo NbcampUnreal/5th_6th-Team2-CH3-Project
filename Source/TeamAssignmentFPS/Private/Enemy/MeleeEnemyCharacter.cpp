@@ -8,7 +8,3 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 	EnemyType = EEnemyType::EET_Melee;
 }
 
-void AMeleeEnemyCharacter::LoadEnemyDataRow()
-{
-	Super::LoadEnemyDataRow();
-}

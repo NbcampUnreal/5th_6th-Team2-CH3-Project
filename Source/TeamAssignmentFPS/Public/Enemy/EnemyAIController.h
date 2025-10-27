@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Enemy/EnemyState/EnemyTypes.h"
 #include "EnemyAIController.generated.h"
 
 
@@ -27,11 +28,14 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 
+	void DefaultSettingBlackBoard();
+
+	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
+
 private:
 	void StartBehaviorTree();
 
 public:
-
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }
-	
+
 };

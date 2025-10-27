@@ -2,67 +2,96 @@
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Enemy/EnemyAIController.h"
 #include "Debug/UELOGCategories.h"
+#include "CharacterStat/HealthComponent.h"
+#include "Enemy/EnemyState/EnemyDataRow.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
-	
 	//PrimaryActorTick.bCanEverTick = false;
 
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	//Movement->bOrientRotationToMovement = true;
 
-	Movement->MaxWalkSpeed = 300.f;
+	Movement->MaxWalkSpeed = 250.f;
 
-	EnemyState = EEnemyState::EES_Idle;
-
-	//ConstructorHelpers::FObjectFinder<UDataTable>
-	//	DataTable(TEXT("/Game/Enemy/DT_EnemyData.DT_EnemyData"));
-	//if (DataTable.Succeeded())
-	//{
-	//	EnemyDataTable = DataTable.Object;
-	//	UE_LOG(Enemy_Log, Warning, TEXT("Enemy DataTable Load Success"));
-	//}
-	//else
-	//{
-	//	UE_LOG(Enemy_Log, Warning, TEXT("Enemy DataTable Load Faile"));
-	//}
+	EnemyData.Range = 200.f;
 }
+
 
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
+}
 
-	LoadEnemyDataRow();
+void AEnemyBaseCharacter::EnemyAttack()
+{
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
 
-	UE_LOG(Enemy_Log, Warning, TEXT("%f"), GetEnemyAttackRange());
+	ChangeEnemyState(EEnemyState::EES_Attack);
+
+	FTimerHandle TestTimerHandle;
+
+	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &AEnemyBaseCharacter::EnemyAttackEnd, 3.f);
 
 }
 
-void AEnemyBaseCharacter::LoadEnemyDataRow()
+void AEnemyBaseCharacter::EnemyAttackEnd()
 {
-	if (!EnemyDataTable)
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack End"));
+
+	ChangeEnemyState(EEnemyState::EES_Chase);
+}
+
+void AEnemyBaseCharacter::TakeDamage(FDamageInfo)
+{
+	//데미지 받을 때 호출할 함수
+
+	if (GetEnemyState() == EEnemyState::EES_Spawn)
 	{
 		return;
 	}
 
-	TArray<FEnemyDataRow*> AllRows;
-	static const FString ContextString(TEXT("FEnemyDataContext"));
-	EnemyDataTable->GetAllRows(ContextString, AllRows);
-
-	if (AllRows.IsEmpty()) return;
-
-	for (FEnemyDataRow* Row : AllRows)
-	{
-		if (EnemyType == Row->EnemyType)
-		{
-			EnemyData = Row;
-		}
-	}
+	ChangeEnemyState(EEnemyState::EES_Damaged);
 }
 
+void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
+{
+	EnemyData.EnemyType = InData.EnemyType;
+	HealthComponent->SetMaxHealth(InData.MaxHP);
+	HealthComponent->SetCurrentHealth(HealthComponent->GetMaxHealth());
+	EnemyData.MoveSpeed = InData.MoveSpeed;
+	EnemyData.HeightMinRatio = InData.HeightMinRatio;
+	EnemyData.HeightMaxRatio = InData.HeightMaxRatio;
+	EnemyData.Damage = InData.Damage;
+	EnemyData.Range = InData.Range;
+	EnemyData.Delay = InData.Delay;
+	EnemyData.Score = InData.Score;
 
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	//Movement->bOrientRotationToMovement = true;
+
+	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
+}
+
+void AEnemyBaseCharacter::EnemyDead()
+{
+	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
+
+	ChangeEnemyState(EEnemyState::EES_Dead);
+}
+
+void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
+{
+	EnemyState = EEnemyState::EES_Chase;
+
+	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
+}
