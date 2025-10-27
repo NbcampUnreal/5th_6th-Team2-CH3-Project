@@ -5,9 +5,11 @@
 
 #include "Camera/CameraManager.h"
 #include "InputAction.h"
+#include "Components/TimelineComponent.h"
+#include "Curves/CurveFloat.h"
 #include "LockonTarget/LockonComponent.h"
 #include "Debug/UELOGCategories.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"as
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -26,10 +28,40 @@ void AMyCharacter::BeginPlay()
 	
 }
 
+void AMyCharacter::SetupForDodgeAction()
+{
+	if (!DodgeTimeLine)
+	{
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupFordodge-> Invalid DodgeTimeLine"));
+		return;
+	}
+	if (!DodgeCurve)// it must be a 0 to 1 alpha curve!!!!!
+	{
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupFordodge-> Invalid DodgeCurve"));
+		return;
+	}
+
+	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
+	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
+	DodgeTimeLine->AddInterpFloat(DodgeCurve, ProgressFunction);
+
+	FOnTimelineEvent FinishFunction;
+	FinishFunction.BindUFunction(this, FName("OnDodgeFinished"));
+	DodgeTimeLine->SetTimelineFinishedFunc(FinishFunction);
+	
+	
+}
+
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	// condition to set the alpha blend to 0 so that camera base is located on the center
+	if (CurrentMovementState==ECharacterMovementState::Sprinting)
+	{
+		//LockonComp->set
+	}
 
 }
 
@@ -40,15 +72,27 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+void AMyCharacter::SetMovementState(ECharacterMovementState NewMovementState)
+{
+	if (CurrentMovementState == NewMovementState)
+	{
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetMovementState-> Same MovementState"))
+		return;
+	}
+	
+	/*CurrentMovementState = NewMovementState;
+	//need to signal the state update.*/
+}
+
 void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 {
 	if (!Controller)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Invalid Controller"))
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Invalid Controller"))
 		return;
 	}
 	
-	const FVector2D MoveInput=Value.Get<FVector2D>();
+	MovementInputValue=Value.Get<FVector2D>();
 
 
 	//Get Forward and right vector from camera manager
@@ -57,27 +101,28 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 
 	if (CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
 	{
-		AddMovementInput(Forward, MoveInput.X);
-		AddMovementInput(Right, MoveInput.Y);
+		AddMovementInput(Forward, MovementInputValue.X);
+		AddMovementInput(Right, MovementInputValue.Y);
 	}
 
-	if (!FMath::IsNearlyZero(MoveInput.X))// forward
+	if (!FMath::IsNearlyZero(MovementInputValue.X))// forward
 	{
-		AddMovementInput(Forward, MoveInput.X,false);
-		UE_LOG(LogTemp, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MoveInput.X)
+		AddMovementInput(Forward, MovementInputValue.X,false);
+		UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MovementInputValue.X)
 		// movement direction, scale, forced or not
 	}
-	if (!FMath::IsNearlyZero(MoveInput.Y))// right
+	if (!FMath::IsNearlyZero(MovementInputValue.Y))// right
 	{
-		AddMovementInput(Right, MoveInput.Y);
-		UE_LOG(LogTemp, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MoveInput.Y)
+		AddMovementInput(Right, MovementInputValue.Y);
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y)
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Function is running"));
+	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Function is running"));
 }
 
-void AMyCharacter::RotateTowardTarget(float Value)
+void AMyCharacter::RotateTowardTarget(float Deltatime)
 {
+	
 }
 
 void AMyCharacter::StartSprinting()
@@ -123,10 +168,30 @@ void AMyCharacter::Dodge(const FInputActionValue& Value)
 
 void AMyCharacter::DirectionalDodge()
 {
+	FVector Forward, Right, Up;
+	FVector GravityDirection = FVector(0,0,-1);
+
+	if (CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
+	{
+		//launch character to the current input direction
+		//float DodgeDistance=600;// use timeline for the dodge update so that the 
+		
+	}
 }
 
 void AMyCharacter::BackDash()
 {
+	//launch character to the back
+}
+
+void AMyCharacter::HandleDodgeAction(float DeltaTime)
+{
+}
+
+void AMyCharacter::OnDodgeFinished()
+{
+	bIsDodging=false;
+	GetCharacterMovement()->Velocity=FVector::ZeroVector;
 }
 
 void AMyCharacter::TriggerBattleAction()

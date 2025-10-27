@@ -26,10 +26,6 @@ struct FHealInfo
 };
 */ //----> seperate params by heal amount and effect(additional for later)
 
-
-
-
-
 UINTERFACE(MinimalAPI)
 class UInterfaceHP : public UInterface
 {

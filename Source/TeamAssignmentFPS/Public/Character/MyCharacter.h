@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "LockonTarget/LockonComponent.h"
+
 #include "MyCharacter.generated.h"
-
-
-
 
 UENUM(BlueprintType)// for informing character movement state
 enum class ECharacterMovementState:uint8
@@ -29,6 +28,9 @@ class UCameraManagerComp;
 //binding function
 struct FInputActionValue;
 
+//== Dodge/BackDash
+class UCurveFloat;
+class UTimelineComponent;
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
@@ -39,15 +41,16 @@ public:
 	// Sets default values for this character's properties
 	AMyCharacter();
 
-
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
 	ULockonComponent* LockonComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
 	UCameraManagerComp* CameraManagerComp;
 
+	//Character Movement State
+	ECharacterMovementState CurrentMovementState;
 
+	
 	//==Stat
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float MovementSpeed=600;
@@ -56,10 +59,34 @@ protected:
 
 	float CurrentMaxSpeed=600.f;//default
 
+	FVector2D MovementInputValue;
+
+	//=== Dodge ===//
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
+	bool bIsDodging=false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
+	UTimelineComponent* DodgeTimeLine;
+	// function to bind with the timeline
+	/*FOnTimelineFloat ProgressFunction;
+	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	UCurveFloat* DodgeCurve;//ease in and out
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float DodgeSpeedPlayrate=1.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float DodgeDistance=600;//temp base dodge distance
+	
+
+	
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void SetupForDodgeAction();
 
 public:	
 	// Called every frame
@@ -70,18 +97,26 @@ public:
 
 
 	//Movement
+//State
+	void SetMovementState(ECharacterMovementState NewMovementState);
+	
 	UFUNCTION()// must put ufunction for binding fuck
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
-	void RotateTowardTarget(float Value);
+	void RotateTowardTarget(float DeltaTime);
 	UFUNCTION()
 	void StartSprinting();
 	UFUNCTION()
 	void StopSprinting();
+
+	//=== Dodge/BackDash ===//
 	UFUNCTION()
 	void Dodge(const FInputActionValue& Value);
 	void DirectionalDodge();
 	void BackDash();
+
+	void HandleDodgeAction(float DeltaTime);
+	void OnDodgeFinished();
 
 	//Attack
 	UFUNCTION()

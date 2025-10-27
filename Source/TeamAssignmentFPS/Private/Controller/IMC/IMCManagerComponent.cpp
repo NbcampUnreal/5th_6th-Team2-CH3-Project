@@ -270,5 +270,124 @@ bool UIMCManagerComp::IsValidIMC(const FIMC_Bundle& IMCB, FString DebuggingFunct
 	return bIsValid;
 }
 
+bool UIMCManagerComp::RegisterIMCB(const FIMC_Bundle& IMCB)
+{
+	if (IMCB.IMC_B_Name==NAME_None)
+	{
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::RegisterIMCB -> IMC_Bundle has no valid Name!"));
+		return false;
+	}
+
+	if (IMCB_Storage.Contains(IMCB.IMC_B_Name))// should it replace or just return? not 
+	{
+		UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::RegisterIMCB -> IMC_Bundle %s already exists, replacing."),
+			*IMCB.IMC_B_Name.ToString());
+	}
+
+	IMCB_Storage.Add(IMCB.IMC_B_Name, IMCB);
+
+	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::RegisterIMCB -> IMC_Bundle %s registered successfully."),
+		*IMCB.IMC_B_Name.ToString());
+	return true;
+}
+
+bool UIMCManagerComp::SetActivationForIMCB(FName ID, bool bIsOn)
+{
+	FIMC_Bundle* FoundIMCB = IMCB_Storage.Find(ID);
+	if (!FoundIMCB)
+	{
+		UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::SetActivationForIMCB -> IMC %s not found"),
+			*ID.ToString());
+		return false;
+	}
+
+	if (bIsOn)// activate
+	{
+		if (ActiveIMC_IDs.Contains(ID))
+		{
+			UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::SetActivationForIMCB -> IMC %s is already active"),
+				*ID.ToString());
+			return false;
+		}
+
+		AddMappingAndBind(*FoundIMCB);
+		ActiveIMC_IDs.Add(ID);
+
+		UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::SetActivationForIMCB -> Activated IMC %s"),
+			*ID.ToString());
+	}
+	else// deactivate
+	{
+		if (!ActiveIMC_IDs.Contains(ID))
+		{
+			UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::SetActivationForIMCB -> IMC %s is not active"),
+				*ID.ToString());
+			return false;
+		}
+
+		ClearIMCB(*FoundIMCB);
+		ActiveIMC_IDs.Remove(ID);
+
+		UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::SetActivationForIMCB -> Deactivated IMC %s"),
+			*ID.ToString());
+	}
+
+	return true;
+}
+
+bool UIMCManagerComp::RemoveIMCB(FName ID)
+{
+	FIMC_Bundle* FoundIMCB = IMCB_Storage.Find(ID);
+	if (!FoundIMCB)
+	{
+		UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::RemoveIMCB -> IMC %s not found"), *ID.ToString());
+		return false;
+	}
+
+	// If it’s active, clear and remove from active list
+	if (ActiveIMC_IDs.Contains(ID))
+	{
+		ClearIMCB(*FoundIMCB);
+		ActiveIMC_IDs.Remove(ID);
+	}
+
+	IMCB_Storage.Remove(ID);
+	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::RemoveIMCB -> IMC %s removed"), *ID.ToString());
+	return true;
+}
+bool UIMCManagerComp::SwapActiveIMCB(FName FromID, FName ToID)
+{
+	if (FromID == ToID)
+	{
+		UE_LOG(IMC_Log, Warning, TEXT("UIMCManagerComp::SwapActiveIMCB -> FromID and ToID are the same %s"),
+			*ToID.ToString());
+		return false;
+	}
+
+	FIMC_Bundle* FromIMCB = IMCB_Storage.Find(FromID);
+	FIMC_Bundle* ToIMCB = IMCB_Storage.Find(ToID);
+
+	if (!FromIMCB || !ToIMCB)
+	{
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::SwapActiveIMCB -> One or both IMCs not found (From: %s, To: %s)"),
+			*FromID.ToString(), *ToID.ToString());
+		return false;
+	}
+
+	// Only clear if it’s active
+	if (ActiveIMC_IDs.Contains(FromID))
+	{
+		ClearIMCB(*FromIMCB);
+		ActiveIMC_IDs.Remove(FromID);
+	}
+
+	AddMappingAndBind(*ToIMCB);
+	ActiveIMC_IDs.Add(ToID);
+
+	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::SwapActiveIMCB -> Swapped from %s to %s"),
+		*FromID.ToString(), *ToID.ToString());
+	return true;
+}
+
 
 

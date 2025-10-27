@@ -7,9 +7,10 @@
 #include "Interface/InterfaceHP.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)// trigger this when character dies
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChanged, float NewHP);
-//--> multicast to send more than one listner
+DECLARE_MULTICAST_DELEGATE(FOnDeath)// trigger this when character dies(ex. shows the death skull head over widget, increment kill count on game state
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChanged, float NewHP);// (ex. health bar)
+DECLARE_DELEGATE_OneParam(FOnAttacked, FDamageInfo);//to call damager reaction based on the FDamageInfo
+// could there be more?
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TEAMASSIGNMENTFPS_API UHealthComponent : public UActorComponent, public IInterfaceHP
@@ -43,6 +44,7 @@ public:
 
 	FOnHPChanged OnHPChanged;
 	FOnDeath OnDeath;
+	FOnAttacked OnDamage;
 	
 	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

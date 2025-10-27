@@ -148,17 +148,12 @@ void ULockonComponent::UpdateCursor()
 	}
 	
 	if (bIsDebugDrawOn)
-    	{
-    		// Draw the trace line
-    		/*DrawDebugLine
-		(GetWorld(),WorldOrigin,CursorWorldLocation,bHit ? FColor::Green : FColor::Red,false,-1.f,0,1.0f);
-		*/
-		// the square is too big--> the square size gets bigger when the field of view is small. fuck
-    
-    		// Draw debug sphere at the hit or fallback location
-    		DrawDebugSphere
+	{
+		DrawDebugSphere
 		(GetWorld(),CursorWorldLocation,25.f,12,FColor::Red,false,-1.f);
-    	}
+		// Draw debug sphere at the hit or fallback location
+		
+	}
 }
 
 void ULockonComponent::DetectTarget()

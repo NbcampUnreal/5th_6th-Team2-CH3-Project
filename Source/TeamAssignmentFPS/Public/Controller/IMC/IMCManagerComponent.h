@@ -29,6 +29,12 @@ private:
 	UPROPERTY()
 	AMyPlayerController* CurrentPlayerController;
 
+	UPROPERTY()
+	TMap<FName, FIMC_Bundle> IMCB_Storage;
+
+	UPROPERTY()
+	TSet<FName> ActiveIMC_IDs;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -62,4 +68,18 @@ public:
 
 	// Valic Checker
 	bool IsValidIMC(const FIMC_Bundle& IMCB, FString DebuggingFunction) const;
+
+	//== Storage Management ==//
+	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
+	bool RegisterIMCB(const FIMC_Bundle& IMCB);
+	
+	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
+	bool SetActivationForIMCB(FName ID, bool bIsOn);
+
+	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
+	bool RemoveIMCB(FName ID);
+
+	UFUNCTION(BlueprintCallable, Category = "IMC | Manager")
+	bool SwapActiveIMCB(FName FromID, FName ToID);
+	
 };
