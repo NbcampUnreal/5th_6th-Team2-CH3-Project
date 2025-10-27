@@ -18,6 +18,6 @@ public:
 	AMeleeEnemyCharacter();
 
 protected:
-	virtual void LoadEnemyDataRow() override;
+	
 
 };
