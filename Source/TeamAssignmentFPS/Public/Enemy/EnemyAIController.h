@@ -36,10 +36,6 @@ private:
 	void StartBehaviorTree();
 
 public:
-
-	/*UPROPERTY(EditAnywhere)
-	EEnemyState EnemyState;*/
-
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }
-	//FORCEINLINE EEnemyState GetEnemyState() const { return EnemyState; }
+
 };

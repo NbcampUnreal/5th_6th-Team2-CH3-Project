@@ -12,6 +12,7 @@ DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
 DECLARE_DELEGATE_OneParam(FOnEnemyStateChanged, EEnemyState NewState);
 
 struct FEnemyDataRow;
+struct FDamageInfo;
 
 USTRUCT(BlueprintType)
 struct FEnemyData
@@ -62,7 +63,13 @@ public:
 	FOnEnemyDead OnEnemyDead;
 	FOnEnemyStateChanged OnEnemyStateChanged;
 
+	FVector knockbackDirection;
+
+	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy 생성 할 때 Enemy의 데이터 값 전달 받아 초기화
 	virtual void EnemyAttack();
+
+	UFUNCTION()
+	void EnemyDead();
 
 protected:
 	virtual void BeginPlay() override;
@@ -76,11 +83,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	FEnemyData EnemyData;
 
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	virtual void EnemyAttackEnd();
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	void TakeDamage(FDamageInfo DamageInfo);
 
 private:
 
@@ -88,12 +96,8 @@ private:
 
 public:
 
-	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy 생성 할 때 Enemy의 데이터 값 전달 받아 초기화
-
 	FORCEINLINE FEnemyData GetEnemyData() const { return EnemyData; }
 	FORCEINLINE EEnemyState GetEnemyState() const { return EnemyState; }
-
-	
 };
 
 
