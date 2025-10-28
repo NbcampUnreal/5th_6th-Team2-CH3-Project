@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Enemy/EnemyState/EnemyTypes.h"
+#include "Debug/UELOGCategories.h"
 //#include "Interface/InterfaceHP.h"
 #include "EnemyBaseCharacter.generated.h"
 
@@ -23,6 +24,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxHealth;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 CurrentHealth;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float MoveSpeed;
@@ -55,7 +62,7 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AEnemyBaseCharacter();
+	AEnemyBaseCharacter(FEnemyDataRow& InData);
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;
@@ -88,7 +95,7 @@ protected:
 
 	virtual void EnemyAttackEnd();
 
-	void TakeDamage(FDamageInfo DamageInfo);
+	void EnemyTakeDamage(FDamageInfo DamageInfo);
 
 private:
 

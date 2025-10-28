@@ -1,0 +1,12 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Enemy/BossEnemyCharacter.h"
+
+void ABossEnemyCharacter::EnemyAttack()
+{
+	Super::EnemyAttack();
+
+
+
+}

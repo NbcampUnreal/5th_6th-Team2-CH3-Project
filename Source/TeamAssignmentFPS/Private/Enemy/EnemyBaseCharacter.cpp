@@ -1,13 +1,12 @@
 
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Enemy/EnemyAIController.h"
-#include "Debug/UELOGCategories.h"
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyState/EnemyDataRow.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
-AEnemyBaseCharacter::AEnemyBaseCharacter()
+AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
 {
 	//PrimaryActorTick.bCanEverTick = false;
 
@@ -23,6 +22,9 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	Movement->MaxWalkSpeed = 250.f;
 
 	EnemyData.Range = 200.f;
+	EnemyData.Damage = 50;
+
+	InitializeEnemyData(InData);
 }
 
 
@@ -30,11 +32,21 @@ void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
+
+
+	HealthComponent->SetMaxHealth(100);
+	HealthComponent->SetCurrentHealth(100);
 }
 
 void AEnemyBaseCharacter::EnemyAttack()
 {
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
+
+	if (EnemyState == EEnemyState::EES_Dead)
+	{
+		return;
+	}
+
 
 	ChangeEnemyState(EEnemyState::EES_Attack);
 
@@ -51,7 +63,7 @@ void AEnemyBaseCharacter::EnemyAttackEnd()
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
-void AEnemyBaseCharacter::TakeDamage(FDamageInfo)
+void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
 {
 	//데미지 받을 때 호출할 함수
 
@@ -61,13 +73,15 @@ void AEnemyBaseCharacter::TakeDamage(FDamageInfo)
 	}
 
 	ChangeEnemyState(EEnemyState::EES_Damaged);
+
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
 }
 
 void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
 {
 	EnemyData.EnemyType = InData.EnemyType;
-	HealthComponent->SetMaxHealth(InData.MaxHP);
-	HealthComponent->SetCurrentHealth(HealthComponent->GetMaxHealth());
+	EnemyData.MaxHealth = InData.MaxHP;
+	EnemyData.CurrentHealth = InData.MaxHP;
 	EnemyData.MoveSpeed = InData.MoveSpeed;
 	EnemyData.HeightMinRatio = InData.HeightMinRatio;
 	EnemyData.HeightMaxRatio = InData.HeightMaxRatio;
@@ -87,11 +101,13 @@ void AEnemyBaseCharacter::EnemyDead()
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
+
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
 }
 
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
-	EnemyState = EEnemyState::EES_Chase;
+	EnemyState = NewEnemyState;
 
 	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
 }
