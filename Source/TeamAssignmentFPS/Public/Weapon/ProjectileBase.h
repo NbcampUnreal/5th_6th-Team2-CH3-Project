@@ -26,14 +26,14 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile")
-	UProjectileMovementComponent* MovementComponent;// this is how projectile move;
+	TObjectPtr<UProjectileMovementComponent> MovementComponent;// this is how projectile move;
 	// apply the data from the weapon that spawned this
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile")
-	USphereComponent* CollisionComponent;
+	TObjectPtr<USphereComponent> CollisionComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile")
-	UStaticMeshComponent* ProjectileMesh;
+	TObjectPtr<UStaticMeshComponent>* ProjectileMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile")
 	FDamageInfo DamageInfo;// put the damage info in here in the editor
@@ -42,22 +42,22 @@ protected:
 	float LifeTime;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | VFX")
-	UParticleSystem* ImpactEffect;//Impact VFX
+	TObjectPtr<UParticleSystem> ImpactEffect;//Impact VFX
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | VFX")
-	UParticleSystem* LifetimeEndEffect;//Impact VFX when projectile disappear after lifetime
+	TObjectPtr<UParticleSystem> LifetimeEndEffect;//Impact VFX when projectile disappear after lifetime
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | VFX")
-	UNiagaraSystem* TrailEffect;//Weapon Trail VFX
+	TObjectPtr<UNiagaraSystem> TrailEffect;//Weapon Trail VFX
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile | VFX")
-	UNiagaraComponent* TrailComponent;//where trail effect come from
+	TObjectPtr<UNiagaraComponent> TrailComponent;//where trail effect come from
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | SFX")
-	USoundBase* ImpactSound;
+	TObjectPtr<USoundBase> ImpactSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | SFX")
-	USoundBase* LifetimeEndSound;
+	TObjectPtr<USoundBase> LifetimeEndSound;
 	
 protected:
 	// Called when the game starts or when spawned
