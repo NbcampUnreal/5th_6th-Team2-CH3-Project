@@ -131,6 +131,3 @@ bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityD
 
 	return true;
 }
-
-
-
