@@ -7,8 +7,6 @@ public class TeamAssignmentFPS : ModuleRules
 	public TeamAssignmentFPS(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-
-
 		
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
@@ -21,8 +19,6 @@ public class TeamAssignmentFPS : ModuleRules
 			"Niagara"//for ribon trace and other advanced effects
 		});
 		
-
-
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
