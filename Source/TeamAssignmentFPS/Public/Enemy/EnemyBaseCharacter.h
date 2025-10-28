@@ -4,10 +4,49 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Enemy/EnemyState/EnemyDataRow.h"
+#include "Enemy/EnemyState/EnemyTypes.h"
+//#include "Interface/InterfaceHP.h"
 #include "EnemyBaseCharacter.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
+DECLARE_DELEGATE_OneParam(FOnEnemyStateChanged, EEnemyState NewState);
+
+struct FEnemyDataRow;
+
+USTRUCT(BlueprintType)
+struct FEnemyData
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	EEnemyType EnemyType;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float MoveSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float HeightMinRatio;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float HeightMaxRatio;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 Damage;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float Range;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float Delay;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 Score;
+};
+
+
+class UHealthComponent;
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
@@ -17,28 +56,45 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 public:
 	AEnemyBaseCharacter();
 
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	EEnemyState EnemyState;
+
 	FOnEnemyDead OnEnemyDead;
+	FOnEnemyStateChanged OnEnemyStateChanged;
+
+	virtual void EnemyAttack();
+
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	TObjectPtr<UDataTable> EnemyDataTable;
-
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
-	EEnemyState EnemyState;
+	/*UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	EEnemyState EnemyState;*/
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
 
-	FEnemyDataRow* EnemyData;
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	FEnemyData EnemyData;
 
-	virtual void LoadEnemyDataRow();
+	TObjectPtr<UHealthComponent> HealthComponent;
 
-	virtual void Attack() PURE_VIRTUAL(AEnemyBaseCharacter::Attack,);
+	virtual void EnemyAttackEnd();
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+
+	void ChangeEnemyState(EEnemyState NewEnemyState);
 
 public:
 
-	FORCEINLINE float GetEnemyAttackRange() const { return EnemyData->Range; }
+	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy 생성 할 때 Enemy의 데이터 값 전달 받아 초기화
 
+	FORCEINLINE FEnemyData GetEnemyData() const { return EnemyData; }
+	FORCEINLINE EEnemyState GetEnemyState() const { return EnemyState; }
+
+	
 };
 
+
+// enemy 캐릭터의 hit reaction의 경우 여러 방향에서 맞는 애니메이션을 blend space로 연결 한 후 hit direaction에 따라 맞는 애니메이션 실행

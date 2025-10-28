@@ -18,6 +18,6 @@ public:
 	ARangeEnemyCharacter();
 
 protected:
-	virtual void LoadEnemyDataRow() override;
+	
 
 };

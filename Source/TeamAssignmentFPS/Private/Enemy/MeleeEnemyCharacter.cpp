@@ -2,3 +2,8 @@
 
 
 #include "Enemy/MeleeEnemyCharacter.h"
+
+AMeleeEnemyCharacter::AMeleeEnemyCharacter()
+{
+	EnemyType = EEnemyType::EET_Melee;
+}
