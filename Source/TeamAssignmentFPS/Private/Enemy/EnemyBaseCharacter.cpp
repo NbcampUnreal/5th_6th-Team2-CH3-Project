@@ -23,11 +23,11 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	EnemyData.Damage = 50;
 }
 
-//AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
-//{
-//	//PrimaryActorTick.bCanEverTick = false;
-//	InitializeEnemyData(InData);
-//}
+AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
+{
+	//PrimaryActorTick.bCanEverTick = false;
+	InitializeEnemyData(InData);
+}
 
 
 void AEnemyBaseCharacter::BeginPlay()

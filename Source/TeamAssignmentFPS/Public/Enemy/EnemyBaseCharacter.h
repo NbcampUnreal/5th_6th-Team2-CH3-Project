@@ -63,7 +63,7 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 
 public:
 	AEnemyBaseCharacter();
-	//AEnemyBaseCharacter(FEnemyDataRow& InData);
+	AEnemyBaseCharacter(FEnemyDataRow& InData);
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;
