@@ -3,3 +3,5 @@
 
 #include "Enemy/MeleeEnemyCharacter.h"
 
+ AMyPlayerController::AMyPlayerController()
+ {}
