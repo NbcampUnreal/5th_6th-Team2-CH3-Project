@@ -2,6 +2,7 @@
 #include "Components/BoxComponent.h"
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/Character.h"
 
 AEnemySpawner::AEnemySpawner()
 {
