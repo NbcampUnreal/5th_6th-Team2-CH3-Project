@@ -17,7 +17,9 @@ public class TeamAssignmentFPS : ModuleRules
 			"EnhancedInput",
 			"NavigationSystem",
 			"UMG",//widget
-			"Niagara"//for ribon trace and other advanced effects
+			"Niagara",//for ribon trace and other advanced effects
+			"AIModule",
+			"GameplayTasks"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
