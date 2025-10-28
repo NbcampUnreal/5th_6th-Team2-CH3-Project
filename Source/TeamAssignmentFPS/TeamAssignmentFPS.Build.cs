@@ -8,6 +8,7 @@ public class TeamAssignmentFPS : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+
 		
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
@@ -20,6 +21,7 @@ public class TeamAssignmentFPS : ModuleRules
 			"Niagara"//for ribon trace and other advanced effects
 		});
 		
+
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
