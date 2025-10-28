@@ -7,6 +7,7 @@
 //여기에 자신이 쓰는 로그 카테고리 만들어서 본인 작업 장소에서 헤더추가해서 작업하기/ 10/21/2025
 
 // 현 API + Log Declare + 이름
+
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(UI_Log, Log, All);// UI 관련 디버깅 카테고리
 
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(IMC_Log, Log, All);// IMC management 디버깅
@@ -22,3 +23,6 @@
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(TimeManager_Log, Log, All);// time flow manipulation
 
  TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(LockonTarget_Log, Log, All);// LockonTarget
+
+ TEAMASSIGNMENTFPS_API DECLARE_LOG_CATEGORY_EXTERN(Enemy_Log, Warning, All); // Enemy
+

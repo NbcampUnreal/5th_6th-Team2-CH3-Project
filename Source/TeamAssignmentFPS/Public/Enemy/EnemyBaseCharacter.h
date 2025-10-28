@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "EnemyBaseCharacter.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
+
 UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
@@ -15,6 +17,16 @@ enum class EEnemyState : uint8
 	Damaged UMETA(DisplayName = "Damaged"),
 	Dead UMETA(DisplayName = "Dead")
 };
+
+UENUM(BlueprintType)
+enum class EEnemyType : uint8
+{
+	Melee UMETA(DisplayName = "Melee"),
+	Range UMETA(DisplayName = "Range"),
+	Boss UMETA(DisplayName = "Boss")
+};
+
+
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
@@ -27,19 +39,17 @@ public:
 
 	EEnemyState EnemyState;
 
+	FOnEnemyDead OnEnemyDead;
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
 
-	UPROPERTY(EditAnywhere, Category = "Enemy || Attack");
-	float AttackMaxRange;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy || Attack")
-	float AttackDelay;
-
-
-
+	/*UPROPERTY(VisibleAnywhere)
+	FEnemyStats EnmeyStats;*/
 };
 
