@@ -12,7 +12,7 @@ UENUM(Blueprintable)
 enum class ETriggerInputType:uint8
 {
 	None UMETA(DisplayName = "None"),// error, no enum
-	Presse UMETA(DisplayName = "Presse"),
+	Press UMETA(DisplayName = "Presse"),
 	Tap UMETA(DisplayName = "Tap"),
 	Hold UMETA(DisplayName = "Hold"),
 	HoldAndRelease UMETA(DisplayName = "HoldAndRelease"),
@@ -33,15 +33,15 @@ protected:
 
 	//==== Weapon =====//
 	UPROPERTY()
-	UStaticMeshComponent* StaticMeshComponent;// weapon mesh with no animation
+	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;// weapon mesh with no animation
 	
 	UPROPERTY()
-	USkeletalMeshComponent* SkeletalMeshComponent;// weapon mesh with animation
+	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;// weapon mesh with animation
 
 	
 	//==== Projectile ====//
 	UPROPERTY()
-	USceneComponent* SpawningLocation;// location, direction of weapon to be fired
+	TObjectPtr<USceneComponent> SpawningLocation;// location, direction of weapon to be fired
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
 	TSubclassOf<AProjectileBase> TargetActors;// projectile to be fired
