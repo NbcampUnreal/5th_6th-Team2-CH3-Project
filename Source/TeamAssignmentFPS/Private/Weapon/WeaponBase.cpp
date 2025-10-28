@@ -25,3 +25,20 @@ void AWeaponBase::Tick(float DeltaTime)
 
 }
 
+void AWeaponBase::HandleTriggerInput_Implementation(ETriggerInputType InputType, bool bIsPressed)
+{
+	if (!bIsPressed)
+	{
+		switch (InputType)
+		{
+			case ETriggerInputType::Press:
+
+			break;
+
+			default:
+			break;
+		}
+	}
+}
+
+

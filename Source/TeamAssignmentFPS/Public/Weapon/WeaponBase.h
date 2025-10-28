@@ -4,24 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/Item_Weapon_Interface.h"
+
 #include "WeaponBase.generated.h"
 
 class AProjectileBase;
 
-UENUM(Blueprintable)
-enum class ETriggerInputType:uint8
-{
-	None UMETA(DisplayName = "None"),// error, no enum
-	Press UMETA(DisplayName = "Presse"),
-	Tap UMETA(DisplayName = "Tap"),
-	Hold UMETA(DisplayName = "Hold"),
-	HoldAndRelease UMETA(DisplayName = "HoldAndRelease"),
-};
-
-
-
 UCLASS()
-class TEAMASSIGNMENTFPS_API AWeaponBase : public AActor
+class TEAMASSIGNMENTFPS_API AWeaponBase : public AActor, public IItem_Weapon_Interface
 {
 	GENERATED_BODY()
 	
@@ -64,6 +54,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void HandleTriggerInput_Implementation(ETriggerInputType InputType, bool bIsPressed) override;
 	
 	void OnTriggerHolding();
 	void OnTriggerReleasedAfterHolding();
