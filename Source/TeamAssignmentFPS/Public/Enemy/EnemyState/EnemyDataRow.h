@@ -43,5 +43,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Score;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float SpawnChance;
 };
 
