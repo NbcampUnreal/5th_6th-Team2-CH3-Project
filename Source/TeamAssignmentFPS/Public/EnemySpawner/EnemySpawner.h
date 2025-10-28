@@ -1,19 +1,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "MonsterSpawnRow.h"
+#include "Enemy/EnemyState/EnemyDataRow.h"
 #include "GameFramework/Actor.h"
+#include "NavMesh/NavMeshBoundsVolume.h"     // ANavMeshBoundsVolume
+#include "NavigationSystem.h"                // UNavigationSystemV1
 #include "EnemySpawner.generated.h"
 
 class UBoxComponent;
-class FMonsterSpawnRow;
+class ANavMeshBoundsVolume;
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemySpawner : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AEnemySpawner();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning")
@@ -24,32 +26,16 @@ public:
 	UDataTable* MonsterDataTable;
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void SpawnRandomMonster();
+	AActor* SpawnRandomMonster();
 
-	//FMonsterSpawnRow* GetRandomMonster() const;
-	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	FEnemyDataRow* GetRandomMonster() const;
+	AActor* SpawnMonster(TSubclassOf<AActor> MonsterClass);
 	FVector GetRandomPontInVolume() const;
-	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void SpawnMonster(TSubclassOf<AActor> MonsterClass);
-
-private:
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* TriggerBox;
 
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class ACharacter> EnemyBpRef;
-
-	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
-	FVector SpawnLocation;
-
-	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
-	int32 NumberOfSpawn;
-
-	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
-	float SpawnRadius;
 };
+
+
+
+
+
