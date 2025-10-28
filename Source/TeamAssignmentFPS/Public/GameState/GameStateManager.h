@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
-#include "MyPlayerController.generated.h"
+#include "GameFramework/GameState.h"
+#include "GameStateManager.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMASSIGNMENTFPS_API AMyPlayerController : public APlayerController
+class TEAMASSIGNMENTFPS_API AGameStateManager : public AGameState
 {
 	GENERATED_BODY()
 	
