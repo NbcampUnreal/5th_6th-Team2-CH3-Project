@@ -1,5 +1,7 @@
 #include "EnemySpawner/EnemySpawner.h"
 #include "Components/BoxComponent.h"
+#include "NavigationSystem.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AEnemySpawner::AEnemySpawner()
 {
@@ -10,7 +12,69 @@ AEnemySpawner::AEnemySpawner()
 
 	SpawningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawingBox"));
 	SpawningBox->SetupAttachment(Scene);
+
+	MonsterDataTable = nullptr;
+
+	TriggerBox = CreateDefaultSubobject<UBoxComponent>(FName("TriggerBox"));
+	if (TriggerBox != nullptr)
+		return;
+
+	RootComponent = TriggerBox;
 }
+
+
+void AEnemySpawner::BeginPlay()
+{
+	Super::BeginPlay();
+
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemySpawner::OnOverlapBegin);
+
+	DrawDebugSphere(GetWorld(), SpawnLocation, SpawnRadius, 12, FColor::White, true);
+}
+
+void AEnemySpawner::SpawnRandomMonster()
+{
+	//if (FMonsterSpawnRow* SelectedRow = GetRandomMonster())
+	//{
+	//	if (UClass* ActualClass = SelectedRow->MonsterClass.Get())
+	//	{
+	//		SpawnMonster(ActualClass);
+	//	}
+	//}
+}
+
+//FMonsterSpawnRow* AEnemySpawner::GetRandomMonster() const
+//{
+//	/*if (!MonsterDataTable) return nullptr;
+//
+//	TArray<FMonsterSpawnRow*> AllRows;
+//	static const FString ContextString(TEXT("MonsterSpawnContext"));
+//	MonsterDataTable->GetAllRows(ContextString,AllRows);
+//
+//	if (AllRows.IsEmpty()) return nullptr;
+//
+//	float TotalChance = 0.0f;
+//	for (const FMonsterSpawnRow* Row : AllRows)
+//	{
+//		if (Row) 
+//		{
+//			TotalChance += Row->SpawnChance;
+//		}
+//	}
+//
+//	const float RandValue = FMath::FRandRange(0.0f, TotalChance);
+//
+//	float AccumulateChance = 0.0f;
+//
+//	for (FMonsterSpawnRow* Row : AllRows)
+//	{
+//		AccumulateChance += Row->SpawnChance;
+//		if (RandValue <= AccumulateChance)
+//		{
+//			return Row;
+//		}
+//	}*/
+//}
 
 FVector AEnemySpawner::GetRandomPontInVolume() const
 {
@@ -35,5 +99,32 @@ void AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClass)
 		FRotator::ZeroRotator
 	);
 }
+
+void AEnemySpawner::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (HasAuthority())
+	{
+		for (int i = 0; i < NumberOfSpawn; i++)
+		{
+			FNavLocation EnemySpawnLocation;
+			UNavigationSystemV1::GetNavigationSystem(GetWorld())->GetRandomReachablePointInRadius(SpawnLocation, SpawnRadius, EnemySpawnLocation);
+
+			auto SpawnedEnemy = GetWorld()->SpawnActor<ACharacter>(EnemyBpRef, UKismetMathLibrary::MakeTransform(EnemySpawnLocation, UKismetMathLibrary::FindLookAtRotation(EnemySpawnLocation, GetActorLocation())));
+
+			if (SpawnedEnemy)
+			{
+				//FRotator NewRotation = SpawnedEnemy->GetActorRotation();
+				//NewRotation.Pitch = 0;
+
+				//SpawnedEnemy->SetActorRotation(NewRotation);
+				//SpawnedEnemy->SpawnDefaultController();
+			}
+		}
+	}
+
+	Destroy();
+
+}
+
 
 
