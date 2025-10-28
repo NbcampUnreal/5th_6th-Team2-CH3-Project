@@ -9,7 +9,7 @@
 #include "Curves/CurveFloat.h"
 #include "LockonTarget/LockonComponent.h"
 #include "Debug/UELOGCategories.h"
-#include "GameFramework/CharacterMovementComponent.h"as
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()

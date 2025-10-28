@@ -8,7 +8,16 @@ public class TeamAssignmentFPS : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" , "UMG"});
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
+			"UMG",//widget
+			"Niagara"//for ribon trace and other advanced effects
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
