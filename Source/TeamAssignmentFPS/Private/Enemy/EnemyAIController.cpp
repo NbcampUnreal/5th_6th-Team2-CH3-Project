@@ -22,6 +22,8 @@ void AEnemyAIController::BeginPlay()
 	DefaultSettingBlackBoard();
 	StartBehaviorTree();
 	
+
+
 }
 
 void AEnemyAIController::DefaultSettingBlackBoard()
@@ -51,8 +53,16 @@ void AEnemyAIController::DefaultSettingBlackBoard()
 		if (BlackboardComp)
 		{
 			BlackboardComp->SetValueAsEnum(TEXT("EnemyState"), (uint8)NewState);
-			UE_LOG(Enemy_Log, Error, TEXT("EnemyStateChanged"));
+			//UE_LOG(Enemy_Log, Error, TEXT("EnemyStateChanged"));
 		}
+
+		/*if (NewState == EEnemyState::EES_Dead)
+		{
+			UE_LOG(Enemy_Log, Log, TEXT("Before Stop Behavior tree"));
+
+			StopBehaviorTree();
+		}*/
+
 	});
 
 }
@@ -61,7 +71,7 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 {
 	Super::OnMoveCompleted(RequestID, Result);
 
-	UE_LOG(Enemy_Log, Error, TEXT("Move Completed"));
+	//UE_LOG(Enemy_Log, Error, TEXT("Move Completed"));
 
 	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
 
@@ -82,5 +92,17 @@ void AEnemyAIController::StartBehaviorTree()
 		RunBehaviorTree(BehaviorTreeAsset);
 
 	}
+}
+
+void AEnemyAIController::StopBehaviorTree()
+{
+	/*if (BehaviorTreeAsset)
+	{
+		StopBehaviorTree();
+
+		
+	}*/
+
+	UE_LOG(Enemy_Log, Log, TEXT("Stop Behavior tree"));
 }
 

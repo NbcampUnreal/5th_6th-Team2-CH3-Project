@@ -1,8 +1,8 @@
 #include "EnemySpawner/EnemySpawner.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/Actor.h"
-#include "Debug/UELOGCategories.h"
-
+#include "NavigationSystem.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/Character.h"
 
 AEnemySpawner::AEnemySpawner()
 {
