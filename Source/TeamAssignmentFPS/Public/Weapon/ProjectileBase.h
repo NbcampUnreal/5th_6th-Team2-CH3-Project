@@ -33,7 +33,7 @@ protected:
 	TObjectPtr<USphereComponent> CollisionComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile")
-	TObjectPtr<UStaticMeshComponent>* ProjectileMesh;
+	TObjectPtr<UStaticMeshComponent> ProjectileMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile")
 	FDamageInfo DamageInfo;// put the damage info in here in the editor

@@ -15,6 +15,7 @@ public class TeamAssignmentFPS : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
+			"NavigationSystem",
 			"UMG",//widget
 			"Niagara"//for ribon trace and other advanced effects
 		});
