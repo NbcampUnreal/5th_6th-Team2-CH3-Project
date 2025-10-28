@@ -98,10 +98,12 @@ protected:
 
 	void EnemyTakeDamage(FDamageInfo DamageInfo);
 
+
+
 private:
 
 	void ChangeEnemyState(EEnemyState NewEnemyState);
-
+	void SetEnemyNoCollision();
 public:
 
 	FORCEINLINE FEnemyData GetEnemyData() const { return EnemyData; }

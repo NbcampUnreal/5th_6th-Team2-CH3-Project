@@ -33,8 +33,11 @@ void AMeleeEnemyCharacter::BeginPlay()
 
 void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (EnemyState != EEnemyState::EES_Attack)
+	{
+		return;
+	}
 
-	UE_LOG(Enemy_Log, Warning, TEXT("Collision Overlap"));
 
 	if (!OtherActor)
 	{
@@ -50,11 +53,9 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 	UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
 	if (HealthComp && HealthComp->GetClass()->ImplementsInterface(UInterfaceHP::StaticClass()))
 	{
-		UE_LOG(Enemy_Log, Warning, TEXT("interface"));
-
 		if (IInterfaceHP* Interface = Cast<IInterfaceHP>(HealthComp))
 		{
-			UE_LOG(Enemy_Log, Warning, TEXT("interface22"));
+			UE_LOG(Enemy_Log, Warning, TEXT("Attck Success"));
 
 			Interface->Execute_GetDamage(HealthComp, DamageInfo);
 		}
