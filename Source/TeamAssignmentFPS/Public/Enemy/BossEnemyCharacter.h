@@ -16,6 +16,6 @@ class TEAMASSIGNMENTFPS_API ABossEnemyCharacter : public AEnemyBaseCharacter
 	
 protected:
 
-	virtual void EnemyAttack() override;
+	//virtual void EnemyAttack() override;
 
 };

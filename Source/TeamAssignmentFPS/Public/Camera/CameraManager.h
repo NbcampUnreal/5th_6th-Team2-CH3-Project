@@ -6,58 +6,76 @@
 #include "Components/ActorComponent.h"
 #include "CameraManager.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
+class ACameraRig;
+
+/*USTRUCT(BlueprintType)
+struct FCameraStateData// this will hold the camera information to be kept (ex. charcter camera--> location= character, 
+{
+	GENERATED_BODY()
+
+};*/
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UCameraManager : public UActorComponent
+class TEAMASSIGNMENTFPS_API UCameraManagerComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCameraManager();
+	UCameraManagerComp();
 
 protected:
-
-
-	UObject* RootOwner;// not the controller, but the parent location of the camera root
-
-
 	
-	//===== Camera ====//
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraManager")
+	bool bIsActivated=false;//for default
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")// put it and adjust the transform with offset
-	USceneComponent* CameraRoot;// base root comp
+	//=== Camera Repositioning ====//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	USpringArmComponent* CameraBoom;
+	bool bIsTransitioning=false;// for checking if the camera change is completed or not. if completed, this will prevent tick to keep doing transition
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	UCameraComponent* Camera;
+	float TransitionSpeed=600.f;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	FVector RootWorldLocation;//where to place the CameraBoom root--> the location will be updated 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	float LocUpdateSpeed;
-
-
 	
-
-
-
-
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")//currently using camera rig
+	ACameraRig* CurrentCameraRig=nullptr;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")// target rig to be transitioned
+	ACameraRig* TargetCameraRig=nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float TransitionBlendAlpha=0.f;// for transition between rigs
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//=== Activation ===//--> turn on and off of camera manager
+	void ActivateCameraManager();
+	void DeactivateCameraManager();
 
-	void UpdateCameraTransform();
+	UFUNCTION(BlueprintCallable, Category = "CameraManager")
+	void SetActiveCameraRig(ACameraRig* NewRig);
+
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	ACameraRig* GetCurrentCameraRig() const {return CurrentCameraRig;}
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	ACameraRig* GetTargetCameraRig() const {return TargetCameraRig;}
+
+	UFUNCTION(BlueprintCallable, Category = "CameraManager")
+	void TransitionToTargetRig(ACameraRig* NewRig, float BlendTime = 1.0f);//default time
+
+	UFUNCTION(BlueprintPure, Category = "CameraManager")
+	bool IsTransitioning() const { return bIsTransitioning; }
+
+	bool GetVectorsByCameraAndGravityDirection
+	(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const;// with default z -1.0
+	// this is for providing character the forward and right vector based on the camera rotation and gravity direction
+	// gravity direction is neeeded to prevent actor tring to move underground when it trys to go forward
+
+	
 
 		
 };

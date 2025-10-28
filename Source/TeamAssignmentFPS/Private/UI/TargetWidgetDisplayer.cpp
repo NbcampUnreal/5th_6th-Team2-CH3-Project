@@ -1,0 +1,260 @@
+#include "UI/TargetWidgetDisplayer.h"
+
+
+#include "Blueprint/WidgetBlueprintLibrary.h"//aslnkfasln.jk asfdlhjk fasdlhjk
+#include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Engine/World.h"
+#include "Debug/UELOGCategories.h"
+
+UTargetWidgetDisplayer::UTargetWidgetDisplayer()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UTargetWidgetDisplayer::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void UTargetWidgetDisplayer::TickComponent(float DeltaTime, enum ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UpdateAllWidgetCoords();
+}
+
+void UTargetWidgetDisplayer::CreateFoundWidget(FName StorageName, FName WidgetName)
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);
+	if (!Storage)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::CreateWidget -> Storage %s not found"),
+			*StorageName.ToString());
+		return;
+	}
+
+	// Check if instance already exists
+	if (Storage->WidgetInstances.Contains(WidgetName))
+	{
+		UE_LOG(UI_Log, Warning, TEXT(
+			"UTargetWidgetDisplayer::CreateWidget -> Widget %s already created in %s"),
+			*WidgetName.ToString(), *StorageName.ToString());
+		return;
+	}
+
+	// Get the widget class
+	TSubclassOf<UUserWidget>* ClassPtr = Storage->WidgetClasses.Find(WidgetName);
+	if (!ClassPtr || !(*ClassPtr))// did find it || is found class valid
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::CreateWidget -> Widget class %s not found or invalid in %s"),
+			*WidgetName.ToString(), *StorageName.ToString());
+		return;
+	}
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Create widget instance
+	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GetWorld(), *ClassPtr);
+	if (!NewWidget)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::CreateWidget -> Failed to create %s"),
+			*WidgetName.ToString());
+		return;
+	}
+	//----> why this is causeing the problem?
+	// Answer : The Original name of this function "CreateWidget" shared same name with "CreateWidget<UUserWidget>" and it seems like it shadowed the function. fuck
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
+	// Store the instance
+	Storage->WidgetInstances.Add(WidgetName, NewWidget);
+
+	UE_LOG(UI_Log, Log, TEXT(
+		"UTargetWidgetDisplayer::CreateWidget -> %s created and stored in %s"),
+		*WidgetName.ToString(), *StorageName.ToString());
+}
+
+void UTargetWidgetDisplayer::ShowWidget(FName StorageName, FName WidgetName, int32 Order)
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);//find storage
+	if (!Storage)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::ShowWidget -> Storage %s not found"),
+			*StorageName.ToString());
+		return;
+	}
+
+	UUserWidget** FoundWidget = Storage->WidgetInstances.Find(WidgetName);// check if the widget is already created and if it is valid or not
+	if (!FoundWidget || !(*FoundWidget))
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::ShowWidget -> Widget %s not found in %s"),
+			*WidgetName.ToString(), *StorageName.ToString());
+		return;
+	}
+	
+	// All checked --> renter to the viewport
+	
+	UUserWidget* Widget = *FoundWidget;
+	if (!Widget->IsInViewport())// for last check. check if the widget is on viewport or not
+	{
+		Widget->AddToViewport(Order);
+		UE_LOG(UI_Log, Log, TEXT(
+			"UTargetWidgetDisplayer::ShowWidget -> [%s] shown with order %d"),
+			*WidgetName.ToString(), Order);
+	}
+}
+
+void UTargetWidgetDisplayer::HideWidget(FName StorageName, FName WidgetName)
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);//find where to find
+	if (!Storage)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::HideWidget -> Storage %s not found"),
+			*StorageName.ToString());
+		return;
+	}
+
+	UUserWidget** FoundWidget = Storage->WidgetInstances.Find(WidgetName);
+	if (!FoundWidget || !(*FoundWidget))
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::HideWidget -> Widget %s not found in %s"),
+			*WidgetName.ToString(), *StorageName.ToString());
+		return;
+	}
+
+	UUserWidget* Widget = *FoundWidget;
+	if (Widget->IsInViewport())
+	{
+		Widget->RemoveFromParent();
+		UE_LOG(UI_Log, Log, TEXT(
+			"UTargetWidgetDisplayer::HideWidget -> [%s] hidden"),
+			*WidgetName.ToString());
+	}
+}
+
+void UTargetWidgetDisplayer::RemoveWidget(FName StorageName, FName WidgetName)
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);// again, find storage
+	if (!Storage)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::RemoveWidget -> Storage %s not found"),
+			*StorageName.ToString());
+		return;
+	}
+
+	UUserWidget* Widget = nullptr;// find widget to be removed
+	if (UUserWidget** FoundWidget = Storage->WidgetInstances.Find(WidgetName))//fucking **
+	{
+		Widget = *FoundWidget;
+	}
+
+	if (!Widget)
+	{
+		UE_LOG(UI_Log, Warning, TEXT(
+			"UTargetWidgetDisplayer::RemoveWidget -> Widget %s not found in %s"),
+			*WidgetName.ToString(), *StorageName.ToString());
+		return;
+	}
+
+	if (Widget->IsInViewport())// already has an function to check if the widget is on screen or not fuck
+	{
+		Widget->RemoveFromParent();
+	}
+
+	Storage->WidgetInstances.Remove(WidgetName);
+
+	UE_LOG(UI_Log, Log, TEXT(
+		"UTargetWidgetDisplayer::RemoveWidget -> %s removed from %s"),
+		*WidgetName.ToString(), *StorageName.ToString());
+}
+
+void UTargetWidgetDisplayer::SetAnchorForWidgets(FName StorageName, USceneComponent* NewAnchor)
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);
+	if (!Storage)
+	{
+		UE_LOG(UI_Log, Error, TEXT(
+			"UTargetWidgetDisplayer::SetAnchorForWidgets -> Storage %s not found"),
+			*StorageName.ToString());
+		return;
+	}
+
+	Storage->AnchorPoint = NewAnchor;
+	UE_LOG(UI_Log, Log, TEXT(
+		"UTargetWidgetDisplayer::SetAnchorForWidgets -> Anchor set for %s"),
+		*StorageName.ToString());
+}
+
+void UTargetWidgetDisplayer::UpdateWidgetCoord(FName StorageName)// for singular
+{
+	FWidgetStorage* Storage = WidgetLists.Find(StorageName);
+	if (!Storage || !Storage->bIsAttatched || !Storage->AnchorPoint)//storage not found || it is not attached || Anchor point to attach is null
+		return;
+
+	FVector WorldLocation = Storage->AnchorPoint->GetComponentLocation();
+	FVector2D ScreenCoord;
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();//get player controller
+	if (!PC)//invalid controller
+		return;
+
+	if (PC->ProjectWorldLocationToScreen(WorldLocation, ScreenCoord))
+	{
+		for (auto& WidgetPair : Storage->WidgetInstances)
+		{
+			UUserWidget* Widget = WidgetPair.Value;
+			if (!Widget)
+				continue;
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Widget->Slot))
+			{
+				CanvasSlot->SetPosition(ScreenCoord);
+			}
+		}
+	}
+}
+
+void UTargetWidgetDisplayer::UpdateAllWidgetCoords()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC) return;
+	
+	for (auto& CurrentWidgetStorage : WidgetLists)
+	{
+		FWidgetStorage& Storage = CurrentWidgetStorage.Value;
+		
+		if (!Storage.bIsAttatched || !Storage.AnchorPoint)// Is not attatched || anchor is invalid
+			continue;
+
+		FVector WorldLocation = Storage.AnchorPoint->GetComponentLocation();
+		//TODO: after making curved world shader, apply custom code to here, to apply offset change--> and then project to the screen
+		FVector2D ScreenCoord;
+
+		// Project world location to screen
+		if (!PC->ProjectWorldLocationToScreen(WorldLocation, ScreenCoord))
+			continue;
+
+		// Update only visible widgets
+		for (auto& WidgetPair : Storage.WidgetInstances)
+		{
+			UUserWidget* Widget = WidgetPair.Value;
+			if (!Widget || !Widget->IsInViewport())// invalid widget or is not on viewport
+				continue;
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Widget->Slot))
+			{
+				CanvasSlot->SetPosition(ScreenCoord);
+			}
+		}
+	}
+}

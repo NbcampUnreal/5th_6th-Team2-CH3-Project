@@ -48,6 +48,14 @@ void UHealthComponent::GetDamage_Implementation(FDamageInfo Damage)// for now, j
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth-Damage.DamageAmount,0,MaxHeath);
 	OnHPChanged.Broadcast(CurrentHealth);
+
+	/*if (OnDamage.IsBound())
+	{
+		OnDamage.Execute(Damage);//signal to the owner to react based on the damage information
+	}*/
+
+	OnDamage.ExecuteIfBound(Damage);// or use this!!! simple!
+	
 	if (CurrentHealth<=0 && bIsAlive)
 	{
 		KilledByDamage();

@@ -3,10 +3,4 @@
 
 #include "Enemy/BossEnemyCharacter.h"
 
-void ABossEnemyCharacter::EnemyAttack()
-{
-	Super::EnemyAttack();
 
-
-
-}

@@ -6,10 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 
-AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
+AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
-	//PrimaryActorTick.bCanEverTick = false;
-
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -23,9 +21,13 @@ AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
 
 	EnemyData.Range = 200.f;
 	EnemyData.Damage = 50;
-
-	InitializeEnemyData(InData);
 }
+
+//AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
+//{
+//	//PrimaryActorTick.bCanEverTick = false;
+//	InitializeEnemyData(InData);
+//}
 
 
 void AEnemyBaseCharacter::BeginPlay()

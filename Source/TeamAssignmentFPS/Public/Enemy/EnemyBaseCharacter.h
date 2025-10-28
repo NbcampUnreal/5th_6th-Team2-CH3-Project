@@ -62,7 +62,8 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AEnemyBaseCharacter(FEnemyDataRow& InData);
+	AEnemyBaseCharacter();
+	//AEnemyBaseCharacter(FEnemyDataRow& InData);
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;
