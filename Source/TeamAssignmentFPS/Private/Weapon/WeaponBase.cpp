@@ -25,20 +25,27 @@ void AWeaponBase::Tick(float DeltaTime)
 
 }
 
-void AWeaponBase::HandleTriggerInput_Implementation(ETriggerInputType InputType, bool bIsPressed)
+void AWeaponBase::OnInputPressed_Implementation()
 {
-	if (!bIsPressed)
-	{
-		switch (InputType)
-		{
-			case ETriggerInputType::Press:
-
-			break;
-
-			default:
-			break;
-		}
-	}
+	IInputReactionInterface::OnInputPressed_Implementation();
 }
 
+void AWeaponBase::OnInputTap_Implementation()
+{
+	IInputReactionInterface::OnInputTap_Implementation();
+}
 
+void AWeaponBase::OnInputHoldStart_Implementation()
+{
+	IInputReactionInterface::OnInputHoldStart_Implementation();
+}
+
+void AWeaponBase::OnInputHoldUpdate_Implementation(float InputValue)
+{
+	IInputReactionInterface::OnInputHoldUpdate_Implementation(InputValue);
+}
+
+void AWeaponBase::OnInputRelease_Implementation()
+{
+	IInputReactionInterface::OnInputRelease_Implementation();
+}

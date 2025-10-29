@@ -38,10 +38,45 @@ public:
 	virtual void OnInputTap_Implementation(){}
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="InputTypeTrigger")
-	void OnInputHold(float InputValue, bool bIsReleased);// update the float when input type is not just bool
-	virtual void OnInputHold_Implementation(float InputValue, bool bIsReleased){}
+	void OnInputHoldStart();
+	virtual void OnInputHoldStart_Implementation(){}
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="InputTypeTrigger")
+	void OnInputHoldUpdate(float InputValue);// update the float when input type is not just bool
+	virtual void OnInputHoldUpdate_Implementation(float InputValue){}
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="InputTypeTrigger")
 	void OnInputRelease();
 	virtual void OnInputRelease_Implementation(){}
+};
+
+
+struct FInputTypeHelper
+{
+	template<typename FunctionType>
+	static bool TryCallingInterface(UObject* Obj, FunctionType Func)
+	{
+		if (Obj && Obj->Implements<UInputReactionInterface>())
+		{
+			Func(Obj);
+			return true;
+		}
+		return false;
+	}
+	
+	static void HandleTapOrHoldRelease(UObject* Obj, float HoldValue, float TapThreshold)
+	{
+		if (!Obj || !Obj->Implements<UInputReactionInterface>()) return;
+
+		if (HoldValue < TapThreshold)
+		{
+			IInputReactionInterface::Execute_OnInputTap(Obj);
+		}
+		else
+		{
+			IInputReactionInterface::Execute_OnInputHoldUpdate(Obj, HoldValue);
+			IInputReactionInterface::Execute_OnInputRelease(Obj);
+		}
+	}
+	
 };

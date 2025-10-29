@@ -24,7 +24,10 @@ enum class ECharacterMovementState:uint8
 
 //Forward Declare
 class ULockonComponent;// to update the forward rotaion that character needs to update
-class UCameraManagerComp;
+class UCameraManagerComponent;
+class UEquipmentManagerCompnent;
+class UInventoryManagerComponent;
+
 //binding function
 struct FInputActionValue;
 
@@ -42,11 +45,18 @@ public:
 	AMyCharacter();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Lockon Comp")
 	TObjectPtr<ULockonComponent> LockonComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
-	TObjectPtr<UCameraManagerComp> CameraManagerComp;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera Comp")
+	TObjectPtr<UCameraManagerComponent> CameraManagerComp;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentInteraction Comp")
+	TObjectPtr<UEquipmentManagerCompnent> EquipmentInteractionComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Comp")
+	TObjectPtr<UInventoryManagerComponent> InventoryComp;
+	
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
 

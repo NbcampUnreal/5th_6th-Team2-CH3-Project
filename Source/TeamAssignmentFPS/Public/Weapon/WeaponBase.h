@@ -8,6 +8,19 @@
 
 #include "WeaponBase.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EWeaponType:uint8
+{
+	None UMETA(DisplayName = "None"),
+	
+};
+
+
+
+
+
+
 class AProjectileBase;
 
 UCLASS()
@@ -30,12 +43,15 @@ protected:
 
 	
 	//==== Projectile ====//
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
 	TObjectPtr<USceneComponent> SpawningLocation;// location, direction of weapon to be fired
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
 	TSubclassOf<AProjectileBase> TargetActors;// projectile to be fired
 
+	UPROPERTY()
+	EWeaponType WeaponType;
+	
 	UPROPERTY(EditAnywhere)
 	float ReloadTime;// required time reload
 
@@ -54,14 +70,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void HandleTriggerInput_Implementation(ETriggerInputType InputType, bool bIsPressed) override;
 	
-	void OnTriggerHolding();
-	void OnTriggerReleasedAfterHolding();
-	void OnTriggerPressed();
-	void OnTriggerTaped();
-
-	void FireBullet();
+	virtual void OnInputPressed_Implementation() override;
+	virtual void OnInputTap_Implementation() override;
+	virtual void OnInputHoldStart_Implementation() override;
+	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
+	virtual void OnInputRelease_Implementation() override;
 
 };
