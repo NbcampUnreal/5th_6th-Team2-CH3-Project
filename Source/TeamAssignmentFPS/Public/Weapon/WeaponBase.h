@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interface/Item_Weapon_Interface.h"
+#include "Interface/InputReactionInterface.h"
 
 #include "WeaponBase.generated.h"
 
 class AProjectileBase;
 
 UCLASS()
-class TEAMASSIGNMENTFPS_API AWeaponBase : public AActor, public IItem_Weapon_Interface
+class TEAMASSIGNMENTFPS_API AWeaponBase : public AActor, public IInputReactionInterface
 {
 	GENERATED_BODY()
 	
