@@ -43,9 +43,9 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
-	ULockonComponent* LockonComp;
+	TObjectPtr<ULockonComponent> LockonComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
-	UCameraManagerComp* CameraManagerComp;
+	TObjectPtr<UCameraManagerComp> CameraManagerComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
@@ -72,7 +72,7 @@ protected:
 	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
-	UCurveFloat* DodgeCurve;//ease in and out
+	TObjectPtr<UCurveFloat> DodgeCurve;//ease in and out
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeSpeedPlayrate=1.f;
