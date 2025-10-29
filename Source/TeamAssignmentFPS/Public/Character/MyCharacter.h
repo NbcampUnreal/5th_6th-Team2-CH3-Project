@@ -32,6 +32,9 @@ struct FInputActionValue;
 class UCurveFloat;
 class UTimelineComponent;
 
+// Health
+class UHealthComponent;
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
 {
@@ -46,6 +49,9 @@ protected:
 	ULockonComponent* LockonComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
 	UCameraManagerComp* CameraManagerComp;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UHealthComponent> HealthComponent;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
