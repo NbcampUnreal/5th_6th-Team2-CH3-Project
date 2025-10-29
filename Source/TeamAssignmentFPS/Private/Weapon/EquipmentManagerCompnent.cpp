@@ -81,22 +81,31 @@ void UEquipmentManagerCompnent::TriggerInput_Start(const FInputActionValue& Valu
 
 void UEquipmentManagerCompnent::TriggerInput_Trigger(const FInputActionValue& Value)
 {
-	if (bDidHoldStarted && CurrentEquipment)
+	if (!CurrentEquipment)
 	{
-		CurrentHoldingTime += GetWorld()->GetDeltaSeconds();// update holding time
+		//UE_LOG(Equipment_Manager_Log, Error,TEXT("UEquipmentManagerCompnent::TriggerInput_Trigger-> CurrentEquipment is invalid"));
+		// no equipment to update
+		return;
+	}
+	if (!bDidHoldStarted)
+	{
+		// not even started yet
+		return;
+	}
+	
+	CurrentHoldingTime += GetWorld()->GetDeltaSeconds();// update holding time
 
-		// Optionally trigger HoldUpdate events
-		const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
-			CurrentEquipment,
-			[this](UObject* Equipment)
-		{
-			IInputReactionInterface::Execute_OnInputHoldUpdate(Equipment, CurrentHoldingTime);
-		});
+	// Optionally trigger HoldUpdate events
+	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
+		CurrentEquipment,
+		[this](UObject* Equipment)
+	{
+		IInputReactionInterface::Execute_OnInputHoldUpdate(Equipment, CurrentHoldingTime);
+	});
 
-		if (!bDidItWork)
-		{
-			//error updating not working
-		}
+	if (!bDidItWork)
+	{
+		//error updating not working
 	}
 }
 
