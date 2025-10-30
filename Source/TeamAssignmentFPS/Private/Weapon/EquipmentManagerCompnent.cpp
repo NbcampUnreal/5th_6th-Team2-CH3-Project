@@ -31,6 +31,30 @@ void UEquipmentManagerCompnent::BeginPlay()
 }
 
 
+void UEquipmentManagerCompnent::OnScrollChunkEnd(float ScrollValue)
+{
+	bool bIsSrollUp;
+	
+	if (ScrollValue>0)// +
+	{
+		bIsSrollUp=true;
+	}
+	else if (ScrollValue<0)// -
+	{
+		bIsSrollUp=false;;
+	}
+	else
+	{
+		//error, no scroll value detected on scroll chunk end
+	}
+
+	//TODO: Switch weapon using Inventory comp
+}
+
+void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollValue, float DeltaTime)
+{
+}
+
 // Called every frame
 void UEquipmentManagerCompnent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

@@ -50,6 +50,7 @@ protected:
 	// mouse wheele update ( to make it only work for once)
 private:
 	float PreviousMouseWheelValue = 0.f;
+	float WheelScrollTickTimeGap = 0.1f;
 
 	
 protected:
@@ -57,7 +58,10 @@ protected:
 	virtual void BeginPlay() override;
 	void SetCurrentWeapon(AActor* NewWeapon) {CurrentWeapon = NewWeapon;}
 	void SetCurrentItem(AActor* NewItem) {CurrentItem = NewItem;}
-	
+
+	//== for mouse scroll detection
+	void OnScrollChunkEnd(float ScrollValue);
+	void ProcessScrollDetection(float ScrollValue, float DeltaTime);	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
