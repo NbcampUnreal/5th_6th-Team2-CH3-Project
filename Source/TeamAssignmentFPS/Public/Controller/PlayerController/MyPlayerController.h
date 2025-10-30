@@ -37,16 +37,9 @@ protected:
 	
 	//=== Confirmations ===//
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
-	bool bIsInMenu;
+	bool bIsInMenu = true;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
-	bool bIsGamepad;
-	
-
-
-
-
-
-	
+	bool bIsGamepad = false;
 	
 public:
 	virtual void BeginPlay() override;

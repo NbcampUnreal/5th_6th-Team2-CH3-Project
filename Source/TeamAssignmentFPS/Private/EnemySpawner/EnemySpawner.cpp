@@ -25,7 +25,6 @@ void AEnemySpawner::BeginPlay()
 
 AActor* AEnemySpawner::SpawnRandomMonster()
 {
-<<<<<<< HEAD
 	if (FEnemyDataRow* SelectedRow = GetRandomMonster())
 	{
 		if (UClass* ActualClass = SelectedRow->EnemyClass.Get())
@@ -75,11 +74,6 @@ FEnemyDataRow* AEnemySpawner::GetRandomMonster() const
 	return nullptr;
 }
 
-=======
-	
-}
-
->>>>>>> 1352d0afd57722be3c883d8d9723dc97ae6f0461
 FVector AEnemySpawner::GetRandomPontInVolume() const
 {
 	FVector BoxExtent = SpawningBox->GetScaledBoxExtent();
