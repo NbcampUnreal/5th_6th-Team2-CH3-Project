@@ -3,7 +3,7 @@
 
 #include "Enemy/RangeEnemyCharacter.h"
 #include "Weapon/ProjectileBase.h"
-
+//#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
 	EnemyType = EEnemyType::EET_Range;
@@ -19,7 +19,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
-	if (!Projectile)
+	if (!Projectile && ProjectileSpawn)
 	{
 		return;
 	}
