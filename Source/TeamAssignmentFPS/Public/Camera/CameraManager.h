@@ -16,13 +16,13 @@ struct FCameraStateData// this will hold the camera information to be kept (ex. 
 };*/
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UCameraManagerComp : public UActorComponent
+class TEAMASSIGNMENTFPS_API UCameraManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCameraManagerComp();
+	UCameraManagerComponent();
 
 protected:
 	

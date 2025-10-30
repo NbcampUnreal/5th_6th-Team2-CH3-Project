@@ -5,22 +5,29 @@
 
 #include "Camera/CameraManager.h"
 #include "InputAction.h"
+
+// components
 #include "Components/TimelineComponent.h"
-#include "Curves/CurveFloat.h"
 #include "LockonTarget/LockonComponent.h"
-#include "Debug/UELOGCategories.h"
+#include "Weapon/EquipmentManagerCompnent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
 
+#include "Item/InventoryManagerComponent.h"
+
+#include "Curves/CurveFloat.h"
+#include "Debug/UELOGCategories.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("LockonComponent"));
-	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComp>(TEXT("CameraManagerComponent"));
+	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("Lockon Component"));
+	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerCompnent>(TEXT("EquipmentManager Component"));
+	InventoryComp=CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Component"));
 }
 
 // Called when the game starts or when spawned
@@ -115,7 +122,7 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 	}
 	if (!FMath::IsNearlyZero(MovementInputValue.Y))// right
 	{
-		AddMovementInput(Right, MovementInputValue.Y);
+		AddMovementInput(Right, MovementInputValue.Y,false);
 		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y)
 	}
 

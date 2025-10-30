@@ -11,32 +11,32 @@
 #include "Debug/UELOGCategories.h"
 
 
-UCameraManagerComp::UCameraManagerComp()
+UCameraManagerComponent::UCameraManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;// no need to use tick any more
 
 }
 
-void UCameraManagerComp::BeginPlay()
+void UCameraManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 
-void UCameraManagerComp::ActivateCameraManager()
+void UCameraManagerComponent::ActivateCameraManager()
 {
 	bIsActivated = true;
 
 	UE_LOG(Camera_Log,Log, TEXT("UCameraManagerComp::ActivateCameraManager->CameraManager Activated"))
 }
 
-void UCameraManagerComp::DeactivateCameraManager()
+void UCameraManagerComponent::DeactivateCameraManager()
 {
 	bIsActivated = false;
 	UE_LOG(Camera_Log, Log, TEXT("UCameraManagerComp::ActivateCameraManagerCamera Manager Deactivated."));
 }
 
-void UCameraManagerComp::SetActiveCameraRig(ACameraRig* NewRig)
+void UCameraManagerComponent::SetActiveCameraRig(ACameraRig* NewRig)
 {
 	if (!bIsActivated || !NewRig)
 	{
@@ -62,7 +62,7 @@ void UCameraManagerComp::SetActiveCameraRig(ACameraRig* NewRig)
 		*NewRig->GetCameraRigName().ToString());
 }
 
-void UCameraManagerComp::TransitionToTargetRig(ACameraRig* NewRig, float BlendTime)
+void UCameraManagerComponent::TransitionToTargetRig(ACameraRig* NewRig, float BlendTime)
 {
 	if (!bIsActivated)
 	{
@@ -101,7 +101,7 @@ void UCameraManagerComp::TransitionToTargetRig(ACameraRig* NewRig, float BlendTi
 
 
 
-bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
+bool UCameraManagerComponent::GetVectorsByCameraAndGravityDirection(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
 {
 	if (!GetWorld())
 	{

@@ -109,7 +109,8 @@ void UIMCManagerComp::BindInputActionByInputType(const FIMC_Bundle& IMCB, bool I
 	
 	for (FInputActionData& Data: SelectedIMCModule.IA_Data)
 	{
-		if (!TryBindAction(Data,IMCB)) continue;
+		if (!TryBindAction(Data,IMCB))
+			continue;
 		/*if (!Data.InputAction)
 		{
 			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::BindInputActionByInputType->invalid InputAction"));
@@ -151,53 +152,61 @@ void UIMCManagerComp::UnBindInputActionByInputType(const FIMC_Bundle& IMCB, bool
 		if (!Data.InputAction)
 		{
 			UE_LOG(IMC_Log,Error,TEXT
-				("Invalid IA of %s from %s")
-				,*Data.FunctionName.ToString(),*IMCB.IMC_B_Name.ToString());
+				("Invalid IA  from %s"),
+				*IMCB.IMC_B_Name.ToString());
 			continue;;
 		}
-		uint32 HandleID=Data.GetCurrentIAHandle();
-		EnhancedInputComp->RemoveBindingByHandle(HandleID);
+
+		for (const auto& HandlePair : Data.GetCurrentIAHandles())
+		{
+			const FName& FunctionName = HandlePair.Key;
+			const TArray<uint32>& HandleList = HandlePair.Value;
+
+			for (uint32 Handle : HandleList)
+			{
+				EnhancedInputComp->RemoveBindingByHandle(Handle);
+				UE_LOG(IMC_Log, Log, TEXT("Unbound %s (Handle: %d) from %s"),
+					*FunctionName.ToString(), Handle, *IMCB.IMC_B_Name.ToString());
+			}
+		}
 	}
 }
 
 bool UIMCManagerComp::TryBindAction(FInputActionData& Data, const FIMC_Bundle& IMCB) const
 {
-	if (!EnhancedInputComp)
+	if (!EnhancedInputComp || !IMCB.FunctionOwner || !Data.InputAction)
 	{
-		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> EnhancedInputComp is nullptr"));
+		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Missing EnhancedInputComp, Owner, or InputAction"));
 		return false;
 	}
 
-	if (!Data.InputAction)
+	for (const auto& Pair : Data.BindActions)
 	{
-		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Invalid InputAction for %s"),
-			*Data.FunctionName.ToString());
-		return false;
+		const FName& FunctionName = Pair.Key;
+		const ETriggerEvent EventType = Pair.Value;
+
+		if (!IMCB.FunctionOwner->FindFunction(FunctionName))
+		{
+			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Function not found: %s (Owner: %s)"),
+				*FunctionName.ToString(), *IMCB.FunctionOwner->GetName());
+			continue;
+		}
+
+		FEnhancedInputActionEventBinding& Binding =
+			EnhancedInputComp->BindAction(Data.InputAction, EventType, IMCB.FunctionOwner, FunctionName);
+
+		if (Binding.GetHandle() == INDEX_NONE)
+		{
+			UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Failed to bind %s"),
+				*FunctionName.ToString());
+			continue;
+		}
+
+		Data.AddBindingHandle(FunctionName, Binding.GetHandle());
+		UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::TryBindAction -> Bound %s (Event: %d, Handle: %d)"),
+			*FunctionName.ToString(), (int32)EventType, Binding.GetHandle());
 	}
 
-	if (!IMCB.FunctionOwner || !IMCB.FunctionOwner->FindFunction(Data.FunctionName))
-	{
-		FString Owner=IMCB.FunctionOwner?*IMCB.FunctionOwner->GetName() : TEXT("nullptr");
-		
-		UE_LOG(IMC_Log, Error,
-			TEXT("UIMCManagerComp::TryBindAction -> Function not found: %s (Owner: %s)"),
-			*Data.FunctionName.ToString(), *Owner);
-		return false;
-	}
-
-	FEnhancedInputActionEventBinding& Binding =
-		EnhancedInputComp->BindAction(Data.InputAction, Data.TriggerEvent, IMCB.FunctionOwner, Data.FunctionName);
-
-	if (Binding.GetHandle() == INDEX_NONE)// binding failed
-	{
-		UE_LOG(IMC_Log, Error, TEXT("UIMCManagerComp::TryBindAction -> Failed to bind %s"),
-			*Data.FunctionName.ToString());
-		return false;
-	}
-
-	Data.SetCurrentIAHandle(Binding.GetHandle());
-	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::TryBindAction -> Bound %s successfully (Handle: %d)"),
-		*Data.FunctionName.ToString(),Binding.GetHandle());
 	return true;
 }
 
@@ -209,17 +218,32 @@ void UIMCManagerComp::AddMappingAndBind(const FIMC_Bundle& IMCB)// do both at on
 
 void UIMCManagerComp::ClearIMCB(const FIMC_Bundle& IMCB)
 {
-	if (!IsValidIMC(IMCB,"UIMCManagerComponent::ClearIMCB")) return;
+	if (!IsValidIMC(IMCB,"UIMCManagerComponent::ClearIMCB"))
+	{	//already doing the debug print in the isvalidimc
+		return;
+	}
 
 	UnBindInputActions(IMCB);
 	RemoveMappingContext(IMCB);
 
-	UE_LOG(IMC_Log, Log, TEXT("%s is Cleared"), *IMCB.IMC_B_Name.ToString())
+	UE_LOG(IMC_Log, Log, TEXT("%s is Cleared"), *IMCB.IMC_B_Name.ToString());
 }
 
 void UIMCManagerComp::ClearAllIMCB()
 {
-
+	for (const FName& ActiveID : ActiveIMC_IDs)
+	{
+		if (FIMC_Bundle* Found = IMCB_Storage.Find(ActiveID))
+		{
+			ClearIMCB(*Found);
+		}
+	}
+	
+	// just in case for safety
+	ActiveIMC_IDs.Empty();
+	IMCB_Storage.Empty();
+	
+	UE_LOG(IMC_Log, Log, TEXT("UIMCManagerComp::ClearAllIMCB -> All IMCs cleared and reset"));
 }
 
 bool UIMCManagerComp::IsValidIMC(const FIMC_Bundle& IMCB, FString DebuggingFunction) const
