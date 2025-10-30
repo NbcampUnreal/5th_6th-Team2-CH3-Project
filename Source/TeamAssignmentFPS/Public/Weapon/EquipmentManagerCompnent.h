@@ -26,15 +26,19 @@ public:
 protected:
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
 	bool bIsEquipping;//is current equipment empty or not*///--> no need, just check CurrentEquipment
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
+	USceneComponent* Placement;
+	
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
-	TObjectPtr<AWeaponBase> CurrentWeapon;
+	TObjectPtr<AActor> CurrentWeapon;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
-	TObjectPtr<AItemBase> CurrentItem;
+	TObjectPtr<AActor> CurrentItem;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
-	UObject* CurrentEquipment;// the weapon or item that player character is currently holding
+	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
 	float TapThreshold=0.2f;//default
@@ -43,11 +47,16 @@ protected:
 	float CurrentHoldingTime=0.0f;
 	bool bDidHoldStarted=false;
 
+	// mouse wheele update ( to make it only work for once)
+private:
+	float PreviousMouseWheelValue = 0.f;
+
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void SetCurrentWeapon(AWeaponBase* NewWeapon) {CurrentWeapon = NewWeapon;}
-	void SetCurrentItem(AItemBase* NewItem) {CurrentItem = NewItem;}
+	void SetCurrentWeapon(AActor* NewWeapon) {CurrentWeapon = NewWeapon;}
+	void SetCurrentItem(AActor* NewItem) {CurrentItem = NewItem;}
 	
 public:	
 	// Called every frame
@@ -59,9 +68,15 @@ public:
 	//so that this weapon manager component can access to the inventory and set the current weapon
 	//--> or should this be done out side of this comp? not so sure
 	//fuck
+	UFUNCTION(BlueprintCallable, Category="Equipment")
+	void UpdatePlacementComponent(USceneComponent* NewPlacement);// this will update where to be attatched
+	void SetCurrentEquipmentPlacement();// this will attatch the current weapon or item to the placementcomponent
 	
 	UFUNCTION()
-	void SwtichWeapon(const FInputActionValue& Value);
+	void SwtichWeapon_PC(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
+
+	UFUNCTION()
+	void SwtichWeapon_GP(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void SelectItem_PC(const FInputActionValue& Value);//
@@ -72,6 +87,9 @@ public:
 	//---- Weapn and Item Interaction ----//
 
 	//Actually binded functions
+
+	UFUNCTION()
+	void TriggerInput_Reload(const FInputActionValue& Value);
 	
 	UFUNCTION()
 	void TriggerInput_Start(const FInputActionValue& Value);

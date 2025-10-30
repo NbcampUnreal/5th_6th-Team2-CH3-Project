@@ -5,6 +5,7 @@
 
 #include "Weapon/WeaponBase.h"
 #include "Item/ItemBase.h"
+#include "InputAction.h"
 #include "Interface/InputReactionInterface.h"
 
 #include "Debug/UELOGCategories.h"//debug log
@@ -37,7 +38,110 @@ void UEquipmentManagerCompnent::TickComponent(float DeltaTime, ELevelTick TickTy
 	
 }
 
-void UEquipmentManagerCompnent::SwtichWeapon(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::UpdatePlacementComponent(USceneComponent* NewPlacement)
+{
+	if (!NewPlacement)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerCompnent::UpdatePlacementComponent-> Invalid Placedment"));
+		return;
+	}
+	
+	Placement=NewPlacement;
+	SetCurrentEquipmentPlacement();
+}
+
+
+void UEquipmentManagerCompnent::SetCurrentEquipmentPlacement()
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerCompnent::SetCurrentEquipmentPlacement-> no equipment to place"));
+		return;
+	}
+	if (!Placement)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerCompnent::SetCurrentEquipmentPlacement-> no place to equip"));
+		return;
+	}
+
+	CurrentEquipment->AttachToComponent(Placement, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	CurrentEquipment->SetActorRelativeLocation(FVector::ZeroVector);//offset
+	CurrentEquipment->SetActorRelativeRotation(FRotator::ZeroRotator);//offset
+}
+
+void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
+{
+	/*float CurrentMouseWheelValue = Value.Get<float>();
+	UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC-> Value:%f"),CurrentMouseWheelValue);//temp
+	
+	// Detect first movement of the wheel (from 0 to non-zero)
+	if (PreviousMouseWheelValue == 0.f && CurrentMouseWheelValue != 0.f)
+	{
+		if (CurrentMouseWheelValue > 0.f)
+		{
+			// Scroll up -> next weapon
+			UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC -> [+]"));
+		}
+		else
+		{
+			// Scroll down -> previous weapon
+			UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC -> [-]"));
+		}
+	}
+
+	// Store the current value for next frame
+	PreviousMouseWheelValue = CurrentMouseWheelValue;*/
+	/*float CurrentValue = Value.Get<float>();
+
+	if (CurrentValue != 0.f)
+	{
+		// Check if previous value had a different sign or was zero
+		if ((PreviousMouseWheelValue <= 0.f && CurrentValue > 0.f) || 
+			(PreviousMouseWheelValue >= 0.f && CurrentValue < 0.f))
+		{
+			if (CurrentValue > 0.f)
+			{
+				UE_LOG(Equipment_Manager_Log, Log, TEXT("SwitchWeapon_PC -> Next weapon"));
+			}
+			else
+			{
+				UE_LOG(Equipment_Manager_Log, Log, TEXT("SwitchWeapon_PC -> Previous weapon"));
+			}
+
+			// Reset previous value so next scroll gesture can trigger again
+			PreviousMouseWheelValue = CurrentValue;
+		}
+	}
+	else
+	{
+		// Wheel is idle, reset
+		PreviousMouseWheelValue = 0.f;
+	}*/
+	
+	float WheelDelta = Value.Get<float>();
+	if (WheelDelta == 0.f) return;
+
+	PreviousMouseWheelValue += WheelDelta;
+
+	while (PreviousMouseWheelValue >= 1.f)
+	{
+		// Scroll up -> next weapon
+		UE_LOG(Equipment_Manager_Log, Log, TEXT("Next Weapon"));
+		PreviousMouseWheelValue -= 1.f;
+	}
+
+	while (PreviousMouseWheelValue <= -1.f)
+	{
+		// Scroll down -> previous weapon
+		UE_LOG(Equipment_Manager_Log, Log, TEXT("Previous Weapon"));
+		PreviousMouseWheelValue += 1.f;
+	}
+}
+
+void UEquipmentManagerCompnent::SwtichWeapon_GP(const FInputActionValue& Value)
 {
 }
 
@@ -47,6 +151,29 @@ void UEquipmentManagerCompnent::SelectItem_PC(const FInputActionValue& Value)
 
 void UEquipmentManagerCompnent::SelectItem_GP(const FInputActionValue& Value)
 {
+}
+
+void UEquipmentManagerCompnent::TriggerInput_Reload(const FInputActionValue& Value)
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment is invalid"));
+		return;
+	}
+
+	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(CurrentEquipment,
+		[](UObject* Equipment)
+	{
+		// Call reload to the currentdquipment
+		IWeaponInterface::Execute_OnReloadInputPressed(Equipment);
+	});
+
+	if (!bDidItWork)
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment does not implement IWeaponInterface"));
+	}
 }
 
 void UEquipmentManagerCompnent::TriggerInput_Start(const FInputActionValue& Value)

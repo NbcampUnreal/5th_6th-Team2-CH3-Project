@@ -27,6 +27,7 @@ class TEAMASSIGNMENTFPS_API IInputReactionInterface
 {
 	GENERATED_BODY()
 public:
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="InputTypeTrigger")
 	void OnInputPressed();
 	virtual void OnInputPressed_Implementation(){}
