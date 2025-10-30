@@ -49,8 +49,15 @@ protected:
 
 	// mouse wheele update ( to make it only work for once)
 private:
-	float PreviousMouseWheelValue = 0.f;
-	float WheelScrollTickTimeGap = 0.1f;
+
+	FTimerHandle ScrollEndTimerHandle;// for setting timer
+	
+	float ScrollSensitivity = 1.f;//default
+	float ScrollEndDelay=0.2f;
+
+	float PreviousScrollSign=0.f;//+ or - or 0
+	bool bIsScrolling=false;
+	bool bDidScrollStarted=false;
 
 	
 protected:
@@ -60,8 +67,11 @@ protected:
 	void SetCurrentItem(AActor* NewItem) {CurrentItem = NewItem;}
 
 	//== for mouse scroll detection
-	void OnScrollChunkEnd(float ScrollValue);
-	void ProcessScrollDetection(float ScrollValue, float DeltaTime);	
+	void OnScrollChunkStart(float ScrollDirection);
+	void OnScrollChunkStep(float ScrollDirection);
+	void OnScrollChunkEnd(float ScrollDirection);
+	
+	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -79,6 +89,8 @@ public:
 	UFUNCTION()
 	void SwtichWeapon_PC(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 
+	void SetCurrentEquipment(AActor* NewEquipment);
+	
 	UFUNCTION()
 	void SwtichWeapon_GP(const FInputActionValue& Value);
 
@@ -119,7 +131,7 @@ public:
 		{
 			// no equipment to use
 			//TODO:
-			// 1. send signal to uimanager to spawn no equipment state widget
+			// 1. send signal to ui manager to spawn no equipment state widget
 			// 2. (error widget), toggle effect on weapon and item slot widget)
 			//3. signal character to react(if ther is anim or task for that)
 			return;

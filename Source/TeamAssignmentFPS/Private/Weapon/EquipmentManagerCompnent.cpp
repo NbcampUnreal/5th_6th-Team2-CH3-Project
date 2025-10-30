@@ -15,12 +15,12 @@
 UEquipmentManagerCompnent::UEquipmentManagerCompnent():
 	CurrentWeapon(nullptr),
 	CurrentItem(nullptr),
-	CurrentEquipment(nullptr)
+	CurrentEquipment(nullptr),
+	Placement(nullptr)// where to put equipment
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 
@@ -31,28 +31,50 @@ void UEquipmentManagerCompnent::BeginPlay()
 }
 
 
-void UEquipmentManagerCompnent::OnScrollChunkEnd(float ScrollValue)
+void UEquipmentManagerCompnent::OnScrollChunkStart(float ScrollDirection)
 {
-	bool bIsSrollUp;
-	
-	if (ScrollValue>0)// +
+	if (ScrollDirection > 0)
 	{
-		bIsSrollUp=true;
-	}
-	else if (ScrollValue<0)// -
-	{
-		bIsSrollUp=false;;
+		UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerCompnent::OnScrollChunkStart->Scroll Start +"));
 	}
 	else
 	{
-		//error, no scroll value detected on scroll chunk end
+		UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerCompnent::OnScrollChunkStart-> Scroll Start -"));
 	}
-
-	//TODO: Switch weapon using Inventory comp
+		
 }
 
-void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollValue, float DeltaTime)
+void UEquipmentManagerCompnent::OnScrollChunkStep(float ScrollDirection)
 {
+	/*FString Sign;
+	if (PreviousScrollSign>0) Sign=TEXT("+");
+	else if (PreviousScrollSign<0)Sign=TEXT("-");
+	else Sign=TEXT("Zero");
+	
+	UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerCompnent::OnScrollChunkStep-> Switch happended %s"),*Sign);*/
+	
+}
+
+void UEquipmentManagerCompnent::OnScrollChunkEnd(float Direction)
+{
+	if (!bIsScrolling)
+		return; // safety
+
+	/*
+	UE_LOG(Equipment_Manager_Log, Log, TEXT("[Scroll Chunk End] Direction: %s"),
+		Direction > 0 ? TEXT("+") : TEXT("-"));*/
+
+	bIsScrolling = false;
+	bDidScrollStarted = false;
+	PreviousScrollSign = 0.f;
+}
+
+void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
+{
+	 
 }
 
 // Called every frame
@@ -144,37 +166,63 @@ void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
 		// Wheel is idle, reset
 		PreviousMouseWheelValue = 0.f;
 	}*/
-	
-	float WheelDelta = Value.Get<float>();
-	if (WheelDelta == 0.f) return;
+	float ScrollValue = Value.Get<float>();
+	if (ScrollValue == 0.f)
+		return;
 
-	PreviousMouseWheelValue += WheelDelta;
+	const float Sign = ScrollValue > 0.f ? 1.f : -1.f;
+	const float NormalizedDelta = ScrollValue * ScrollSensitivity;
 
-	while (PreviousMouseWheelValue >= 1.f)
+	// === 1. Handle direction change ===
+	if (bIsScrolling && Sign != PreviousScrollSign)
 	{
-		// Scroll up -> next weapon
-		UE_LOG(Equipment_Manager_Log, Log, TEXT("Next Weapon"));
-		PreviousMouseWheelValue -= 1.f;
+		// End previous chunk immediately
+		OnScrollChunkEnd(PreviousScrollSign);
+		bIsScrolling = false;
+		bDidScrollStarted = false;
 	}
 
-	while (PreviousMouseWheelValue <= -1.f)
+	// === 2. Handle new chunk start ===
+	if (!bIsScrolling)
 	{
-		// Scroll down -> previous weapon
-		UE_LOG(Equipment_Manager_Log, Log, TEXT("Previous Weapon"));
-		PreviousMouseWheelValue += 1.f;
+		OnScrollChunkStart(Sign);
+		bIsScrolling = true;
+		bDidScrollStarted = true;
+		PreviousScrollSign = Sign;
 	}
+
+	// === 3. Restart timer for this chunk ===
+	GetWorld()->GetTimerManager().ClearTimer(ScrollEndTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(
+		ScrollEndTimerHandle,
+		FTimerDelegate::CreateUObject(this, &UEquipmentManagerCompnent::OnScrollChunkEnd, Sign),
+		ScrollEndDelay,
+		false
+	);
+
+	// === 4. Perform step logic (each notch or accumulated movement) ===
+	OnScrollChunkStep(Sign);
+
+}
+
+void UEquipmentManagerCompnent::SetCurrentEquipment(AActor* NewEquipment)
+{
+	CurrentEquipment=NewEquipment;
 }
 
 void UEquipmentManagerCompnent::SwtichWeapon_GP(const FInputActionValue& Value)
 {
+	
 }
 
 void UEquipmentManagerCompnent::SelectItem_PC(const FInputActionValue& Value)
 {
+	
 }
 
 void UEquipmentManagerCompnent::SelectItem_GP(const FInputActionValue& Value)
 {
+	
 }
 
 void UEquipmentManagerCompnent::TriggerInput_Reload(const FInputActionValue& Value)
