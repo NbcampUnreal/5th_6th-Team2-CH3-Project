@@ -9,6 +9,19 @@
 
 class UInputAction;
 
+/*//----- Binding Information -----// for the case when one input action has the multiple inputtype (a-> pressed, tap, hold ...)
+USTRUCT(BlueprintType)
+struct FInputActionBindData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
+	FName FunctionName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
+	ETriggerEvent TriggerEvent;
+};*///--> replace it with map
+
 //-------- InputAction Data ---------//
 USTRUCT(BlueprintType)
 struct FInputActionData
@@ -16,28 +29,53 @@ struct FInputActionData
 	GENERATED_BODY()
 	
 	FInputActionData():
-	FunctionName(NAME_None), InputAction(nullptr), TriggerEvent(),IAHandleID(0)//--> this is private and cannot get acces. need somehitng else
+	InputAction(nullptr)//, IAHandleIDs(0)//--> this is private and cannot get acces. need somehitng else//-> now the handle is multiple
 	{}// IAHandle(0)--> basically just a empty id, do not use INDEX_NONE = -1
 	FInputActionData(FName Name, UInputAction* IA, ETriggerEvent Event):
-	FunctionName(Name), InputAction(IA), TriggerEvent(Event),IAHandleID(0)
+	InputAction(IA)//,IAHandleIDs(0)//--> same
 	{}
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
-	FName FunctionName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
-	UInputAction* InputAction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
-	ETriggerEvent TriggerEvent;
 	
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "IMC | IA")//--> not so sure why but it is not working with reflection system
-	//																			-->//cause it is not in reflection system. it is pure code
-	//FInputBindingHandle IAHandle;  // store handle for later usage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
+	TObjectPtr<UInputAction> InputAction;
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
+	TArray<FInputActionBindData> BindVariants;
+	*/// basically just lower version of map using struct as pair
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | IA")
+	TMap<FName/*Function Name*/,ETriggerEvent/* Trigger event*/> BindActions;// for multiple bindings 
+	
 private:
-	uint32 IAHandleID;
+	TMap<FName, TArray<uint32>> IAHandleIDs;//for multiple triggers are for same function
 
 public:
-	uint32 GetCurrentIAHandle()const{return IAHandleID;}
-	void SetCurrentIAHandle(uint32 Handle){IAHandleID = Handle;}
+	TMap<FName, TArray<uint32>> GetCurrentIAHandles()const{return IAHandleIDs;}
+
+	const TArray<uint32>* GetHandlesByFunction(FName WantedFunctionName)const
+	{
+		return IAHandleIDs.Find(WantedFunctionName);//??? why should it be const for return?
+	}
+	
+	void AddBindingHandle(FName FunctionName, uint32 Hanlde)
+	{
+		if (IAHandleIDs.Find(FunctionName))// same function found
+		{
+			IAHandleIDs.Find(FunctionName)->Add(Hanlde);
+		}
+		else// when function is new
+		{
+			IAHandleIDs.Add(FunctionName).Add(Hanlde);
+		}
+	}
+
+	void ClearBindingHandles(FName FunctionName)
+	{
+		IAHandleIDs.Remove(FunctionName);
+	}
+
+	void ClearAllBindingHandles()
+	{
+		IAHandleIDs.Empty();
+	}
 	
 };
 //--------------------------------------------------------------------------------------------------------------------//
@@ -59,7 +97,7 @@ struct FIMC_Module
 	{}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | Module")
-	UInputMappingContext* IMC;
+	TObjectPtr<UInputMappingContext> IMC;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | Module")
 	TArray<FInputActionData> IA_Data;
@@ -68,17 +106,6 @@ struct FIMC_Module
 //--------------------------------------------------------------------------------------------------------------------//
 //==== IMCB_Type =====//
 
-UENUM(BlueprintType)
-enum class EIMC_B_Type:uint8
-{
-	None UMETA(DisplayName = "None"),
-	CharacterMovement UMETA(DisplayName = "CharacterControl"),
-	WorldInteraction UMETA(DisplayName = "WorldInteraction"),
-	CameraInteraction UMETA(DisplayName = "CameraInteraction"),
-	UIInteraction UMETA(DisplayName = "UIInteraction"),// this is for hud ui interaction while playing as character
-	MenuInteraction UMETA(DisplayName = "MenuInteraction"),
-	Custom UMETA(DisplayName = "Custom")
-};
 //---------------------------------------------------------------------------------------------------------------------//
 
 //=== IMC_B ===//
@@ -87,17 +114,14 @@ struct FIMC_Bundle
 {
 	GENERATED_BODY()
 	FIMC_Bundle():
-	IMC_B_Name(NAME_None), IMC_B_Type(EIMC_B_Type::None), FunctionOwner(nullptr), LayerPriority(0)
+	IMC_B_Name(NAME_None), FunctionOwner(nullptr), LayerPriority(0)
 	{}
-	FIMC_Bundle(FName Name, EIMC_B_Type InType, UObject* Owner, FIMC_Module GP, FIMC_Module PC, int32 Priority):
-	IMC_B_Name(Name), IMC_B_Type(InType), FunctionOwner(Owner),GP_IMC(GP), PC_IMC(PC), LayerPriority(Priority)
+	FIMC_Bundle(FName Name,  UObject* Owner, FIMC_Module GP, FIMC_Module PC, int32 Priority):
+	IMC_B_Name(Name),  FunctionOwner(Owner),GP_IMC(GP), PC_IMC(PC), LayerPriority(Priority)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | Bundle")
 	FName IMC_B_Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | Bundle")
-	EIMC_B_Type IMC_B_Type;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IMC | Bundle")
 	UObject* FunctionOwner;

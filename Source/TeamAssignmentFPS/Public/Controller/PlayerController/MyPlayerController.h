@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
-class UCameraManagerComp;
+class UCameraManagerComponent;
 class UIMCManagerComp;
 class UUIManagerComp;
 
@@ -29,7 +29,7 @@ protected:
 
 	//==== ManagerComp ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controller")
-	UCameraManagerComp* CameraManager;
+	UCameraManagerComponent* CameraManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Controller")
 	UIMCManagerComp* IMCManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Controller")
@@ -37,22 +37,15 @@ protected:
 	
 	//=== Confirmations ===//
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
-	bool bIsInMenu;
+	bool bIsInMenu = true;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
-	bool bIsGamepad;
-	
-
-
-
-
-
-	
+	bool bIsGamepad = false;
 	
 public:
 	virtual void BeginPlay() override;
 	//Manager Comp Getter
 	UFUNCTION(BlueprintPure, Category = "Manager")
-	UCameraManagerComp* GetCameraManager()const {return CameraManager;}
+	UCameraManagerComponent* GetCameraManager()const {return CameraManager;}
 	UFUNCTION(BlueprintPure, Category = "Manager")
 	UIMCManagerComp* GetIMCManager()const {return IMCManager;}
 	UFUNCTION(BlueprintPure, Category = "Manager")

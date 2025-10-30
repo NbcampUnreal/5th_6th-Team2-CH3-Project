@@ -5,20 +5,29 @@
 
 #include "Camera/CameraManager.h"
 #include "InputAction.h"
-#include "Components/TimelineComponent.h"
-#include "Curves/CurveFloat.h"
-#include "LockonTarget/LockonComponent.h"
-#include "Debug/UELOGCategories.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
+// components
+#include "Components/TimelineComponent.h"
+#include "LockonTarget/LockonComponent.h"
+#include "Weapon/EquipmentManagerCompnent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "CharacterStat/HealthComponent.h"
+
+#include "Item/InventoryManagerComponent.h"
+
+#include "Curves/CurveFloat.h"
+#include "Debug/UELOGCategories.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
-	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("LockonComponent"));
-	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComp>(TEXT("CameraManagerComponent"));
+
+	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("Lockon Component"));
+	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
+	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerCompnent>(TEXT("EquipmentManager Component"));
+	InventoryComp=CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Component"));
 }
 
 // Called when the game starts or when spawned
@@ -94,27 +103,24 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 	
 	MovementInputValue=Value.Get<FVector2D>();
 
-
 	//Get Forward and right vector from camera manager
-	FVector Forward, Right, Up;
+	FVector Forward = FVector::ZeroVector;
+	FVector Right = FVector::ZeroVector;
+	FVector Up = FVector::ZeroVector;
 	FVector GravityDirection = FVector(0,0,-1);
 
 	if (CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
 	{
-		AddMovementInput(Forward, MovementInputValue.X);
-		AddMovementInput(Right, MovementInputValue.Y);
-	}
-
-	if (!FMath::IsNearlyZero(MovementInputValue.X))// forward
-	{
-		AddMovementInput(Forward, MovementInputValue.X,false);
-		UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MovementInputValue.X)
-		// movement direction, scale, forced or not
-	}
-	if (!FMath::IsNearlyZero(MovementInputValue.Y))// right
-	{
-		AddMovementInput(Right, MovementInputValue.Y);
-		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y)
+		if (!FMath::IsNearlyZero(MovementInputValue.X))// forward
+		{
+			AddMovementInput(Forward, MovementInputValue.X, false);
+			UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MovementInputValue.X)
+		}
+		if (!FMath::IsNearlyZero(MovementInputValue.Y))// right
+		{
+			AddMovementInput(Right, MovementInputValue.Y, false);
+			UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y)
+		}
 	}
 
 	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Function is running"));

@@ -10,11 +10,11 @@
 
 // Sets default values for this component's properties
 UUIManagerComp::UUIManagerComp():
+	//Controller
+	OwnerController(nullptr),
 	HUDWidgets(FWidgetDataStorage(EUIMode::Gameplay)),
 	MenuWidgets(FWidgetDataStorage(EUIMode::Menu)),
-	CurrentUIMode(EUIMode::None),
-	//Controller
-	OwnerController(nullptr)
+	CurrentUIMode(EUIMode::None)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	

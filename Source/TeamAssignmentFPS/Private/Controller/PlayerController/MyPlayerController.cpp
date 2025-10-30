@@ -21,14 +21,9 @@
 	//---- Manager Components ----//
 	CameraManager(nullptr),
 	IMCManager(nullptr),
-	UIManager(nullptr),
-
-
-	//----Control----//
-	bIsGamepad(false),
-	bIsInMenu(true)// start from the game menu so true, it is menu
+	UIManager(nullptr)
  {
- 	CameraManager=CreateDefaultSubobject<UCameraManagerComp>(TEXT("Camera Manager Component"));
+ 	CameraManager=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("Camera Manager Component"));
  	IMCManager=CreateDefaultSubobject<UIMCManagerComp>(TEXT("IMC Manager Component"));
  	UIManager=CreateDefaultSubobject<UUIManagerComp>(TEXT("UI Manager Component"));
  }

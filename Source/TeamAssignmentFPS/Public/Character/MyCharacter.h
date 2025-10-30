@@ -24,7 +24,10 @@ enum class ECharacterMovementState:uint8
 
 //Forward Declare
 class ULockonComponent;// to update the forward rotaion that character needs to update
-class UCameraManagerComp;
+class UCameraManagerComponent;
+class UHealthComponent;
+class UEquipmentManagerCompnent;
+class UInventoryManagerComponent;
 //binding function
 struct FInputActionValue;
 
@@ -45,11 +48,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
 	ULockonComponent* LockonComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
-	UCameraManagerComp* CameraManagerComp;
+	UCameraManagerComponent* CameraManagerComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HealthComp")
+	UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
+	UEquipmentManagerCompnent* EquipmentInteractionComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InventoryComp")
+	UInventoryManagerComponent* InventoryComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
-
 	
 	//==Stat
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
@@ -79,9 +87,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance
-	
-
-	
 	
 protected:
 	// Called when the game starts or when spawned

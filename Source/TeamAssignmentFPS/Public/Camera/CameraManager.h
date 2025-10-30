@@ -16,13 +16,13 @@ struct FCameraStateData// this will hold the camera information to be kept (ex. 
 };*/
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UCameraManagerComp : public UActorComponent
+class TEAMASSIGNMENTFPS_API UCameraManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCameraManagerComp();
+	UCameraManagerComponent();
 
 protected:
 	
@@ -71,7 +71,7 @@ public:
 	bool IsTransitioning() const { return bIsTransitioning; }
 
 	bool GetVectorsByCameraAndGravityDirection
-	(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const;// with default z -1.0
+	(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const;// with default z -1.0
 	// this is for providing character the forward and right vector based on the camera rotation and gravity direction
 	// gravity direction is neeeded to prevent actor tring to move underground when it trys to go forward
 

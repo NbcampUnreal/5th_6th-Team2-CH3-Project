@@ -11,32 +11,32 @@
 #include "Debug/UELOGCategories.h"
 
 
-UCameraManagerComp::UCameraManagerComp()
+UCameraManagerComponent::UCameraManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;// no need to use tick any more
 
 }
 
-void UCameraManagerComp::BeginPlay()
+void UCameraManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 
-void UCameraManagerComp::ActivateCameraManager()
+void UCameraManagerComponent::ActivateCameraManager()
 {
 	bIsActivated = true;
 
 	UE_LOG(Camera_Log,Log, TEXT("UCameraManagerComp::ActivateCameraManager->CameraManager Activated"))
 }
 
-void UCameraManagerComp::DeactivateCameraManager()
+void UCameraManagerComponent::DeactivateCameraManager()
 {
 	bIsActivated = false;
 	UE_LOG(Camera_Log, Log, TEXT("UCameraManagerComp::ActivateCameraManagerCamera Manager Deactivated."));
 }
 
-void UCameraManagerComp::SetActiveCameraRig(ACameraRig* NewRig)
+void UCameraManagerComponent::SetActiveCameraRig(ACameraRig* NewRig)
 {
 	if (!bIsActivated || !NewRig)
 	{
@@ -62,7 +62,7 @@ void UCameraManagerComp::SetActiveCameraRig(ACameraRig* NewRig)
 		*NewRig->GetCameraRigName().ToString());
 }
 
-void UCameraManagerComp::TransitionToTargetRig(ACameraRig* NewRig, float BlendTime)
+void UCameraManagerComponent::TransitionToTargetRig(ACameraRig* NewRig, float BlendTime)
 {
 	if (!bIsActivated)
 	{
@@ -101,7 +101,7 @@ void UCameraManagerComp::TransitionToTargetRig(ACameraRig* NewRig, float BlendTi
 
 
 
-bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
+bool UCameraManagerComponent::GetVectorsByCameraAndGravityDirection(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
 {
 	if (!GetWorld())
 	{
@@ -115,6 +115,8 @@ bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityD
 		UE_LOG(Camera_Log, Error, TEXT("UCameraManagerComp::GetVectorsByCameraAndGravityDirection->Invalid PlayerCameraManager"));
 		return false;
 	}
+	/*//Temp
+	UE_LOG(Camera_Log, Error, TEXT("chekcing"));*/
 	
 	//rotate the camera rotaion to match with upvector with -gravity direction
 	FRotator CameraRotation = PlayerCameraManager->GetCameraRotation();
@@ -123,11 +125,20 @@ bool UCameraManagerComp::GetVectorsByCameraAndGravityDirection(FVector& GravityD
 	FVector TargetUpVector=-GravityDirection.GetSafeNormal();
 
 	//match the camera up vector with TargetUpVector by rotating pitch of the camera rotation
-	FRotator AlignedCameraRotation = UKismetMathLibrary::MakeRotFromXZ(CameraForwardVector, TargetUpVector);
+	const FVector ProjectedForward = FVector::VectorPlaneProject(CameraForwardVector, TargetUpVector).GetSafeNormal();
 
-	Forward=UKismetMathLibrary::GetForwardVector(AlignedCameraRotation);
-	Right=UKismetMathLibrary::GetRightVector(AlignedCameraRotation);
-	UpVector=UKismetMathLibrary::GetUpVector(AlignedCameraRotation);
+	if (ProjectedForward.IsNearlyZero())// when the camera is looking strait down to the surface
+	{
+		Forward = FVector::CrossProduct(TargetUpVector, FVector::RightVector).GetSafeNormal();
+	}
+	else
+	{
+		Forward = ProjectedForward;
+	}
+
+	// Recompute right and up
+	Right = FVector::CrossProduct(TargetUpVector, Forward).GetSafeNormal();
+	UpVector = -TargetUpVector;
 
 	return true;
 }
