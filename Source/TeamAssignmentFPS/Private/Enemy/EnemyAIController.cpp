@@ -3,10 +3,11 @@
 
 #include "Enemy/EnemyAIController.h"
 #include "NavigationSystem.h"
-#include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Enemy/EnemyBaseCharacter.h"
+#include "Debug/UELOGCategories.h"
+#include "BrainComponent.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -17,15 +18,65 @@ void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	//EnemyState = EEnemyState::EES_Idle;
 
-	if (BlackboardComp && Player)
+	DefaultSettingBlackBoard();
+	StartBehaviorTree();
+	
+
+
+}
+
+void AEnemyAIController::DefaultSettingBlackBoard()
+{
+	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
+	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!Enemy)
 	{
-		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Player);
-		BlackboardComp->SetValueAsBool(TEXT("CanChasingTarget"), true);
+		return;
+	}
+	if (!Player)
+	{
+		return;
 	}
 
-	StartBehaviorTree();
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Player);
+		//BlackboardComp->SetValueAsEnum(TEXT("EnemyState"), static_cast<uint8>(Enemy->GetEnemyState()));
+		BlackboardComp->SetValueAsBool(TEXT("CanChasingTarget"), true);
+		BlackboardComp->SetValueAsFloat(TEXT("EnemyAttackRange"), Enemy->GetEnemyData().Range);
+	}
+
+	Enemy->OnEnemyStateChanged.BindLambda([this](EEnemyState NewState)
+	{
+		if (BlackboardComp)
+		{
+			BlackboardComp->SetValueAsEnum(TEXT("EnemyState"), (uint8)NewState);
+			//UE_LOG(Enemy_Log, Error, TEXT("EnemyStateChanged"));
+		}
+
+		if (NewState == EEnemyState::EES_Dead)
+		{
+			StopBehaviorTree();
+		}
+
+	});
+
+}
+
+void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+	Super::OnMoveCompleted(RequestID, Result);
+
+	//UE_LOG(Enemy_Log, Error, TEXT("Move Completed"));
+
+	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
+
+	
+	Enemy->EnemyAttack();
+	
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
@@ -38,10 +89,26 @@ void AEnemyAIController::StartBehaviorTree()
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
+
 	}
-	else
+}
+
+void AEnemyAIController::StopBehaviorTree()
+{
+	/*if (BehaviorTreeAsset)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Not Exist BehaviorTree"));
+		
+
+		StopBehaviorTree();
+	}*/
+
+	
+
+	if (UBrainComponent* Brain = BrainComponent)
+	{
+		Brain->StopLogic(TEXT("Dead"));
+		UE_LOG(Enemy_Log, Warning, TEXT("Stop Behavior tree"));
+		
 	}
 }
 

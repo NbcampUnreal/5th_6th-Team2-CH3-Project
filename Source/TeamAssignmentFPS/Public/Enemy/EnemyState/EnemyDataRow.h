@@ -18,10 +18,13 @@ public:
 	EEnemyType EnemyType;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	int32 MaxHP;
+	TSubclassOf<AActor> EnemyClass;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float MoveSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxHP;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float HeightMinRatio;
@@ -40,5 +43,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Score;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	float SpawnChance;
 };
 
