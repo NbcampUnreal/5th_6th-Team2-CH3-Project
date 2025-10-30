@@ -15,7 +15,7 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	//Movement->bOrientRotationToMovement = true;
+	Movement->bOrientRotationToMovement = true;
 
 	Movement->MaxWalkSpeed = 250.f;
 
@@ -42,6 +42,9 @@ void AEnemyBaseCharacter::BeginPlay()
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
 	HealthComponent->OnDamage.BindUObject(this, &AEnemyBaseCharacter::EnemyTakeDamage);
+	//Enemy->OnEnemyDead.BindUObject(this, &GamestateManager::AddScore);
+
+	
 
 	HealthComponent->SetMaxHealth(100);
 	HealthComponent->SetCurrentHealth(100);
@@ -49,7 +52,7 @@ void AEnemyBaseCharacter::BeginPlay()
 
 void AEnemyBaseCharacter::EnemyAttack()
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
+	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
 
 	if (EnemyState == EEnemyState::EES_Dead)
 	{
@@ -75,6 +78,8 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
 {
 	//데미지 받을 때 호출할 함수
 
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
+
 	if (GetEnemyState() == EEnemyState::EES_Spawn)
 	{
 		return;
@@ -82,18 +87,20 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
 
 	ChangeEnemyState(EEnemyState::EES_Damaged);
 
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
+	
 }
 
 void AEnemyBaseCharacter::EnemyDead()
 {
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
+
 	SetEnemyNoCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
 	
-
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
+	Destroy();
+	
 }
 
 void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)

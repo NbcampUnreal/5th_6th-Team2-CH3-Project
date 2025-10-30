@@ -23,6 +23,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void EnemyDead() override;
+	virtual void EnemyTakeDamage(FDamageInfo DamageInfo) override;
 private:
 
 	UPROPERTY(VisibleAnywhere)

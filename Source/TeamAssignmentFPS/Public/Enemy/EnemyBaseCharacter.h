@@ -77,7 +77,7 @@ public:
 	virtual void EnemyAttack();
 
 	UFUNCTION()
-	void EnemyDead();
+	virtual void EnemyDead();
 
 protected:
 	virtual void BeginPlay() override;
@@ -95,10 +95,9 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	virtual void EnemyAttackEnd();
+	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
 
-	void EnemyTakeDamage(FDamageInfo DamageInfo);
-
-
+	//void EnemyDestroy();
 
 private:
 

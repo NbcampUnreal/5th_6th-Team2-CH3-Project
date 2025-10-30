@@ -15,11 +15,21 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 
 void AMeleeEnemyCharacter::AttackCollisionOn()
 {
+	if (!AttackCollision)
+	{
+		return;
+	}
+
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AMeleeEnemyCharacter::AttackCollisionOff()
 {
+	if (!AttackCollision)
+	{
+		return;
+	}
+
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -27,9 +37,29 @@ void AMeleeEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &AMeleeEnemyCharacter::OnAttackOverlap);
 
 }
+
+void AMeleeEnemyCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
+{
+	Super::EnemyTakeDamage(DamageInfo);
+
+	AttackCollisionOff();
+
+	UE_LOG(Enemy_Log, Error, TEXT("Melee Damaged"));
+}
+
+void AMeleeEnemyCharacter::EnemyDead()
+{
+	Super::EnemyDead();
+
+	AttackCollisionOff();
+
+	UE_LOG(Enemy_Log, Error, TEXT("Melee Dead"));
+}
+
 
 void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -64,3 +94,4 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 }
 
 
+// 근접 Enemy는 애니메이션 추가 후 motion warping을 사용해서 플레이어 캐릭터의 방향으로 공격을 할 수 있도록 설정
