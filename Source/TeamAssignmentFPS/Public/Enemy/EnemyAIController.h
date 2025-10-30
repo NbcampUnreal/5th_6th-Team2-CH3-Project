@@ -34,6 +34,7 @@ protected:
 
 private:
 	void StartBehaviorTree();
+	void StopBehaviorTree();
 
 public:
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }

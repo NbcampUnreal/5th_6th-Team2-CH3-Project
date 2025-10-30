@@ -14,4 +14,6 @@ class TEAMASSIGNMENTFPS_API AGameModeManager : public AGameMode
 {
 	GENERATED_BODY()
 	
+public: 
+	AGameModeManager();
 };

@@ -17,7 +17,19 @@ class TEAMASSIGNMENTFPS_API AMeleeEnemyCharacter : public AEnemyBaseCharacter
 public:
 	AMeleeEnemyCharacter();
 
+	void AttackCollisionOn();
+	void AttackCollisionOff();
+
 protected:
-	
+	virtual void BeginPlay() override;
+
+private:
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCapsuleComponent> AttackCollision;
+
+
+	UFUNCTION()
+	void OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

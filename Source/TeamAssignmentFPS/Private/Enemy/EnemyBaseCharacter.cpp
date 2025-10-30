@@ -1,21 +1,18 @@
-
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Enemy/EnemyAIController.h"
-#include "Debug/UELOGCategories.h"
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyState/EnemyDataRow.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Components/CapsuleComponent.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
-	//PrimaryActorTick.bCanEverTick = false;
-
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	//Movement->bOrientRotationToMovement = true;
@@ -23,6 +20,20 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	Movement->MaxWalkSpeed = 250.f;
 
 	EnemyData.Range = 200.f;
+	EnemyData.Damage = 50;
+}
+
+AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
+{
+	AIControllerClass = AEnemyAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
+
+	//PrimaryActorTick.bCanEverTick = false;
+	InitializeEnemyData(InData);
 }
 
 
@@ -30,11 +41,20 @@ void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
+	HealthComponent->OnDamage.BindUObject(this, &AEnemyBaseCharacter::EnemyTakeDamage);
+
+	HealthComponent->SetMaxHealth(100);
+	HealthComponent->SetCurrentHealth(100);
 }
 
 void AEnemyBaseCharacter::EnemyAttack()
 {
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
+
+	if (EnemyState == EEnemyState::EES_Dead)
+	{
+		return;
+	}
 
 	ChangeEnemyState(EEnemyState::EES_Attack);
 
@@ -46,12 +66,12 @@ void AEnemyBaseCharacter::EnemyAttack()
 
 void AEnemyBaseCharacter::EnemyAttackEnd()
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack End"));
+	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack End"));
 
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
-void AEnemyBaseCharacter::TakeDamage(FDamageInfo)
+void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
 {
 	//데미지 받을 때 호출할 함수
 
@@ -61,13 +81,26 @@ void AEnemyBaseCharacter::TakeDamage(FDamageInfo)
 	}
 
 	ChangeEnemyState(EEnemyState::EES_Damaged);
+
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
+}
+
+void AEnemyBaseCharacter::EnemyDead()
+{
+	SetEnemyNoCollision();
+	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
+
+	ChangeEnemyState(EEnemyState::EES_Dead);
+	
+
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
 }
 
 void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
 {
 	EnemyData.EnemyType = InData.EnemyType;
-	HealthComponent->SetMaxHealth(InData.MaxHP);
-	HealthComponent->SetCurrentHealth(HealthComponent->GetMaxHealth());
+	EnemyData.MaxHealth = InData.MaxHP;
+	EnemyData.CurrentHealth = InData.MaxHP;
 	EnemyData.MoveSpeed = InData.MoveSpeed;
 	EnemyData.HeightMinRatio = InData.HeightMinRatio;
 	EnemyData.HeightMaxRatio = InData.HeightMaxRatio;
@@ -82,16 +115,15 @@ void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
 	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
 }
 
-void AEnemyBaseCharacter::EnemyDead()
-{
-	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
-
-	ChangeEnemyState(EEnemyState::EES_Dead);
-}
 
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
 	EnemyState = NewEnemyState;
 
 	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
+}
+
+void AEnemyBaseCharacter::SetEnemyNoCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
