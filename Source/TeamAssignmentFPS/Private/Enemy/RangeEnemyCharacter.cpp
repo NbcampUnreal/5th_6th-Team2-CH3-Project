@@ -19,7 +19,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
-	if (!Projectile && ProjectileSpawn)
+	if (!Projectile || !ProjectileSpawn)
 	{
 		return;
 	}
