@@ -61,73 +61,86 @@ void ATrapBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+/**
+ * 오버랩 이벤트 핸들러
+ * 캐릭터가 트랩과 오버랩하면 트랩 발동
+ */
 void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	// Check if the overlapping actor is a character
+	// 오버랩한 액터가 캐릭터인지 확인
 	AMyCharacter* Character = Cast<AMyCharacter>(OtherActor);
 	if (Character)
 	{
-		// Apply damage based on trap type
+		// 트랩 타입에 따라 데미지 적용
 		if (DamageType == ETrapDamageType::SingleTarget)
 		{
-			ApplySingleTargetDamage(Character);
+			ApplySingleTargetDamage(Character); // 단일 타겟 데미지
 		}
 		else if (DamageType == ETrapDamageType::AreaOfEffect)
 		{
-			ApplyAreaOfEffectDamage();
+			ApplyAreaOfEffectDamage(); // 광역 데미지
 		}
 
-		// Play explosion effect
+		// 폭발 이펙트 재생
 		if (ExplosionEffect)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 		}
 
-		// Play explosion sound
+		// 폭발 사운드 재생
 		if (ExplosionSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 		}
 
-		// Destroy the trap
+		// 트랩 제거
 		Destroy();
 	}
 }
 
+/**
+ * 단일 타겟 데미지 적용
+ * 트랩을 밟은 캐릭터 한 명에게만 데미지를 줌
+ */
 void ATrapBase::ApplySingleTargetDamage(AMyCharacter* Character)
 {
 	if (!Character) return;
 
-	// Get HealthComponent from the character
+	// 캐릭터의 HealthComponent 가져오기
 	UHealthComponent* HealthComp = Character->FindComponentByClass<UHealthComponent>();
 	if (HealthComp)
 	{
-		// Create damage info
+		// 데미지 정보 생성
 		FDamageInfo DamageInfo;
-		DamageInfo.DamageCauser = this;
-		DamageInfo.DamageAmount = Damage;
-		DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		DamageInfo.DamageCauser = this; // 데미지 원인 (이 트랩)
+		DamageInfo.DamageAmount = Damage; // 데미지 양
+		DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal(); // 데미지 방향
 
-		// Apply damage through HealthComponent
+		// HealthComponent를 통해 데미지 전달
 		HealthComp->GetDamage_Implementation(DamageInfo);
 	}
 }
 
+/**
+ * 광역 데미지 적용
+ * AOERadius 반경 내 모든 캐릭터에게 데미지를 줌
+ * 같은 캐릭터에게 중복 데미지를 주지 않음
+ */
 void ATrapBase::ApplyAreaOfEffectDamage()
 {
 	if (!GetWorld()) return;
 
-	// Perform sphere overlap to find all characters in range
+	// 구체 오버랩으로 반경 내 모든 캐릭터 찾기
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(AOERadius);
 
 	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
+	QueryParams.AddIgnoredActor(this); // 자기 자신은 제외
 
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn); // Pawn 타입만 검색
 
 	GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
@@ -138,32 +151,32 @@ void ATrapBase::ApplyAreaOfEffectDamage()
 		QueryParams
 	);
 
-	// Track characters that have already been damaged
+	// 이미 데미지를 받은 캐릭터 추적 (중복 데미지 방지)
 	TSet<class AMyCharacter*> DamagedCharacters;
 
-	// Apply damage to all overlapped characters
+	// 오버랩된 모든 캐릭터에게 데미지 적용
 	for (const FOverlapResult& Result : OverlapResults)
 	{
 		AMyCharacter* Character = Cast<AMyCharacter>(Result.GetActor());
 		if (Character)
 		{
-			// Skip if already damaged
+			// 이미 데미지를 받았다면 건너뛰기
 			if (DamagedCharacters.Contains(Character))
 				continue;
 
 			UHealthComponent* HealthComp = Character->FindComponentByClass<UHealthComponent>();
 			if (HealthComp)
 			{
-				// Create damage info
+				// 데미지 정보 생성
 				FDamageInfo DamageInfo;
-				DamageInfo.DamageCauser = this;
-				DamageInfo.DamageAmount = Damage;
-				DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+				DamageInfo.DamageCauser = this; // 데미지 원인 (이 트랩)
+				DamageInfo.DamageAmount = Damage; // 데미지 양
+				DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal(); // 데미지 방향
 
-				// Apply damage through HealthComponent
+				// HealthComponent를 통해 데미지 전달
 				HealthComp->GetDamage_Implementation(DamageInfo);
 
-				// Add to damaged characters set
+				// 데미지를 받은 캐릭터 목록에 추가
 				DamagedCharacters.Add(Character);
 			}
 		}
