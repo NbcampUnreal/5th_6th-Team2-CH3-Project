@@ -52,7 +52,6 @@ private:
 
 	FTimerHandle ScrollEndTimerHandle;// for setting timer
 	
-	float ScrollSensitivity = 1.f;//default
 	float ScrollEndDelay=0.2f;
 
 	float PreviousScrollSign=0.f;//+ or - or 0
@@ -89,10 +88,10 @@ public:
 	UFUNCTION()
 	void SwtichWeapon_PC(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 
-	void SetCurrentEquipment(AActor* NewEquipment);
-	
 	UFUNCTION()
 	void SwtichWeapon_GP(const FInputActionValue& Value);
+
+	void SetCurrentEquipment(AActor* NewEquipment);
 
 	UFUNCTION()
 	void SelectItem_PC(const FInputActionValue& Value);//

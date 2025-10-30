@@ -169,11 +169,11 @@ void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
 	float ScrollValue = Value.Get<float>();
 	if (ScrollValue == 0.f)
 		return;
-
+	
 	const float Sign = ScrollValue > 0.f ? 1.f : -1.f;
-	const float NormalizedDelta = ScrollValue * ScrollSensitivity;
 
-	// === 1. Handle direction change ===
+
+	//===  Handle direction change ===//
 	if (bIsScrolling && Sign != PreviousScrollSign)
 	{
 		// End previous chunk immediately
@@ -182,7 +182,7 @@ void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
 		bDidScrollStarted = false;
 	}
 
-	// === 2. Handle new chunk start ===
+	//=== Handle new chunk start ===//
 	if (!bIsScrolling)
 	{
 		OnScrollChunkStart(Sign);
@@ -191,16 +191,17 @@ void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
 		PreviousScrollSign = Sign;
 	}
 
-	// === 3. Restart timer for this chunk ===
-	GetWorld()->GetTimerManager().ClearTimer(ScrollEndTimerHandle);
+	//===  Restart timer for this chunk ===//
+	GetWorld()->GetTimerManager().ClearTimer(ScrollEndTimerHandle);//reset timer
+	//set new timer
 	GetWorld()->GetTimerManager().SetTimer(
 		ScrollEndTimerHandle,
-		FTimerDelegate::CreateUObject(this, &UEquipmentManagerCompnent::OnScrollChunkEnd, Sign),
+		FTimerDelegate::CreateUObject(this, &UEquipmentManagerCompnent::OnScrollChunkEnd, Sign),// make delegate to trigger function with delegate
 		ScrollEndDelay,
 		false
 	);
 
-	// === 4. Perform step logic (each notch or accumulated movement) ===
+	//===  Perform step logic (per scroll chunk movement) ===//
 	OnScrollChunkStep(Sign);
 
 }
