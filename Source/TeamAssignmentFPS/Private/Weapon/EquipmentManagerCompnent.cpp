@@ -30,6 +30,18 @@ void UEquipmentManagerCompnent::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UEquipmentManagerCompnent::SetPlacementComponent(USceneComponent* NewPlacement)
+{
+	if (!NewPlacement)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+		TEXT("UEquipmentManagerCompnent::SetPlacementComponent->Invaild USceneComp for Placement"));
+		return;
+	}
+
+	Placement = NewPlacement;
+}
+
 
 void UEquipmentManagerCompnent::OnScrollChunkStart(float ScrollDirection)
 {
@@ -75,6 +87,16 @@ void UEquipmentManagerCompnent::OnScrollChunkEnd(float Direction)
 void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
 {
 	 
+}
+
+void UEquipmentManagerCompnent::TestEquipWeapon(AActor* SettingWeapon)
+{
+	SetCurrentEquipment(SettingWeapon);
+
+	FVector PlacementLocation=Placement->GetComponentLocation();
+	FRotator PlacementRotation=Placement->GetComponentRotation();
+	
+	SettingWeapon->SetActorLocationAndRotation(PlacementLocation, PlacementRotation);
 }
 
 // Called every frame

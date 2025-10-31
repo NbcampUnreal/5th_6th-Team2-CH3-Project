@@ -2,11 +2,22 @@
 
 
 #include "UI/Widget/Healthbar.h"
+#include "Debug/UELOGCategories.h"
 
+
+void UHealthbar::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+}
 
 void UHealthbar::NativeConstruct()// this is not 
 {
 	Super::NativeConstruct();
+}
+
+void UHealthbar::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 }
 
 void UHealthbar::NativeDestruct()

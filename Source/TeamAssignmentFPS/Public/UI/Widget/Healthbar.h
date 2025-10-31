@@ -28,7 +28,10 @@ class TEAMASSIGNMENTFPS_API UHealthbar : public UUserWidget
 
 
 protected:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;//begin play of widget
+	virtual void NativeOnInitialized() override;
+	
 	// this should be for basically creating and initializing hpbar
 	
 	virtual void NativeDestruct() override;// for destruction

@@ -21,12 +21,21 @@ public:
 	
 protected:
 
+	int32 WeaponSlotCount=6;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Weapon")
-	TMap<FName, FWeaponData> Weapons;
+	TMap<uint8, FWeaponData> Weapons;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Weapon")
+	uint8 CurrentWeaponIndex;
 
+	int32 ItemSlotCount=6;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Item")
-	TMap<FName, FItemData> Items;
+	TMap<uint8, FItemData> Items;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Item")
+	uint8 CurrentItemIndex;
+
+
 	
+
 	
 
 protected:
@@ -37,6 +46,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	AActor* GetWeaponOrItemFromDataRow();
+	AActor* GetWeaponFromInventoryByIndex(uint8 Index);
 		
 };

@@ -58,10 +58,13 @@ private:
 	bool bIsScrolling=false;
 	bool bDidScrollStarted=false;
 
-	
+	//Test Temp
+	UFUNCTION(BlueprintCallable, Category="Equipment")
+	void SetPlacementComponent(USceneComponent* NewPlacement);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	//void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
 	void SetCurrentWeapon(AActor* NewWeapon) {CurrentWeapon = NewWeapon;}
 	void SetCurrentItem(AActor* NewItem) {CurrentItem = NewItem;}
 
@@ -71,7 +74,13 @@ protected:
 	void OnScrollChunkEnd(float ScrollDirection);
 	
 	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);	
-public:	
+public:
+
+	//Temp for controlling weapon without inventory( weapon in the editor )
+	UFUNCTION(BlueprintCallable, Category="Equipment")
+	void TestEquipWeapon(AActor* SettingWeapon);
+
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -98,6 +107,8 @@ public:
 
 	UFUNCTION()
 	void SelectItem_GP(const FInputActionValue& Value);//
+	
+
 
 	//---- Weapn and Item Interaction ----//
 
