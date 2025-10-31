@@ -98,6 +98,8 @@ public:
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool GetDeprojectedCursorLocation(FVector& CursorWorldLocation);
 	
 protected:
 	void UpdateCameraBoomLocation();// middle location by BaseRootToTargetAlpha

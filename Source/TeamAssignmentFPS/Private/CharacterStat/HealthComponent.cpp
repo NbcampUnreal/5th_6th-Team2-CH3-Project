@@ -8,7 +8,6 @@ UHealthComponent::UHealthComponent():
 	MaxHeath(100),
 	CurrentHealth(MaxHeath)
 {
-
 	PrimaryComponentTick.bCanEverTick = false;
 	bIsAlive = CurrentHealth>0;
 }
@@ -46,13 +45,16 @@ void UHealthComponent::KilledByDamage()
 
 void UHealthComponent::GetDamage_Implementation(FDamageInfo Damage)// for now, just the damage amount
 {
-	CurrentHealth = FMath::Clamp(CurrentHealth-Damage.DamageAmount,0,MaxHeath);
+	CurrentHealth -=Damage.DamageAmount;
+	CurrentHealth=FMath::Clamp(CurrentHealth,0,MaxHeath);//clamp the 
 	OnHPChanged.Broadcast(CurrentHealth);
 
-	/*if (OnDamage.IsBound())
+	/*
+	 if (OnDamage.IsBound())
 	{
 		OnDamage.Execute(Damage);//signal to the owner to react based on the damage information
-	}*/
+	}
+	*/
 
 	OnDamage.ExecuteIfBound(Damage);// or use this!!! simple!
 	
