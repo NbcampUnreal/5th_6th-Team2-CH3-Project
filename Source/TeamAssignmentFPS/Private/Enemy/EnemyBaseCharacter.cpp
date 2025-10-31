@@ -13,28 +13,19 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
-
+	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	
+	
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bOrientRotationToMovement = true;
 
 	Movement->MaxWalkSpeed = 250.f;
 
-	EnemyData.Range = 200.f;
+	EnemyData.Range = 100.f;
 	EnemyData.Damage = 50;
 }
 
-AEnemyBaseCharacter::AEnemyBaseCharacter(FEnemyDataRow& InData)
-{
-	AIControllerClass = AEnemyAIController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-
-	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
-
-	//PrimaryActorTick.bCanEverTick = false;
-	InitializeEnemyData(InData);
-}
 
 
 void AEnemyBaseCharacter::BeginPlay()
@@ -74,9 +65,9 @@ void AEnemyBaseCharacter::EnemyAttackEnd()
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
-void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
+void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 {
-	//µ¥¹ÌÁö ¹ÞÀ» ¶§ È£ÃâÇÒ ÇÔ¼ö
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
 
@@ -84,17 +75,29 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo)
 	{
 		return;
 	}
-
+	
+	//Knockback();
+	
 	ChangeEnemyState(EEnemyState::EES_Damaged);
-
 	
 }
+
+// void AEnemyBaseCharacter::Knockback()
+// {
+// 	if (EnemyState == EEnemyState::EES_Dead)
+// 	{
+// 		return;
+// 	}
+// 	FVector D = GetActorForwardVector();
+// 	SetActorLocation(GetActorLocation()+ D * 100.f);
+// 	
+// }
 
 void AEnemyBaseCharacter::EnemyDead()
 {
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
 
-	SetEnemyNoCollision();
+	DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
@@ -130,7 +133,7 @@ void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
 }
 
-void AEnemyBaseCharacter::SetEnemyNoCollision()
+void AEnemyBaseCharacter::DisableEnemyCollision()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

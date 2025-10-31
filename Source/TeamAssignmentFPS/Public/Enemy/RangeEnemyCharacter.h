@@ -20,10 +20,11 @@ protected:
 	virtual void EnemyAttack() override;
 	
 private:
-
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> ProjectileSpawn;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<AProjectileBase> Projectile;
+
+	void LookAtPlayer();
 };

@@ -17,8 +17,8 @@ class TEAMASSIGNMENTFPS_API AMeleeEnemyCharacter : public AEnemyBaseCharacter
 public:
 	AMeleeEnemyCharacter();
 
-	void AttackCollisionOn();
-	void AttackCollisionOff();
+	void EnableAttackCollision();
+	void DisableAttackCollision();
 
 protected:
 	virtual void BeginPlay() override;

@@ -13,7 +13,7 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 	AttackCollision->SetupAttachment(RootComponent);
 }
 
-void AMeleeEnemyCharacter::AttackCollisionOn()
+void AMeleeEnemyCharacter::EnableAttackCollision() 
 {
 	if (!AttackCollision)
 	{
@@ -23,7 +23,7 @@ void AMeleeEnemyCharacter::AttackCollisionOn()
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
-void AMeleeEnemyCharacter::AttackCollisionOff()
+void AMeleeEnemyCharacter::DisableAttackCollision() 
 {
 	if (!AttackCollision)
 	{
@@ -46,8 +46,7 @@ void AMeleeEnemyCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 {
 	Super::EnemyTakeDamage(DamageInfo);
 
-	AttackCollisionOff();
-
+	DisableAttackCollision();
 	UE_LOG(Enemy_Log, Error, TEXT("Melee Damaged"));
 }
 
@@ -55,7 +54,7 @@ void AMeleeEnemyCharacter::EnemyDead()
 {
 	Super::EnemyDead();
 
-	AttackCollisionOff();
+	DisableAttackCollision();
 
 	UE_LOG(Enemy_Log, Error, TEXT("Melee Dead"));
 }
@@ -65,6 +64,7 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 {
 	if (EnemyState != EEnemyState::EES_Attack)
 	{
+		UE_LOG(Enemy_Log, Warning, TEXT("not Attack State"));
 		return;
 	}
 
@@ -85,7 +85,7 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 	{
 		if (IInterfaceHP* Interface = Cast<IInterfaceHP>(HealthComp))
 		{
-			UE_LOG(Enemy_Log, Warning, TEXT("Attck Success"));
+			UE_LOG(Enemy_Log, Warning, TEXT("Attack Success"));
 
 			Interface->Execute_GetDamage(HealthComp, DamageInfo);
 		}
@@ -94,4 +94,5 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 }
 
 
-// ±ÙÁ¢ Enemy´Â ¾Ö´Ï¸ÞÀÌ¼Ç Ãß°¡ ÈÄ motion warpingÀ» »ç¿ëÇØ¼­ ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍÀÇ ¹æÇâÀ¸·Î °ø°ÝÀ» ÇÒ ¼ö ÀÖµµ·Ï ¼³Á¤
+// ï¿½ï¿½ï¿½ï¿½ Enemyï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ motion warpingï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+// uprimitivecomponent collision component;
