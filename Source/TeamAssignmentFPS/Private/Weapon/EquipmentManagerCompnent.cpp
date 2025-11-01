@@ -7,14 +7,13 @@
 #include "Item/ItemBase.h"
 #include "InputAction.h"
 #include "Interface/InputReactionInterface.h"
+#include "Interface/EquipmentInterface.h"
 
 #include "Debug/UELOGCategories.h"//debug log
 
 
 // Sets default values for this component's properties
 UEquipmentManagerCompnent::UEquipmentManagerCompnent():
-	CurrentWeapon(nullptr),
-	CurrentItem(nullptr),
 	CurrentEquipment(nullptr),
 	Placement(nullptr)// where to put equipment
 {
@@ -87,6 +86,41 @@ void UEquipmentManagerCompnent::OnScrollChunkEnd(float Direction)
 void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
 {
 	 
+}
+
+void UEquipmentManagerCompnent::SpawnCurrentEquipment()
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment is Invalid."));
+		return;
+	}
+
+	const FTransform SpawnTransform=Placement->GetComponentTransform();
+	
+	AActor*SpawnedActor= GetWorld()->SpawnActor<AActor>(CurrentEquipment->GetClass(),SpawnTransform);
+	if (!SpawnedActor)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Equipment Spawing Failed."));
+		return;
+	}
+
+	if (!SpawnedActor->Implements<UEquipmentInterface>())// when ther is no equipment interface
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment does not have equipment interface"));
+		// but still use it, some could have no interface for calling equipped and unequipped
+	}
+	else// when there is equipment interface
+	{
+		IEquipmentInterface::Execute_OnEquipped(SpawnedActor);
+	}
+
+	//SpawnedActor->SetActorTransform(SpawnTransform);/--> no need, the spawn used the transform
+	UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> CurrentEquipment is Set."));
 }
 
 void UEquipmentManagerCompnent::TestEquipWeapon(AActor* SettingWeapon)
@@ -355,9 +389,39 @@ void UEquipmentManagerCompnent::TriggerInput_Canceled(const FInputActionValue& V
 		return;
 	}
 
-	// should this be treated as a release or just cancle and dont trigger the function? not so sure fuck
-	IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
+	// should this be treated as a release or just cancle and don't trigger the function? not so sure fuck
+	//IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
+
+	//cancled situation needs to be seperate from the completed case. just dont finish the prior process
 
 	CurrentHoldingTime = 0.f;
 	bDidHoldStarted = false;
+}
+
+void UEquipmentManagerCompnent::ReloadWeapon(const FInputActionValue& Value)
+{
+	if (CurrentEquipmentType!=EEquipmentType::Weapon)
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerCompnent::ReloadWeapon-> not holding weapon currently."));
+		return;
+	}
+	
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerCompnent::ReloadWeapon-> Invalid Equipment."));
+		return;
+	}
+
+	if (!CurrentEquipment->Implements<UWeaponInterface>())// when the current equipment does not have the reload interface function
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerCompnent::ReloadWeapon-> Invalid Equipment."));
+		return;
+	}
+
+	//chekcing completed
+	IWeaponInterface::Execute_OnReloadInputPressed(CurrentEquipment);
+	
 }

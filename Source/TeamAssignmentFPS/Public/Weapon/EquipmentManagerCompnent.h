@@ -14,6 +14,18 @@ class AItemBase;
 
 struct FInputActionValue;
 
+
+UENUM()
+enum class EEquipmentType:uint8
+{
+	None UMETA(DisplayName = "None"),// nothing to hold
+	Weapon UMETA(DisplayName="Weapon"),
+	Item UMETA(DisplayName="Item"),
+};
+
+
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TEAMASSIGNMENTFPS_API UEquipmentManagerCompnent : public UActorComponent
 {
@@ -24,22 +36,34 @@ public:
 	UEquipmentManagerCompnent();
 	
 protected:
+
+
+	// confirmations
+
+	EEquipmentType CurrentEquipmentType=EEquipmentType::None;// default = none
+	
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
 	bool bIsEquipping;//is current equipment empty or not*///--> no need, just check CurrentEquipment
 
+	//==== Quick Slot ====//
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Weapon")
+	TMap<uint8/*ID*/,TObjectPtr<AActor>/*Weapon*/> WeaponQuickSlot;
+	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
+	uint8 CurrentWeaponID;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Item")
+	TMap<uint8/*ID*/,TObjectPtr<AActor>/*Item*/> ItemQuickSlot;
+	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
+	uint8 CurrentItemID;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
-	USceneComponent* Placement;
-	
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
-	TObjectPtr<AActor> CurrentWeapon;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
-	TObjectPtr<AActor> CurrentItem;
+	USceneComponent* Placement;// the Scene component of where to attach equipment
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
 
+
+	//==== MouseWheel Tracking ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
 	float TapThreshold=0.2f;//default
 
@@ -61,19 +85,24 @@ private:
 	//Test Temp
 	UFUNCTION(BlueprintCallable, Category="Equipment")
 	void SetPlacementComponent(USceneComponent* NewPlacement);
+
+	// for actually showing up the weapon or the item
+	UFUNCTION(BlueprintCallable, Category="Equipment")
+	void SpawnCurrentEquipment();
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	//void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
-	void SetCurrentWeapon(AActor* NewWeapon) {CurrentWeapon = NewWeapon;}
-	void SetCurrentItem(AActor* NewItem) {CurrentItem = NewItem;}
 
 	//== for mouse scroll detection
 	void OnScrollChunkStart(float ScrollDirection);
 	void OnScrollChunkStep(float ScrollDirection);
 	void OnScrollChunkEnd(float ScrollDirection);
 	
-	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);	
+	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);
+	
+
 public:
 
 	//Temp for controlling weapon without inventory( weapon in the editor )
@@ -114,6 +143,7 @@ public:
 
 	//Actually binded functions
 
+	//-- basic input reactions
 	UFUNCTION()
 	void TriggerInput_Reload(const FInputActionValue& Value);
 	
@@ -132,29 +162,9 @@ public:
 	UFUNCTION()
 	void TriggerInput_Canceled(const FInputActionValue& Value);
 
-/*private:
-	// Helper to call interface on current weapon or item
-	template<typename FuncType>
-	void TryCallingInterface(FuncType Func)
-	{
-		if (!CurrentEquipment)
-		{
-			// no equipment to use
-			//TODO:
-			// 1. send signal to ui manager to spawn no equipment state widget
-			// 2. (error widget), toggle effect on weapon and item slot widget)
-			//3. signal character to react(if ther is anim or task for that)
-			return;
-		}
-		
-		if (!CurrentEquipment->Implements<UInputReactionInterface>())
-		{
-			//when equipment does not have InputReactionInterface
-			return;
-		}
-		
-		//when the obj is valid and obj has interface
-		Func(CurrentEquipment); // Call the lambda or function you passed
-	}*///--> this is now done in the #include "Interface/InputReactionInterface.h"
+	//--- Weapon Interaction
+
+	UFUNCTION()
+	void ReloadWeapon(const FInputActionValue& Value);
 
 };
