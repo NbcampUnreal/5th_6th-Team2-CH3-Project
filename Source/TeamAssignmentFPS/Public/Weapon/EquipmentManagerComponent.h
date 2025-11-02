@@ -17,6 +17,100 @@ class AItemBase;
 struct FInputActionValue;
 
 
+USTRUCT(BlueprintType)
+struct FEquipmentSlot// one slot
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	TObjectPtr<AActor> EquipmentPtr=nullptr;
+
+private:
+	UPROPERTY()
+	int32 EquipmentID=INDEX_NONE;
+
+public:
+	bool InitializeEquipmentSlot(AActor* Equipment,int32 ID);
+
+	int32 GetEquipmentID()const {return EquipmentID;}
+	AActor* GetEquipmentPtr() const {return EquipmentPtr;}
+};
+
+// make Child class of slots (Weapon, Items)
+
+USTRUCT(BlueprintType)
+struct FWeaponSlot:public FEquipmentSlot// one slot
+{
+	GENERATED_BODY()
+
+	/*
+	 TODO: put required infos in here for weapon
+
+	 */
+	
+protected:
+	bool InitializeWeaponData(AActor* Equipment,int32 ID);
+};
+
+USTRUCT(BlueprintType)
+struct FItemSlot:public FEquipmentSlot// one slot
+{
+	GENERATED_BODY()
+	
+private:
+	int32 MAxStackCount=0;
+	int32 CurrentStackCount=INDEX_NONE;
+
+public:
+	int32 GetCurrentStackCount()const {return MAxStackCount;}
+	int32 GetMaxStackCount()const {return CurrentStackCount;}
+
+	void IncrementStackCount();// only increment and decrement with 1 cause the leftover case happens
+	void DecrementStackCount();
+
+	
+	bool InitializeItemData(AActor* Equipment,int32 ID, int32 MaxStackCount);
+};
+
+
+
+
+// slot struct to manage equipments
+USTRUCT(BlueprintType)
+struct FEquipmentQuickSlots//multiple slots
+{
+	GENERATED_BODY()
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Equipment Slot")
+	TMap<uint8/*slot Number*/,TObjectPtr<AActor>/*Equipment*/> EquipmentQuickSlot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Equipment Slot")
+	int32 SlotMaxCount;
+	
+
+private:
+	
+	int32 CurrentEquipmentID=INDEX_NONE;//default
+	int32 UsedSlotCount=0;
+	uint8 CurrentSlotIndex=1;// the main
+	
+	UPROPERTY(VisibleAnywhere, Category = "Equipment Slot")
+	AActor* CurrentSlotEquipment=nullptr;// not currently equipt by player but equipment of current slot index
+	
+public:
+	AActor* GetEquipmentFromCurrentSlot() const { return CurrentSlotEquipment;}
+	uint8 GetCurrentSlotIndex() const { return CurrentSlotIndex; }
+	int32 GetCurrentEquipmentID() const { return CurrentEquipmentID;}
+
+	bool AddToSlot(uint8 SlotIndex, TObjectPtr<AActor> Equipment);
+	bool RemoveFromSlot(uint8 SlotIndex);
+
+};
+//---------------------------------------------------------------------------------------------------------------------
+
+//=========================<< UEquipmentManagerComponent >>============================================================//
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TEAMASSIGNMENTFPS_API UEquipmentManagerComponent : public UActorComponent
 {
@@ -42,15 +136,18 @@ protected:
 	bool bIsEquipping;//is current equipment empty or not*///--> no need, just check CurrentEquipment
 
 	//==== Quick Slot ====//
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Weapon")
-	TMap<uint8/*ID*/,TObjectPtr<AActor>/*Weapon*/> WeaponQuickSlot;
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Weapon")
+	TMap<int32/*ID#1#,TObjectPtr<AActor>/*Weapon#1#> WeaponQuickSlot;
 	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
-	uint8 CurrentWeaponID;
+	int32 CurrentWeaponID;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Item")
-	TMap<uint8/*ID*/,TObjectPtr<AActor>/*Item*/> ItemQuickSlot;
+	TMap<int32/*ID#1#,TObjectPtr<AActor>/*Item#1#> ItemQuickSlot;
 	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
-	uint8 CurrentItemID;
+	int32 CurrentItemID;*/
+
+	TMap<EEquipmentType, FEquipmentQuickSlots> EquipmentSlots;// for weapons, items and more in the future
+	
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
@@ -99,20 +196,24 @@ protected:
 	virtual void BeginPlay() override;
 	//void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
 
-	//== for mouse scroll detection
+private:
+	//== Mouse scroll action
 	void OnScrollChunkStart(float ScrollDirection);
 	void OnScrollChunkStep(float ScrollDirection);
 	void OnScrollChunkEnd(float ScrollDirection);
-	
 	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);
 
-	// fill quick slots 
+
+	// Equipment setting
+	void SpawnEquipmentInSlot(int32 ID,  EEquipmentType Type,TMap<int32, TObjectPtr<AActor>>& Slot);
+
+public:
+
+	// fill quick slots with equipments
 	void UpdateQuickSlots();
 
 	void UpdateWeaponQuickSlots();
 	void UpdateItemQuickSlots();
-
-public:
 
 	//Temp for controlling weapon without inventory( weapon in the editor )
 	UFUNCTION(BlueprintCallable, Category="Equipment")
@@ -155,9 +256,5 @@ public:
 	UFUNCTION()
 	void TriggerInput_Canceled(const FInputActionValue& Value);
 //----------------------------------------------------------------------------------------------------------------------
-
-	//--- Weapon Interaction
-	UFUNCTION()
-	void ReloadWeapon(const FInputActionValue& Value);
 
 };
