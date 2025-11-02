@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Debug/UELOGCategories.h"
+#include "UObject/Object.h"// to use delegate, struct cannot boradcast or execute delegate
 
-USTRUCT(BlueprintType)
-struct FEquipmentSlot// one slot
+UCLASS()
+class TEAMASSIGNMENTFPS_API UEquipmentSlot: public UObject
 {
 	GENERATED_BODY()
+public:
+	/*DECLARE_MULTICAST_DELEGATE(FOnEquipmentChanged);
+	FOnEquipmentChanged OnEquipmentChanged;*/ //temp delegate. find the required params 
 	
 	UPROPERTY()
 	TObjectPtr<AActor> EquipmentPtr=nullptr;
@@ -26,8 +29,8 @@ public:
 
 // make Child class of slots (Weapon, Items)
 
-USTRUCT(BlueprintType)
-struct FWeaponSlot:public FEquipmentSlot// one slot
+UCLASS()
+class TEAMASSIGNMENTFPS_API UWeaponSlot:public UEquipmentSlot// one slot
 {
 	GENERATED_BODY()
 
@@ -40,8 +43,8 @@ protected:
 	bool InitializeWeaponData(AActor* Equipment,int32 ID);
 };
 
-USTRUCT(BlueprintType)
-struct FItemSlot:public FEquipmentSlot// one slot
+UCLASS()
+class TEAMASSIGNMENTFPS_API UItemSlot:public UEquipmentSlot// one slot
 {
 	GENERATED_BODY()
 	

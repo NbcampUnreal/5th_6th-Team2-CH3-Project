@@ -4,7 +4,7 @@
 #include "Item/QuickSlotsBase.h"
 // for EquipmentQuickSlot
 
-bool FEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
+bool UEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
 {
 	if (!EquipmentQuickSlot.Contains(SlotIndex))
 	{

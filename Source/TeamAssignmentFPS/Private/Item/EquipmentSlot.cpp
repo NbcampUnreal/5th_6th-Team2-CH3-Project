@@ -6,7 +6,7 @@
 
 
 // For Slots
-bool FEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
+bool UEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
 {
 	if(!Equipment)
 	{
@@ -20,7 +20,7 @@ bool FEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
 }
 
 //----- ChildClasses---------------------------------------------------------------------------------------------------//
-bool FWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
+bool UWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
 {
 	if (!InitializeEquipmentSlot(Equipment,ID))
 	{
@@ -32,18 +32,18 @@ bool FWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
 
 
 	//after confirmations and initializing is done
-	UE_LOG(Inventory_Log, Log, TEXT("FWeaponSlot::InitializeWeaponData-> Initialization completed"));
+	UE_LOG(Inventory_Log, Log, TEXT("UWeaponSlot::InitializeWeaponData-> Initialization completed"));
 	return true;
 }
 
 
-bool FItemSlot::IncrementStackCount(bool& BDidReachedMax)
+bool UItemSlot::IncrementStackCount(bool& BDidReachedMax)
 {
 	if (CurrentStackCount>=MaxStackCount)
 	{
 		BDidReachedMax=true;
 		UE_LOG(Inventory_Log,Error,
-			TEXT("FItemSlot::IncrementStackCount-> Not enough space. %d/%d"),CurrentStackCount,MaxStackCount);
+			TEXT("UItemSlot::IncrementStackCount-> Not enough space. %d/%d"),CurrentStackCount,MaxStackCount);
 		return false;
 	}
 	
@@ -53,18 +53,18 @@ bool FItemSlot::IncrementStackCount(bool& BDidReachedMax)
 	if (BDidReachedMax)
 	{
 		UE_LOG(Inventory_Log,Warning,
-			TEXT("FItemSlot::IncrementStackCount-> Slot is now full. %d/%d"),CurrentStackCount,MaxStackCount);
+			TEXT("UItemSlot::IncrementStackCount-> Slot is now full. %d/%d"),CurrentStackCount,MaxStackCount);
 	}
 	return true;
 }
 
-bool FItemSlot::DecrementStackCount(bool& DidSlotConsumedAll)
+bool UItemSlot::DecrementStackCount(bool& DidSlotConsumedAll)
 {
 	
 	if (CurrentStackCount<=0)
 	{
 		UE_LOG(Inventory_Log,Error,
-			TEXT("FItemSlot::DecrementStackCount-> No more Item, %d/%d"),CurrentStackCount,MaxStackCount);
+			TEXT("UItemSlot::DecrementStackCount-> No more Item, %d/%d"),CurrentStackCount,MaxStackCount);
 		DidSlotConsumedAll=false;// not consumed at all
 		return false;
 	}
@@ -75,13 +75,13 @@ bool FItemSlot::DecrementStackCount(bool& DidSlotConsumedAll)
 	if (DidSlotConsumedAll)// after consumed, when no more item to consume
 	{
 		UE_LOG(Inventory_Log,Warning,
-			TEXT("FItemSlot::DecrementStackCount-> No more item left, %d/%d"),CurrentStackCount,MaxStackCount);
+			TEXT("UItemSlot::DecrementStackCount-> No more item left, %d/%d"),CurrentStackCount,MaxStackCount);
 	}
 	
 	return true;
 }
 
-bool FItemSlot::InitializeItemData(AActor* Equipment, int32 ID, int32 MaxStack)
+bool UItemSlot::InitializeItemData(AActor* Equipment, int32 ID, int32 MaxStack)
 {
 	if (!InitializeEquipmentSlot(Equipment,ID))
 	{
@@ -92,11 +92,11 @@ bool FItemSlot::InitializeItemData(AActor* Equipment, int32 ID, int32 MaxStack)
 	if (MaxStack<=0)
 	{
 		UE_LOG(Inventory_Log,Error,
-			TEXT("FItemSlot::InitializeItemData-> cannot stack item when max stack count is below 0"));
+			TEXT("UItemSlot::InitializeItemData-> cannot stack item when max stack count is below 0"));
 		return false;
 	}
 	MaxStackCount=MaxStack;
 	// all done
-	UE_LOG(Inventory_Log, Log, TEXT("FItemSlot::InitializeItemData-> Initialization completed"));
+	UE_LOG(Inventory_Log, Log, TEXT("UItemSlot::InitializeItemData-> Initialization completed"));
 	return true;
 }

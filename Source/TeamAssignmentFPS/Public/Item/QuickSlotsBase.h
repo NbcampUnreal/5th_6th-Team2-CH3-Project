@@ -7,19 +7,20 @@
 #include "Item/EquipmentSlot.h"
 #include "QuickSlotsBase.generated.h"
 
+#include "Debug/UELOGCategories.h"
+
 // slot struct to manage equipments
-USTRUCT(BlueprintType)
-struct FEquipmentQuickSlots//multiple slots
+UCLASS()
+class TEAMASSIGNMENTFPS_API UEquipmentQuickSlots:public UObject//multiple slots
 {
 	GENERATED_BODY()
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Equipment Slot")
-	TMap<uint8/*slot Number*/,FEquipmentSlot/*Equipment*/> EquipmentQuickSlot;
+	TMap<uint8/*slot Number*/,UEquipmentSlot/*Equipment*/> EquipmentQuickSlot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Equipment Slot")
 	int32 SlotMaxCount;
-
-private:
+	
 	int32 CurrentEquipmentID=INDEX_NONE;//default
 	int32 UsedSlotCount=0;
 	uint8 CurrentSlotIndex=1;// the main
@@ -28,6 +29,7 @@ private:
 	AActor* CurrentSlotEquipment=nullptr;// not currently equipt by player but equipment of current slot index
 
 	void OnEquipmentSlotHasNothing(uint8 RemovingSlotIndex);
+	
 public:
 	AActor* GetEquipmentFromCurrentSlot() const { return CurrentSlotEquipment;}
 	uint8 GetCurrentSlotIndex() const { return CurrentSlotIndex; }
