@@ -71,7 +71,7 @@ public:
 	bool IsTransitioning() const { return bIsTransitioning; }
 
 	bool GetVectorsByCameraAndGravityDirection
-	(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const;// with default z -1.0
+	(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& Up) const;// with default z -1.0
 	// this is for providing character the forward and right vector based on the camera rotation and gravity direction
 	// gravity direction is neeeded to prevent actor tring to move underground when it trys to go forward
 

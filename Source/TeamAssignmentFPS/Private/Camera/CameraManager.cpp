@@ -101,7 +101,7 @@ void UCameraManagerComponent::TransitionToTargetRig(ACameraRig* NewRig, float Bl
 
 
 
-bool UCameraManagerComponent::GetVectorsByCameraAndGravityDirection(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& UpVector) const
+bool UCameraManagerComponent::GetVectorsByCameraAndGravityDirection(const FVector& GravityDirection, FVector& Forward, FVector& Right, FVector& Up) const
 {
 	if (!GetWorld())
 	{
@@ -138,7 +138,7 @@ bool UCameraManagerComponent::GetVectorsByCameraAndGravityDirection(const FVecto
 
 	// Recompute right and up
 	Right = FVector::CrossProduct(TargetUpVector, Forward).GetSafeNormal();
-	UpVector = -TargetUpVector;
+	Up = -TargetUpVector;
 
 	return true;
 }
