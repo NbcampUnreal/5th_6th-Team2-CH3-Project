@@ -5,6 +5,7 @@
 #include "Weapon/ProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Pooling/PoolingSubsystem.h"
 //#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
@@ -27,9 +28,14 @@ void ARangeEnemyCharacter::EnemyAttack()
 	}
 
 	UE_LOG(Enemy_Log, Error, TEXT("Range Attack"));
-	//LookAtPlayer();
-	GetWorld()->SpawnActor<AActor>(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+	LookAtPlayer();
+	//GetWorld()->SpawnActor<AActor>(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+	}
+	
 }
 
 void ARangeEnemyCharacter::LookAtPlayer()
