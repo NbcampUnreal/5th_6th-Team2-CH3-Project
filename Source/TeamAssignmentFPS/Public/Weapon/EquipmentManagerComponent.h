@@ -32,35 +32,20 @@ protected:
 	
 	// Inventory
 	UPROPERTY()
-	UInventoryManagerComponent* InventoryCompoent;// get this from player state
+	UInventoryManagerComponent* InventoryComponent;// get this from player state
+	UPROPERTY()
+	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
+	UPROPERTY()
+	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
 	
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
-	bool bIsEquipping;//is current equipment empty or not*///--> no need, just check CurrentEquipment
-
-	//==== Quick Slot ====//
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Weapon")
-	TMap<int32/*ID#1#,TObjectPtr<AActor>/*Weapon#1#> WeaponQuickSlot;
-	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
-	int32 CurrentWeaponID;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QuickSlot|Item")
-	TMap<int32/*ID#1#,TObjectPtr<AActor>/*Item#1#> ItemQuickSlot;
-	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
-	int32 CurrentItemID;*/
-
-	TMap<EEquipmentType, TObjectPtr<UEquipmentQuickSlots>> EquipmentSlotsList;// for weapons, items and more in the future
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
 
+	
 	// Placement
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
 	USceneComponent* Placement;// the Scene component of where to attach equipment
 
-
-
-
-	
 private:
 	// quick slot switching
 	bool bIsHoldingMouseRightButton;
@@ -77,18 +62,10 @@ private:
 	float PreviousScrollSign=0.f;//+ or - or 0
 	bool bIsScrolling=false;
 	bool bDidScrollStarted=false;
-
-
+	
 	//for tracking holding to determine tap or hold
 	float CurrentHoldingTime=0.0f;
 	bool bDidHoldStarted=false;
-	
-
-	//Test Temp
-
-	// for actually showing up the weapon or the item
-	UFUNCTION(BlueprintCallable, Category="Equipment")
-	void SpawnCurrentEquipment();
 	
 protected:
 	// Called when the game starts
@@ -103,9 +80,6 @@ private:
 	
 	//==== Inventory ====//
 	void CacheInventoryComponent();
-
-	// Equipment setting
-	void SpawnEquipmentInSlot(int32 ID,  EEquipmentType Type,TMap<int32, TObjectPtr<AActor>>& Slot);
 	
 	void SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue);
 	// helper function for sequential switching
@@ -113,17 +87,24 @@ private:
 
 	//helper for overall
 	bool DoesTypeOfQuickSlotExist(EEquipmentType Type) const;
-	
 	bool SwitchCurrentEquipmentByType(EEquipmentType Type);
+	bool AddQuickSlot(EEquipmentType Type, const FInitializeParams& Params);
+	void ActivateOrDeactivateActor(AActor* Actor, bool bActivate);
+
+
+	// this will handle visibility, Attachment setting and triggering equipment interface
+	void EquipOrUnequip(AActor* EquipmentActor, bool bIsEquip);
+	
+	UEquipmentQuickSlots* GetQuickSlotByType(EEquipmentType Type) const;
+
 	
 public:
 
-	UFUNCTION(BlueprintCallable, Category="Equipment")
-	void SetPlacementComponent(USceneComponent* NewPlacement);
+	UFUNCTION(BlueprintCallable, Category="Equipment")// this is to populate the quickslots from the inventory
+	bool AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type);
 	
 	UFUNCTION(BlueprintCallable, Category="Equipment")
-	void UpdatePlacementComponent(USceneComponent* NewPlacement);// this will update where to be attatched
-	void SetCurrentEquipmentPlacement();// this will attatch the current weapon or item to the placementcomponent
+	void SetCurrentEquipmentPlacement(USceneComponent* NewPlacement);// this will attatch the current weapon or item to the placementcomponent
 	UFUNCTION()
 	void SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 

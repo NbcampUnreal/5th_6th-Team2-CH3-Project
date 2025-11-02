@@ -6,6 +6,27 @@
 #include "UObject/Object.h"// to use delegate, struct cannot boradcast or execute delegate
 #include "EquipmentSlot.generated.h"
 
+
+USTRUCT()
+struct FInitializeParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AActor* Equipment=nullptr;
+	UPROPERTY()
+	TSubclassOf<AActor> EquipmentClass = nullptr;
+	UPROPERTY()
+	int32 ID=INDEX_NONE;
+	UPROPERTY()
+	int32 MaxStack=INDEX_NONE;
+	// and more
+	
+};
+
+
+
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API UEquipmentSlot: public UObject
 {
@@ -20,7 +41,7 @@ protected:
 	int32 EquipmentID=INDEX_NONE;
 
 public:
-	bool InitializeEquipmentSlot(AActor* Equipment,int32 ID);
+	virtual bool InitializeEquipmentSlot(const FInitializeParams& Params);
 
 	int32 GetEquipmentID()const {return EquipmentID;}
 	AActor* GetEquipmentPtr() const {return EquipmentPtr;}
@@ -39,7 +60,7 @@ class TEAMASSIGNMENTFPS_API UWeaponSlot:public UEquipmentSlot// one slot
 	 */
 	
 public:
-	bool InitializeWeaponData(AActor* Equipment,int32 ID);
+	virtual bool InitializeEquipmentSlot(const FInitializeParams& Params) override;
 };
 
 UCLASS()
@@ -61,5 +82,5 @@ public:
 	// param for checking if the slot used all of the stacks and need to removed from quick slots
 
 	
-	bool InitializeItemData(AActor* Equipment,int32 ID, int32 MaxStack);
+	virtual bool InitializeEquipmentSlot(const FInitializeParams& Params) override;
 };

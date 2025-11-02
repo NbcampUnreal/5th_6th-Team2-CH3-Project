@@ -6,26 +6,27 @@
 
 
 // For Slots
-bool UEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
+bool UEquipmentSlot::InitializeEquipmentSlot(const FInitializeParams& Params)
 {
-	if(!Equipment)
+	if(!Params.Equipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
 			TEXT("FEquipmentSlot::InitializeEquipmentSlot-> Invalid EquipmentPtr"));
 		return false;
 	}
-	EquipmentPtr=Equipment;
-	EquipmentID=ID;
+	EquipmentPtr=Params.Equipment;
+	EquipmentID=Params.ID;
 	return true;
 }
 
+
+
 //----- ChildClasses---------------------------------------------------------------------------------------------------//
-bool UWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
+bool UWeaponSlot::InitializeEquipmentSlot(const FInitializeParams& Params)
 {
-	if (!InitializeEquipmentSlot(Equipment,ID))
-	{
+	if (!Super::InitializeEquipmentSlot(Params))
 		return false;
-	}
+
 	// now can InitializeWeaponData
 
 	//TODO:: add something for weapondata
@@ -81,22 +82,20 @@ bool UItemSlot::DecrementStackCount(bool& DidSlotConsumedAll)
 	return true;
 }
 
-bool UItemSlot::InitializeItemData(AActor* Equipment, int32 ID, int32 MaxStack)
+bool UItemSlot::InitializeEquipmentSlot(const FInitializeParams& Params)
 {
-	if (!InitializeEquipmentSlot(Equipment,ID))
-	{
+	if (!Super::InitializeEquipmentSlot(Params))
 		return false;
-	}
-	// now check and initialize the item data from here
 
-	if (MaxStack<=0)
+	if (Params.MaxStack<=0)
 	{
 		UE_LOG(Inventory_Log,Error,
 			TEXT("UItemSlot::InitializeItemData-> cannot stack item when max stack count is below 0"));
 		return false;
 	}
-	MaxStackCount=MaxStack;
+	MaxStackCount=Params.MaxStack;
 	// all done
 	UE_LOG(Inventory_Log, Log, TEXT("UItemSlot::InitializeItemData-> Initialization completed"));
 	return true;
 }
+

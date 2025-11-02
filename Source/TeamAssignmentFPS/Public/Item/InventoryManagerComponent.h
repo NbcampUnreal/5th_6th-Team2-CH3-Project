@@ -52,6 +52,9 @@ public:
 
 	TSubclassOf<AActor> GetWeaponByID(int32 ID);
 	TSubclassOf<AActor>  GetItemByID(int32 ID);
+	TMap<int32, FWeaponData>* GetWeapons() {return &Weapons;}
+	TMap<int32, FItemData>* GetItems() {return &Items;}
+	
 
 
 	//Inventory-> Equipment Slots
@@ -61,6 +64,8 @@ public:
 	bool AddItem(FItemData ItemData);
 	bool RemoveItem(int32 ID);
 
+	bool GetWeaponDataByID(int32 ID, FWeaponData& OutData) const;// for equipment componet
+	bool GetItemDataByID(int32 ID, FItemData& OutData) const;
 
 	
 	// ID Management

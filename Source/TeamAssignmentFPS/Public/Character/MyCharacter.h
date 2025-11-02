@@ -53,8 +53,6 @@ protected:
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
 	UEquipmentManagerComponent* EquipmentInteractionComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InventoryComp")
-	UInventoryManagerComponent* InventoryComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
@@ -122,20 +120,4 @@ public:
 
 	void HandleDodgeAction(float DeltaTime);
 	void OnDodgeFinished();
-
-	//Attack
-	UFUNCTION()
-	void TriggerBattleAction();// this can be differ by the current equipped weapon or item(ex. Itme-> use item, weapon-> use weapon)
-	UFUNCTION()
-	void SwitchAction(const FInputActionValue& Value);// use mouse wheel(pc)or face button?(gamepad)
-	//trigger battle action-->
-	void UseWeapon();// not so sure should i use interface for both weapon and item?
-	void UseItem();// inventory related action
-	
-	//UseItem
-	void SelectItem();// inventory related action
-	void SwitchToNewWeapon();// weapon to weapon swtich
-	void SwtichToWeapon();// itme to weapon--> same input of switch weapon, but when using item+input-> equip previously used weapon
-	
-	void LockonTarget();//gamepad only?
 };

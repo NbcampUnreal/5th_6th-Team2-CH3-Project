@@ -121,6 +121,61 @@ bool UEquipmentQuickSlots::RemoveFromQuickSlot(uint8 SlotIndex)
 	return true;
 }
 
+bool UEquipmentQuickSlots::AddEquipment(const FInitializeParams& Params)
+{
+	if (!Params.Equipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("UEquipmentQuickSlots::AddEquipment-> Invalid Actor"));
+		return false;
+	}
+
+	UEquipmentSlot* NewSlot = NewObject<UEquipmentSlot>();
+	if (!NewSlot->InitializeEquipmentSlot(Params))
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("UEquipmentQuickSlots::AddEquipment-> Failed to initialize slot"));
+		return false;
+	}
+
+	if (!AddToQuickSlot(NewSlot))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning, TEXT("UEquipmentQuickSlots::AddEquipment-> No available slot."));
+		return false;
+	}
+
+	// set current equipment if it isn't decided yet
+	if (!CurrentSlotEquipment)
+	{
+		SwitchCurrentSlot(NewSlot->GetEquipmentID());
+	}
+
+	return true;
+}
+
+void UEquipmentQuickSlots::ActivateOrDeactivateSpawnedActor(AActor* Actor, bool bActivate)
+{
+	if (!Actor) return;
+
+	// Visibility
+	Actor->SetActorHiddenInGame(!bActivate);
+
+	// Collision
+	Actor->SetActorEnableCollision(bActivate);
+
+	// Ticking
+	Actor->SetActorTickEnabled(bActivate);
+
+	// Physics / primitive components
+	TArray<UPrimitiveComponent*> Components;
+	Actor->GetComponents<UPrimitiveComponent>(Components);
+	for (UPrimitiveComponent* Comp : Components)
+	{
+		if (Comp)
+		{
+			Comp->SetSimulatePhysics(bActivate && Comp->IsSimulatingPhysics());
+			Comp->SetCollisionEnabled(bActivate ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+		}
+	}
+}
 
 
 bool UEquipmentQuickSlots::CheckIfIndexIsValid(uint8 SlotIndex)

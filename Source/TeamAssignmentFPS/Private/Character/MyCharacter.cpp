@@ -28,7 +28,6 @@ AMyCharacter::AMyCharacter()
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
-	InventoryComp=CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Component"));
 }
 
 // Called when the game starts or when spawned
@@ -230,35 +229,4 @@ void AMyCharacter::OnDodgeFinished()
 	GetCharacterMovement()->Velocity=FVector::ZeroVector;
 }
 
-void AMyCharacter::TriggerBattleAction()
-{
-}
-
-void AMyCharacter::SwitchAction(const FInputActionValue& Value)
-{
-}
-
-void AMyCharacter::UseWeapon()
-{
-}
-
-void AMyCharacter::UseItem()
-{
-}
-
-void AMyCharacter::SelectItem()
-{
-}
-
-void AMyCharacter::SwitchToNewWeapon()
-{
-}
-
-void AMyCharacter::SwtichToWeapon()
-{
-}
-
-void AMyCharacter::LockonTarget()
-{
-}
 

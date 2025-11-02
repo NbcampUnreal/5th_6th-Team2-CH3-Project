@@ -86,6 +86,30 @@ bool UInventoryManagerComponent::RemoveItem(int32 ID)
 	return FreeID<FItemData>(ID, Items, FreedItemIDs);
 }
 
+bool UInventoryManagerComponent::GetWeaponDataByID(int32 ID, FWeaponData& OutData) const
+{
+	if (const FWeaponData* Found = Weapons.Find(ID))
+	{
+		OutData = *Found;
+		return true;
+	}
+
+	UE_LOG(Inventory_Log, Warning, TEXT("UInventoryManagerComponent::GetWeaponDataByID -> ID %d not found."), ID);
+	return false;
+}
+
+bool UInventoryManagerComponent::GetItemDataByID(int32 ID, FItemData& OutData) const
+{
+	if (const FItemData* Found = Items.Find(ID))
+	{
+		OutData = *Found;
+		return true;
+	}
+
+	UE_LOG(Inventory_Log, Warning, TEXT("UInventoryManagerComponent::GetItemDataByID -> ID %d not found."), ID);
+	return false;
+}
+
 bool UInventoryManagerComponent::GenerateID(int32& ID, TArray<int32>& FreedIDs, int32& CurrentMaxID)
 {
 	//Valid Checking first

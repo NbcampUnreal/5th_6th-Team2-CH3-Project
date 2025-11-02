@@ -40,9 +40,8 @@ public:
 	bool SwitchToNextSlot(bool bIsDirectionRight);// for sequential switching
 	bool RemoveFromQuickSlot(uint8 SlotIndex);
 
-	
-	
-
+	bool AddEquipment(const FInitializeParams& Params);
+	void ActivateOrDeactivateSpawnedActor(AActor* Actor, bool bActivate);// this will hide and deactivate the spawned actor
 protected:
 	// internally called functions
 	void OnEquipmentSlotHasNothing(uint8 RemovingSlotIndex);
@@ -67,6 +66,7 @@ protected:
 		
 		return AddToQuickSlotBySlotIndex(SlotIndex,SlotData);
 	}
+	
 	template<typename T_SlotData>
 	bool AddToQuickSlotBySlotIndex(uint8 SlotIndex, T_SlotData SlotData)
 	{
@@ -87,6 +87,7 @@ protected:
 		UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentQuickSlots::AddToSlot-> Slot Added"));
 		return true;
 	}
+	
 	template<typename T_SlotData>
 	T_SlotData* GetSlot(uint8 SlotIndex)
 	{
@@ -97,6 +98,44 @@ protected:
 			return nullptr;
 		}
 		return Cast<T_SlotData>(EquipmentQuickSlot[SlotIndex]);
+	}
+
+public:
+	template<typename T_SlotType>
+	bool InitializeSlot(const FInitializeParams& Params, const TSubclassOf<AActor>& EquipmentClass)
+	{
+		if (!EquipmentClass)
+		{
+			UE_LOG(Equipment_Manager_Log, Error,
+				TEXT("UEquipmentQuickSlots::InitializeSlot-> Invalid EquipmentClass"));
+			return false;
+		}
+
+		UWorld* World = GetWorld();
+		if (!World) return false;
+
+		// Spawn actor
+		AActor* SpawnedActor = World->SpawnActor<AActor>(EquipmentClass);
+		// no need for location and rotation. it will be deactivated anyway. the activated one will be relocated after equiped
+		if (!SpawnedActor)
+			return false;
+
+		// Hide / deactivate immediately
+		this->ActivateOrDeactivateSpawnedActor(SpawnedActor, false);
+
+		// Create the slot
+		T_SlotType* NewSlot = NewObject<T_SlotType>(this);
+		if (!NewSlot) return false;
+
+		// Fill the required values in params
+		FInitializeParams SlotParams = Params;
+		SlotParams.Equipment = SpawnedActor;
+
+		if (!NewSlot->InitializeEquipmentSlot(SlotParams))
+			return false;
+
+		// Add to quick slot
+		return AddToQuickSlot<T_SlotType>(NewSlot);
 	}
 
 };
