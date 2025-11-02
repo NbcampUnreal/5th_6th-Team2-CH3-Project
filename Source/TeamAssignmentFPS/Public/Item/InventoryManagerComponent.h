@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Debug/UELOGCategories.h"
 #include "Item/EquipmentData.h"
+#include "Item/EquipmentSlot.h"// also for inventory
 
 #include "InventoryManagerComponent.generated.h"
 

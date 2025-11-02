@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Debug/UELOGCategories.h"
 
 USTRUCT(BlueprintType)
 struct FEquipmentSlot// one slot
@@ -59,40 +60,4 @@ public:
 
 	
 	bool InitializeItemData(AActor* Equipment,int32 ID, int32 MaxStack);
-};
-
-
-
-
-// slot struct to manage equipments
-USTRUCT(BlueprintType)
-struct FEquipmentQuickSlots//multiple slots
-{
-	GENERATED_BODY()
-
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Equipment Slot")
-	TMap<uint8/*slot Number*/,TObjectPtr<AActor>/*Equipment*/> EquipmentQuickSlot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Equipment Slot")
-	int32 SlotMaxCount;
-	
-
-private:
-	
-	int32 CurrentEquipmentID=INDEX_NONE;//default
-	int32 UsedSlotCount=0;
-	uint8 CurrentSlotIndex=1;// the main
-	
-	UPROPERTY(VisibleAnywhere, Category = "Equipment Slot")
-	AActor* CurrentSlotEquipment=nullptr;// not currently equipt by player but equipment of current slot index
-	
-public:
-	AActor* GetEquipmentFromCurrentSlot() const { return CurrentSlotEquipment;}
-	uint8 GetCurrentSlotIndex() const { return CurrentSlotIndex; }
-	int32 GetCurrentEquipmentID() const { return CurrentEquipmentID;}
-
-	bool AddToSlot(uint8 SlotIndex, TObjectPtr<AActor> Equipment);
-	bool RemoveFromSlot(uint8 SlotIndex);
-
 };

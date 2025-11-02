@@ -143,19 +143,6 @@ void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType 
 	//TSubclassOf<AActor> EquipmentClass=InventoryCompoent->
 }
 
-void UEquipmentManagerComponent::UpdateQuickSlots()
-{
-}
-
-void UEquipmentManagerComponent::UpdateWeaponQuickSlots()
-{
-
-}
-
-void UEquipmentManagerComponent::UpdateItemQuickSlots()
-{
-}
-
 void UEquipmentManagerComponent::SpawnCurrentEquipment()
 {
 	if (!CurrentEquipment)
@@ -201,12 +188,7 @@ void UEquipmentManagerComponent::TestEquipWeapon(AActor* SettingWeapon)
 	SettingWeapon->SetActorLocationAndRotation(PlacementLocation, PlacementRotation);
 }
 
-// Called every frame
-void UEquipmentManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-}
+
 
 void UEquipmentManagerComponent::UpdatePlacementComponent(USceneComponent* NewPlacement)
 {
