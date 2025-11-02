@@ -1,21 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Weapon/EquipmentManagerComponent.h"
+#include "Weapon/EquipmentManagerCompnent.h"
 
 #include "Weapon/WeaponBase.h"
 #include "Item/ItemBase.h"
 #include "InputAction.h"
 #include "Interface/InputReactionInterface.h"
-#include "Interface/EquipmentInterface.h"
-#include "PlayerState/MyPlayerState.h"
 
 #include "Debug/UELOGCategories.h"//debug log
 
 
-
 // Sets default values for this component's properties
-UEquipmentManagerComponent::UEquipmentManagerComponent():
+UEquipmentManagerCompnent::UEquipmentManagerCompnent():
+	CurrentWeapon(nullptr),
+	CurrentItem(nullptr),
 	CurrentEquipment(nullptr),
 	Placement(nullptr)// where to put equipment
 {
@@ -26,67 +25,13 @@ UEquipmentManagerComponent::UEquipmentManagerComponent():
 
 
 // Called when the game starts
-void UEquipmentManagerComponent::BeginPlay()
+void UEquipmentManagerCompnent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//bing inventory ptr to here
-	CacheInventoryComponent();
-}
-
-void UEquipmentManagerComponent::CacheInventoryComponent()
-{
-	if (!GetOwner())
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid Owner"));
-		return;
-	}
-
-	AController* OwnerController=GetOwner()->GetInstigatorController();
-	if (!OwnerController)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid OwnerController"));
-		return;
-	}
-
-	
-	AMyPlayerState* PlayerState=OwnerController->GetPlayerState<AMyPlayerState>();// get the player state from the controller
-	if (!PlayerState)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid PlayerState"));
-		return;
-	}
-	
-	InventoryCompoent=PlayerState->GetInventoryManager();
-
-	if (!InventoryCompoent)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Cached Invalid InventoryComponent"));
-		return;
-	}
-
-	UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Cached Completed"));
-}
-
-void UEquipmentManagerComponent::SetPlacementComponent(USceneComponent* NewPlacement)
-{
-	if (!NewPlacement)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-		TEXT("UEquipmentManagerCompnent::SetPlacementComponent->Invaild USceneComp for Placement"));
-		return;
-	}
-
-	Placement = NewPlacement;
 }
 
 
-void UEquipmentManagerComponent::OnScrollChunkStart(float ScrollDirection)
+void UEquipmentManagerCompnent::OnScrollChunkStart(float ScrollDirection)
 {
 	if (ScrollDirection > 0)
 	{
@@ -101,7 +46,7 @@ void UEquipmentManagerComponent::OnScrollChunkStart(float ScrollDirection)
 		
 }
 
-void UEquipmentManagerComponent::OnScrollChunkStep(float ScrollDirection)
+void UEquipmentManagerCompnent::OnScrollChunkStep(float ScrollDirection)
 {
 	/*FString Sign;
 	if (PreviousScrollSign>0) Sign=TEXT("+");
@@ -113,7 +58,7 @@ void UEquipmentManagerComponent::OnScrollChunkStep(float ScrollDirection)
 	
 }
 
-void UEquipmentManagerComponent::OnScrollChunkEnd(float Direction)
+void UEquipmentManagerCompnent::OnScrollChunkEnd(float Direction)
 {
 	if (!bIsScrolling)
 		return; // safety
@@ -127,77 +72,19 @@ void UEquipmentManagerComponent::OnScrollChunkEnd(float Direction)
 	PreviousScrollSign = 0.f;
 }
 
-void UEquipmentManagerComponent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
+void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
 {
 	 
 }
 
-void UEquipmentManagerComponent::UpdateQuickSlots()
-{
-}
-
-void UEquipmentManagerComponent::UpdateWeaponQuickSlots()
-{
-
-}
-
-void UEquipmentManagerComponent::UpdateItemQuickSlots()
-{
-}
-
-void UEquipmentManagerComponent::SpawnCurrentEquipment()
-{
-	if (!CurrentEquipment)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment is Invalid."));
-		return;
-	}
-
-	const FTransform SpawnTransform=Placement->GetComponentTransform();
-	
-	AActor*SpawnedActor= GetWorld()->SpawnActor<AActor>(CurrentEquipment->GetClass(),SpawnTransform);
-	if (!SpawnedActor)
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Equipment Spawing Failed."));
-		return;
-	}
-
-	if (!SpawnedActor->Implements<UEquipmentInterface>())// when ther is no equipment interface
-	{
-		UE_LOG(Equipment_Manager_Log, Warning,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment does not have equipment interface"));
-		// but still use it, some could have no interface for calling equipped and unequipped
-	}
-	else// when there is equipment interface
-	{
-		IEquipmentInterface::Execute_OnEquipped(SpawnedActor);
-	}
-
-	//SpawnedActor->SetActorTransform(SpawnTransform);/--> no need, the spawn used the transform
-	UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> CurrentEquipment is Set."));
-}
-
-void UEquipmentManagerComponent::TestEquipWeapon(AActor* SettingWeapon)
-{
-	SetCurrentEquipment(SettingWeapon);
-
-	FVector PlacementLocation=Placement->GetComponentLocation();
-	FRotator PlacementRotation=Placement->GetComponentRotation();
-	
-	SettingWeapon->SetActorLocationAndRotation(PlacementLocation, PlacementRotation);
-}
-
 // Called every frame
-void UEquipmentManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UEquipmentManagerCompnent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 }
 
-void UEquipmentManagerComponent::UpdatePlacementComponent(USceneComponent* NewPlacement)
+void UEquipmentManagerCompnent::UpdatePlacementComponent(USceneComponent* NewPlacement)
 {
 	if (!NewPlacement)
 	{
@@ -211,7 +98,7 @@ void UEquipmentManagerComponent::UpdatePlacementComponent(USceneComponent* NewPl
 }
 
 
-void UEquipmentManagerComponent::SetCurrentEquipmentPlacement()
+void UEquipmentManagerCompnent::SetCurrentEquipmentPlacement()
 {
 	if (!CurrentEquipment)
 	{
@@ -231,7 +118,7 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement()
 	CurrentEquipment->SetActorRelativeRotation(FRotator::ZeroRotator);//offset
 }
 
-void UEquipmentManagerComponent::SwtichWeapon_PC(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::SwtichWeapon_PC(const FInputActionValue& Value)
 {
 	/*float CurrentMouseWheelValue = Value.Get<float>();
 	UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC-> Value:%f"),CurrentMouseWheelValue);//temp
@@ -309,7 +196,7 @@ void UEquipmentManagerComponent::SwtichWeapon_PC(const FInputActionValue& Value)
 	//set new timer
 	GetWorld()->GetTimerManager().SetTimer(
 		ScrollEndTimerHandle,
-		FTimerDelegate::CreateUObject(this, &UEquipmentManagerComponent::OnScrollChunkEnd, Sign),// make delegate to trigger function with delegate
+		FTimerDelegate::CreateUObject(this, &UEquipmentManagerCompnent::OnScrollChunkEnd, Sign),// make delegate to trigger function with delegate
 		ScrollEndDelay,
 		false
 	);
@@ -319,29 +206,29 @@ void UEquipmentManagerComponent::SwtichWeapon_PC(const FInputActionValue& Value)
 
 }
 
-void UEquipmentManagerComponent::SetCurrentEquipment(AActor* NewEquipment)
+void UEquipmentManagerCompnent::SetCurrentEquipment(AActor* NewEquipment)
 {
 	CurrentEquipment=NewEquipment;
 }
 
-void UEquipmentManagerComponent::SwtichWeapon_GP(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::SwtichWeapon_GP(const FInputActionValue& Value)
 {
 	
 }
 
-void UEquipmentManagerComponent::SelectItem_PC(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::SelectItem_PC(const FInputActionValue& Value)
 {
 	
 }
 
-void UEquipmentManagerComponent::SelectItem_GP(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::SelectItem_GP(const FInputActionValue& Value)
 {
 	
 }
 
-void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::TriggerInput_Reload(const FInputActionValue& Value)
 {
-	/*if (!CurrentEquipment)
+	if (!CurrentEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
 			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment is invalid"));
@@ -359,37 +246,10 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 	{
 		UE_LOG(Equipment_Manager_Log, Warning,
 			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment does not implement IWeaponInterface"));
-	}*/// need to check if current equipment type is weapon
-
-	if (CurrentEquipmentType!=EEquipmentType::Weapon)
-	{
-		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> not holding weapon currently."));
-
-		// should this qutomatically switch to the weapon and reload the weapon?
-		//TODO: decide the case. should this switch to weapon or do nothing and return
-		return;
 	}
-	
-	if (!CurrentEquipment)
-	{
-		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> Invalid Equipment."));
-		return;
-	}
-
-	if (!CurrentEquipment->Implements<UWeaponInterface>())// when the current equipment does not have the reload interface function
-	{
-		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> Invalid Equipment."));
-		return;
-	}
-
-	//chekcing completed
-	IWeaponInterface::Execute_OnReloadInputPressed(CurrentEquipment);
 }
 
-void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::TriggerInput_Start(const FInputActionValue& Value)
 {
 	if (!CurrentEquipment)
 	{
@@ -419,7 +279,7 @@ void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Val
 		
 }
 
-void UEquipmentManagerComponent::TriggerInput_Trigger(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::TriggerInput_Trigger(const FInputActionValue& Value)
 {
 	if (!CurrentEquipment)
 	{
@@ -449,24 +309,23 @@ void UEquipmentManagerComponent::TriggerInput_Trigger(const FInputActionValue& V
 	}
 }
 
-void UEquipmentManagerComponent::TriggerInput_Complete(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::TriggerInput_Complete(const FInputActionValue& Value)
 {
 	if (!CurrentEquipment) return;
 
-	float TapThreshold =0.2f;
-	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime,TapThreshold);
+	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime, TapThreshold);
 
 	// Reset the variables
 	CurrentHoldingTime = 0.f;
 	bDidHoldStarted = false;
 }
 
-void UEquipmentManagerComponent::TriggerInput_Ongoing(const FInputActionValue& Value)
+void UEquipmentManagerCompnent::TriggerInput_Ongoing(const FInputActionValue& Value)
 {
 	// not decided yet. maybe update the ui?
 }
 
-void UEquipmentManagerComponent::TriggerInput_Canceled(const FInputActionValue& Value)// not so sure where to use this
+void UEquipmentManagerCompnent::TriggerInput_Canceled(const FInputActionValue& Value)// not so sure where to use this
 {
 	if (!CurrentEquipment)
 	{
@@ -474,10 +333,8 @@ void UEquipmentManagerComponent::TriggerInput_Canceled(const FInputActionValue& 
 		return;
 	}
 
-	// should this be treated as a release or just cancle and don't trigger the function? not so sure fuck
-	//IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
-
-	//cancled situation needs to be seperate from the completed case. just dont finish the prior process
+	// should this be treated as a release or just cancle and dont trigger the function? not so sure fuck
+	IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
 
 	CurrentHoldingTime = 0.f;
 	bDidHoldStarted = false;

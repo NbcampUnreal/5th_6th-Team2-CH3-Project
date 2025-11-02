@@ -65,18 +65,6 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 }
 
-bool ULockonComponent::GetDeprojectedCursorLocation(FVector& SetCursorWorldLocation)
-{
-	if (!bIsActivated||!OwnerController)
-	{
-		// no targetting done yet
-		return false;
-	}
-
-	SetCursorWorldLocation=CursorWorldLocation;
-	return true;
-}
-
 void ULockonComponent::UpdateCameraBoomLocation()
 {
 	if (!CameraManager || !LockonBaseRoot)//return; //temp log print --> 

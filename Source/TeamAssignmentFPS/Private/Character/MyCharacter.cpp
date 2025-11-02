@@ -7,10 +7,9 @@
 #include "InputAction.h"
 
 // components
-#include "MaterialHLSLTree.h"
 #include "Components/TimelineComponent.h"
 #include "LockonTarget/LockonComponent.h"
-#include "Weapon/EquipmentManagerComponent.h"
+#include "Weapon/EquipmentManagerCompnent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
 
@@ -27,7 +26,7 @@ AMyCharacter::AMyCharacter()
 	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("Lockon Component"));
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
+	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerCompnent>(TEXT("EquipmentManager Component"));
 	InventoryComp=CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Component"));
 }
 
@@ -72,9 +71,6 @@ void AMyCharacter::Tick(float DeltaTime)
 	{
 		//LockonComp->set
 	}
-
-	//temp rotaion without state case
-	RotateTowardTarget(DeltaTime);
 
 }
 
@@ -132,32 +128,6 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 
 void AMyCharacter::RotateTowardTarget(float Deltatime)
 {
-	FVector CursorLocation;
-	if (!LockonComp->GetDeprojectedCursorLocation(CursorLocation))
-	{
-		// not activated, so, no cursor location is valid location
-		return;
-	}
-	// if the cursorlocation is valid location
-
-	FVector LookAtDirection=CursorLocation-GetActorLocation();
-
-	float TooCloseDistance=100.f;// temp. this is for when the cursor is too close to the player character
-	if (LookAtDirection.Size()<TooCloseDistance)
-	{
-		// too cloase, do nothing
-		return;
-	}
-	
-	FRotator TargetRotatioin=LookAtDirection.Rotation();
-	//lock the pitch, roll rotoation(roll for just incase)
-	TargetRotatioin.Pitch=GetActorRotation().Pitch;
-	TargetRotatioin.Roll=GetActorRotation().Roll;
-
-	float RoationInterpSpeed=6.f;// temp
-
-	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
-	SetActorRotation(NewRotation);
 	
 }
 
