@@ -17,14 +17,12 @@ class TEAMASSIGNMENTFPS_API AMeleeEnemyCharacter : public AEnemyBaseCharacter
 public:
 	AMeleeEnemyCharacter();
 
-	void EnableAttackCollision();
-	void DisableAttackCollision();
+	void AttackCollisionOn();
+	void AttackCollisionOff();
 
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void EnemyDead() override;
-	virtual void EnemyTakeDamage(FDamageInfo DamageInfo) override;
 private:
 
 	UPROPERTY(VisibleAnywhere)

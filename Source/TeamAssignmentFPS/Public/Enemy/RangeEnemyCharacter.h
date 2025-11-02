@@ -6,8 +6,9 @@
 #include "Enemy/EnemyBaseCharacter.h"
 #include "RangeEnemyCharacter.generated.h"
 
-class AProjectileBase;
-
+/**
+ * 
+ */
 UCLASS()
 class TEAMASSIGNMENTFPS_API ARangeEnemyCharacter : public AEnemyBaseCharacter
 {
@@ -16,20 +17,7 @@ class TEAMASSIGNMENTFPS_API ARangeEnemyCharacter : public AEnemyBaseCharacter
 public:
 	ARangeEnemyCharacter();
 
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<USceneComponent> ProjectileSpawn;
-	
 protected:
-	virtual void EnemyAttack() override;
 	
-private:
-	// UPROPERTY(VisibleAnywhere)
-	// TObjectPtr<USceneComponent> ProjectileSpawn;
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<AProjectileBase> Projectile;
-
-	
-	
-	void LookAtPlayer();
 };
