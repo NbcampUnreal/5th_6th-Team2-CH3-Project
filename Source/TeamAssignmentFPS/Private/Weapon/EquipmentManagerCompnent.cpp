@@ -88,6 +88,18 @@ void UEquipmentManagerCompnent::ProcessScrollDetection(float ScrollDeltaValue, f
 	 
 }
 
+void UEquipmentManagerCompnent::UpdateQuickSlots()
+{
+}
+
+void UEquipmentManagerCompnent::UpdateWeaponQuickSlots()
+{
+}
+
+void UEquipmentManagerCompnent::UpdateItemQuickSlots()
+{
+}
+
 void UEquipmentManagerCompnent::SpawnCurrentEquipment()
 {
 	if (!CurrentEquipment)
@@ -369,7 +381,8 @@ void UEquipmentManagerCompnent::TriggerInput_Complete(const FInputActionValue& V
 {
 	if (!CurrentEquipment) return;
 
-	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime, TapThreshold);
+	float TapThreshold =0.2f;
+	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime,TapThreshold);
 
 	// Reset the variables
 	CurrentHoldingTime = 0.f;

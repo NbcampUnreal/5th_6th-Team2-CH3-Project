@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Weapon/WeaponBase.h"
 #include "Item/ItemBase.h"
+#include "Item/EquipmentData.h"
 
 #include "EquipmentManagerCompnent.generated.h"
 
@@ -13,17 +14,6 @@ class AWeaponBase;
 class AItemBase;
 
 struct FInputActionValue;
-
-
-UENUM()
-enum class EEquipmentType:uint8
-{
-	None UMETA(DisplayName = "None"),// nothing to hold
-	Weapon UMETA(DisplayName="Weapon"),
-	Item UMETA(DisplayName="Item"),
-};
-
-
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -56,17 +46,16 @@ protected:
 	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
 	uint8 CurrentItemID;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
-	USceneComponent* Placement;// the Scene component of where to attach equipment
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
 
+	
+	// Placement
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
+	USceneComponent* Placement;// the Scene component of where to attach equipment
+
 
 	//==== MouseWheel Tracking ====//
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
-	float TapThreshold=0.2f;//default
-
 	//for tracking holding to determine tap or hold
 	float CurrentHoldingTime=0.0f;
 	bool bDidHoldStarted=false;
@@ -101,7 +90,12 @@ protected:
 	void OnScrollChunkEnd(float ScrollDirection);
 	
 	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);
-	
+
+	// fill quick slots 
+	void UpdateQuickSlots();
+
+	void UpdateWeaponQuickSlots();
+	void UpdateItemQuickSlots();
 
 public:
 
@@ -112,58 +106,42 @@ public:
 	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	/*UFUNCTION()
-	void BringInventoryComponent();*/
-	//--> this is for bringing ptr of inventory component which is in the player character.
-	//so that this weapon manager component can access to the inventory and set the current weapon
-	//--> or should this be done out side of this comp? not so sure
-	//fuck
+	
 	UFUNCTION(BlueprintCallable, Category="Equipment")
 	void UpdatePlacementComponent(USceneComponent* NewPlacement);// this will update where to be attatched
 	void SetCurrentEquipmentPlacement();// this will attatch the current weapon or item to the placementcomponent
-	
 	UFUNCTION()
 	void SwtichWeapon_PC(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
-
 	UFUNCTION()
 	void SwtichWeapon_GP(const FInputActionValue& Value);
-
 	void SetCurrentEquipment(AActor* NewEquipment);
-
 	UFUNCTION()
 	void SelectItem_PC(const FInputActionValue& Value);//
-
 	UFUNCTION()
 	void SelectItem_GP(const FInputActionValue& Value);//
 	
 
 
-	//---- Weapn and Item Interaction ----//
+	//---- Weapn and Item Interaction ----//----------------------------------------------------------------------------
 
 	//Actually binded functions
 
 	//-- basic input reactions
 	UFUNCTION()
 	void TriggerInput_Reload(const FInputActionValue& Value);
-	
 	UFUNCTION()
 	void TriggerInput_Start(const FInputActionValue& Value);
-
 	UFUNCTION()
 	void TriggerInput_Trigger(const FInputActionValue& Value);
-
 	UFUNCTION()
 	void TriggerInput_Complete(const FInputActionValue& Value);
-
 	UFUNCTION()
 	void TriggerInput_Ongoing(const FInputActionValue& Value);
-
 	UFUNCTION()
 	void TriggerInput_Canceled(const FInputActionValue& Value);
+//----------------------------------------------------------------------------------------------------------------------
 
 	//--- Weapon Interaction
-
 	UFUNCTION()
 	void ReloadWeapon(const FInputActionValue& Value);
 
