@@ -73,7 +73,7 @@ bool FEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
 {
 	if (!EquipmentQuickSlot.Contains(SlotIndex))
 	{
-		UE_LOG(Equipment_Manager_Log, Error, TEXT("FEquipmentQuickSlot::RemoveFromSlot-> ID:%d not found in the slot"),ID);
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("FEquipmentQuickSlot::RemoveFromSlot-> ID:%d not found in the slot"),SlotIndex);
 		return false;
 	}
 
@@ -95,7 +95,8 @@ bool FEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
 		// should it set to the first one? or last one?
 	}
 	// when there is a replacement slot
-	
+
+	return false;// temp
 }
 
 
@@ -230,7 +231,7 @@ void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType 
 
 	
 
-	TSubclassOf<AActor> EquipmentClass=InventoryCompoent->
+	//TSubclassOf<AActor> EquipmentClass=InventoryCompoent->
 }
 
 void UEquipmentManagerComponent::UpdateQuickSlots()
