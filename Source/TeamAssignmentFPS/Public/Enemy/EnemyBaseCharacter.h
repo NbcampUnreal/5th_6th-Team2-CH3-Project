@@ -63,7 +63,6 @@ class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 
 public:
 	AEnemyBaseCharacter();
-	AEnemyBaseCharacter(FEnemyDataRow& InData);
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;
@@ -73,11 +72,11 @@ public:
 
 	FVector knockbackDirection;
 
-	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy »ý¼º ÇÒ ¶§ EnemyÀÇ µ¥ÀÌÅÍ °ª Àü´Þ ¹Þ¾Æ ÃÊ±âÈ­
+	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ Enemyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾ï¿½ ï¿½Ê±ï¿½È­
 	virtual void EnemyAttack();
 
 	UFUNCTION()
-	void EnemyDead();
+	virtual void EnemyDead();
 
 protected:
 	virtual void BeginPlay() override;
@@ -95,15 +94,16 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	virtual void EnemyAttackEnd();
+	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
 
-	void EnemyTakeDamage(FDamageInfo DamageInfo);
-
-
+	//void Knockback();
+	
+	//void EnemyDestroy();
 
 private:
 
 	void ChangeEnemyState(EEnemyState NewEnemyState);
-	void SetEnemyNoCollision();
+	void DisableEnemyCollision();
 public:
 
 	FORCEINLINE FEnemyData GetEnemyData() const { return EnemyData; }
@@ -111,4 +111,4 @@ public:
 };
 
 
-// enemy Ä³¸¯ÅÍÀÇ hit reactionÀÇ °æ¿ì ¿©·¯ ¹æÇâ¿¡¼­ ¸Â´Â ¾Ö´Ï¸ÞÀÌ¼ÇÀ» blend space·Î ¿¬°á ÇÑ ÈÄ hit direaction¿¡ µû¶ó ¸Â´Â ¾Ö´Ï¸ÞÀÌ¼Ç ½ÇÇà
+// enemy Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ hit reactionï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ ï¿½Â´ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ blend spaceï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ hit direactionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½

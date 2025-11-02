@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Enemy/EnemyAIController.h"
+#include "Enemy/AI/EnemyDetourCrowdAIController.h"
+
+// Fill out your copyright notice in the Description page of Project Settings.
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,12 +11,12 @@
 #include "Debug/UELOGCategories.h"
 #include "BrainComponent.h"
 
-AEnemyAIController::AEnemyAIController()
+AEnemyDetourCrowdAIController::AEnemyDetourCrowdAIController()
 {
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 }
 
-void AEnemyAIController::BeginPlay()
+void AEnemyDetourCrowdAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -27,7 +29,7 @@ void AEnemyAIController::BeginPlay()
 
 }
 
-void AEnemyAIController::DefaultSettingBlackBoard()
+void AEnemyDetourCrowdAIController::DefaultSettingBlackBoard()
 {
 	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -66,7 +68,7 @@ void AEnemyAIController::DefaultSettingBlackBoard()
 
 }
 
-void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+void AEnemyDetourCrowdAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	Super::OnMoveCompleted(RequestID, Result);
 
@@ -79,12 +81,12 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 	
 }
 
-void AEnemyAIController::OnPossess(APawn* InPawn)
+void AEnemyDetourCrowdAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 }
 
-void AEnemyAIController::StartBehaviorTree()
+void AEnemyDetourCrowdAIController::StartBehaviorTree()
 {
 	if (BehaviorTreeAsset)
 	{
@@ -93,7 +95,7 @@ void AEnemyAIController::StartBehaviorTree()
 	}
 }
 
-void AEnemyAIController::StopBehaviorTree()
+void AEnemyDetourCrowdAIController::StopBehaviorTree()
 {
 	/*if (BehaviorTreeAsset)
 	{
