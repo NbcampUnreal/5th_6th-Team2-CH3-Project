@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Item/QuickSlotsBase.h"
-// for EquipmentQuickSlot
+#include "Item/QuickSlotsBase.h"// for EquipmentQuickSlot
+
 
 bool UEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
 {

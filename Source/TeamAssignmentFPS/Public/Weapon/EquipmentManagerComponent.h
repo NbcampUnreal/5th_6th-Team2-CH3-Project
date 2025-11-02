@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Item/EquipmentData.h"
-#include "Item/EquipmentSlot.h"
+#include "Item/QuickSlotsBase.h"// why this one only works when it is included, not just forward declare
 
 #include "EquipmentManagerComponent.generated.h"
 
 class UInventoryManagerComponent;
 class AWeaponBase;
 class AItemBase;
+class UEquipmentSlot;
 struct FInputActionValue;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -46,7 +47,7 @@ protected:
 	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
 	int32 CurrentItemID;*/
 
-	TMap<EEquipmentType, FEquipmentQuickSlots> EquipmentSlotsList;// for weapons, items and more in the future
+	TMap<EEquipmentType, UEquipmentQuickSlots> EquipmentSlotsList;// for weapons, items and more in the future
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding

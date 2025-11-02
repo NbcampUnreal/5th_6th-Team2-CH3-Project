@@ -5,18 +5,19 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "Item/EquipmentSlot.h"
-#include "QuickSlotsBase.generated.h"
-
 #include "Debug/UELOGCategories.h"
+
+
+#include "QuickSlotsBase.generated.h"
 
 // slot struct to manage equipments
 UCLASS()
 class TEAMASSIGNMENTFPS_API UEquipmentQuickSlots:public UObject//multiple slots
 {
 	GENERATED_BODY()
-	
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Equipment Slot")
-	TMap<uint8/*slot Number*/,UEquipmentSlot/*Equipment*/> EquipmentQuickSlot;
+	TMap<uint8,TObjectPtr<UEquipmentSlot>> EquipmentQuickSlot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Equipment Slot")
 	int32 SlotMaxCount;

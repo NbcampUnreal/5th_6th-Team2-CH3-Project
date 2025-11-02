@@ -9,7 +9,7 @@
 #include "Interface/InputReactionInterface.h"
 #include "Interface/EquipmentInterface.h"
 #include "PlayerState/MyPlayerState.h"
-
+#include "Item/EquipmentSlot.h"
 #include "Debug/UELOGCategories.h"//debug log
 
 UEquipmentManagerComponent::UEquipmentManagerComponent():
@@ -75,7 +75,7 @@ void UEquipmentManagerComponent::SetPlacementComponent(USceneComponent* NewPlace
 	if (!NewPlacement)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-		TEXT("UEquipmentManagerCompnent::SetPlacementComponent->Invaild USceneComp for Placement"));
+		TEXT("UEquipmentManagerComponent::SetPlacementComponent->InVaild USceneComp for Placement"));
 		return;
 	}
 
@@ -88,12 +88,12 @@ void UEquipmentManagerComponent::OnScrollChunkStart(float ScrollDirection)
 	if (ScrollDirection > 0)
 	{
 		UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerCompnent::OnScrollChunkStart->Scroll Start +"));
+			TEXT("UEquipmentManagerComponent::OnScrollChunkStart->Scroll Start +"));
 	}
 	else
 	{
 		UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerCompnent::OnScrollChunkStart-> Scroll Start -"));
+			TEXT("UEquipmentManagerComponent::OnScrollChunkStart-> Scroll Start -"));
 	}
 		
 }
@@ -148,7 +148,7 @@ void UEquipmentManagerComponent::SpawnCurrentEquipment()
 	if (!CurrentEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment is Invalid."));
+			TEXT("UEquipmentManagerComponent::SpawnCurrentEquipment-> Current Equipment is Invalid."));
 		return;
 	}
 
@@ -158,14 +158,14 @@ void UEquipmentManagerComponent::SpawnCurrentEquipment()
 	if (!SpawnedActor)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Equipment Spawing Failed."));
+			TEXT("UEquipmentManagerComponent::SpawnCurrentEquipment-> Equipment Spawing Failed."));
 		return;
 	}
 
 	if (!SpawnedActor->Implements<UEquipmentInterface>())// when ther is no equipment interface
 	{
 		UE_LOG(Equipment_Manager_Log, Warning,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> Current Equipment does not have equipment interface"));
+			TEXT("UEquipmentManagerComponent::SpawnCurrentEquipment-> Current Equipment does not have equipment interface"));
 		// but still use it, some could have no interface for calling equipped and unequipped
 	}
 	else// when there is equipment interface
@@ -175,7 +175,7 @@ void UEquipmentManagerComponent::SpawnCurrentEquipment()
 
 	//SpawnedActor->SetActorTransform(SpawnTransform);/--> no need, the spawn used the transform
 	UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerCompnent::SpawnCurrentEquipment-> CurrentEquipment is Set."));
+			TEXT("UEquipmentManagerComponent::SpawnCurrentEquipment-> CurrentEquipment is Set."));
 }
 
 void UEquipmentManagerComponent::TestEquipWeapon(AActor* SettingWeapon)
@@ -195,7 +195,7 @@ void UEquipmentManagerComponent::UpdatePlacementComponent(USceneComponent* NewPl
 	if (!NewPlacement)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::UpdatePlacementComponent-> Invalid Placedment"));
+			TEXT("UEquipmentManagerComponent::UpdatePlacementComponent-> Invalid Placedment"));
 		return;
 	}
 	
@@ -209,13 +209,13 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement()
 	if (!CurrentEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SetCurrentEquipmentPlacement-> no equipment to place"));
+			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> no equipment to place"));
 		return;
 	}
 	if (!Placement)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerCompnent::SetCurrentEquipmentPlacement-> no place to equip"));
+			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> no place to equip"));
 		return;
 	}
 
@@ -357,7 +357,7 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 	if (CurrentEquipmentType!=EEquipmentType::Weapon)
 	{
 		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> not holding weapon currently."));
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> not holding weapon currently."));
 
 		// should this qutomatically switch to the weapon and reload the weapon?
 		//TODO: decide the case. should this switch to weapon or do nothing and return
@@ -367,14 +367,14 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 	if (!CurrentEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> Invalid Equipment."));
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> Invalid Equipment."));
 		return;
 	}
 
 	if (!CurrentEquipment->Implements<UWeaponInterface>())// when the current equipment does not have the reload interface function
 	{
 		UE_LOG(Equipment_Manager_Log,Error,
-			TEXT("UEquipmentManagerCompnent::TriggerInput_Reload-> Invalid Equipment."));
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> Invalid Equipment."));
 		return;
 	}
 
@@ -387,7 +387,7 @@ void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Val
 	if (!CurrentEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("EquipmentManagerCompnent::TriggerInput_Start-> CurrentEquipment is invalid"));
+			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment is invalid"));
 		return;
 	}
 	bDidHoldStarted=true;
@@ -404,7 +404,7 @@ void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Val
 	if (!bDidItWork)// when calling failed
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("EquipmentManagerCompnent::TriggerInput_Start-> CurrentEquipment does not have required interface"));
+			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment does not have required interface"));
 		// TODO:
 		// siganl ui that equipment trigger is invalid (ex. red highlight for current equipment widget)
 		// player character playing anim for invalid command?

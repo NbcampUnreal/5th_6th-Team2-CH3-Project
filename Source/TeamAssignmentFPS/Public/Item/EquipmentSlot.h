@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"// to use delegate, struct cannot boradcast or execute delegate
+#include "EquipmentSlot.generated.h"
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API UEquipmentSlot: public UObject
