@@ -65,7 +65,7 @@ protected:
 		}
 		// found the slot to add
 		
-		return AddToSlotBySlotIndex(SlotIndex,SlotData);
+		return AddToQuickSlotBySlotIndex(SlotIndex,SlotData);
 	}
 	template<typename T_SlotData>
 	bool AddToQuickSlotBySlotIndex(uint8 SlotIndex, T_SlotData SlotData)

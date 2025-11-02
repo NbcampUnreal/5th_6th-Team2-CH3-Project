@@ -130,7 +130,7 @@ public:
 	UFUNCTION()
 	void SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 
-	//----- So, the weapon quick slot max count is 5
+	//==== Number Key Input Binding =====//
 	UFUNCTION()
 	void SwtichWeapon_PC_Numbkey1() { SwtichWeapon_PC_NumbKeys(1);}
 	UFUNCTION()
@@ -141,7 +141,7 @@ public:
 	void SwtichWeapon_PC_Numbkey4() { SwtichWeapon_PC_NumbKeys(4);}
 	UFUNCTION()
 	void SwtichWeapon_PC_Numbkey5() { SwtichWeapon_PC_NumbKeys(5);}
-	
+	//----- So, the weapon quick slot max count is 5
 	
 	
 	UFUNCTION()
