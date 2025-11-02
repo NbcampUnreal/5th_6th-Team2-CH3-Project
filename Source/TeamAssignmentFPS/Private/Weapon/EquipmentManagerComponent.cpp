@@ -83,53 +83,6 @@ void UEquipmentManagerComponent::SetPlacementComponent(USceneComponent* NewPlace
 	Placement = NewPlacement;
 }
 
-
-void UEquipmentManagerComponent::OnScrollChunkStart(float ScrollDirection)
-{
-	if (ScrollDirection > 0)
-	{
-		UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerComponent::OnScrollChunkStart->Scroll Start +"));
-	}
-	else
-	{
-		UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerComponent::OnScrollChunkStart-> Scroll Start -"));
-	}
-		
-}
-
-void UEquipmentManagerComponent::OnScrollChunkStep(float ScrollDirection)
-{
-	/*FString Sign;
-	if (PreviousScrollSign>0) Sign=TEXT("+");
-	else if (PreviousScrollSign<0)Sign=TEXT("-");
-	else Sign=TEXT("Zero");
-	
-	UE_LOG(Equipment_Manager_Log, Log,
-			TEXT("UEquipmentManagerCompnent::OnScrollChunkStep-> Switch happended %s"),*Sign);*/
-	
-}
-
-void UEquipmentManagerComponent::OnScrollChunkEnd(float Direction)
-{
-	if (!bIsScrolling)
-		return; // safety
-
-	/*
-	UE_LOG(Equipment_Manager_Log, Log, TEXT("[Scroll Chunk End] Direction: %s"),
-		Direction > 0 ? TEXT("+") : TEXT("-"));*/
-
-	bIsScrolling = false;
-	bDidScrollStarted = false;
-	PreviousScrollSign = 0.f;
-}
-
-void UEquipmentManagerComponent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
-{
-	 
-}
-
 void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType Type,TMap<int32, TObjectPtr<AActor>>& Slot)
 {
 	if (!InventoryCompoent)
@@ -146,7 +99,7 @@ void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType 
 
 void UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue)
 {
-	UEquipmentQuickSlots* WeaponQuickSlot = EquipmentSlotsList.Find(EEquipmentType::Weapon);
+	UEquipmentQuickSlots* WeaponQuickSlot = *EquipmentSlotsList.Find(EEquipmentType::Weapon);
 	if (!WeaponQuickSlot)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
@@ -166,8 +119,103 @@ void UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue)
 	}
 
 	CurrentEquipment=WeaponQuickSlot->GetCurrentEquipmentPtr();
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> %d Weapon Setting is completed.")
+		,NumbKeyValue);
 	SetCurrentEquipmentPlacement();// set location to the hodling location; just in case
 }
+
+void UEquipmentManagerComponent::GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight)
+{
+	if (!DoesTypeOfQuickSlotExist(Type)) return;
+
+	UEquipmentQuickSlots* QuickSlots = EquipmentSlotsList[Type];
+	if (!QuickSlots)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> QuickSlots pointer is Invalid"));
+		return;
+	}
+	if (!QuickSlots->SwitchToNextSlot(bIsDirectionRight))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> Failed to switch slot"));
+		return;
+	}
+	
+	CurrentEquipment=QuickSlots->GetCurrentEquipmentPtr();
+	SetCurrentEquipmentPlacement();
+	
+	UE_LOG(Equipment_Manager_Log, Log,
+				TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> Switching completed"));
+	// TODO: send signal to widget for update
+	// no need to , cause the slot it self will send signal
+}
+
+bool UEquipmentManagerComponent::DoesTypeOfQuickSlotExist(EEquipmentType Type) const
+{
+	FString QuickSlotType=UEnum::GetValueAsString(Type);
+	
+	if (!EquipmentSlotsList.Contains(Type))
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> Cannot find %s from list")
+			, *QuickSlotType);
+		return false;
+	}
+	
+	UE_LOG(Equipment_Manager_Log, Log,
+	TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> %s got found from list")
+	, *QuickSlotType);
+	return true;
+}
+
+bool UEquipmentManagerComponent::SwitchCurrentEquipmentByType(EEquipmentType Type)
+{
+	if (!DoesTypeOfQuickSlotExist(Type))
+		return false;
+
+	UEquipmentQuickSlots* QuickSlots = EquipmentSlotsList[Type];
+	if (!QuickSlots)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SwitchCurrentEquipmentByType -> Invalid QuickSlot for %s"),
+			*UEnum::GetValueAsString(Type));// wow fuck yeah. now can print enum display name
+		return false;
+	}
+
+	AActor* NewEquipment = QuickSlots->GetCurrentEquipmentPtr();
+	if (!NewEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SwitchCurrentEquipmentByType -> No valid equipment in current slot for %s"),
+			*UEnum::GetValueAsString(Type));
+		return false;
+	}
+	
+	// unequip the soon be replaced equipment if it has interface
+	if (CurrentEquipment && CurrentEquipment->Implements<UEquipmentInterface>())
+	{
+		IEquipmentInterface::Execute_OnUnequipped(CurrentEquipment);
+	}
+
+	CurrentEquipmentType = Type;
+	CurrentEquipment = NewEquipment;
+	SetCurrentEquipmentPlacement();
+
+	// trigger equip using interface
+	if (CurrentEquipment->Implements<UEquipmentInterface>())
+	{
+		IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);
+	}
+
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT("UEquipmentManagerComponent::SwitchCurrentEquipmentByType -> Switched to %s"),
+		*UEnum::GetValueAsString(Type));
+
+	return true;
+}
+
 
 void UEquipmentManagerComponent::SpawnCurrentEquipment()
 {
@@ -202,16 +250,6 @@ void UEquipmentManagerComponent::SpawnCurrentEquipment()
 	//SpawnedActor->SetActorTransform(SpawnTransform);/--> no need, the spawn used the transform
 	UE_LOG(Equipment_Manager_Log, Log,
 			TEXT("UEquipmentManagerComponent::SpawnCurrentEquipment-> CurrentEquipment is Set."));
-}
-
-void UEquipmentManagerComponent::TestEquipWeapon(AActor* SettingWeapon)
-{
-	SetCurrentEquipment(SettingWeapon);
-
-	FVector PlacementLocation=Placement->GetComponentLocation();
-	FRotator PlacementRotation=Placement->GetComponentRotation();
-	
-	SettingWeapon->SetActorLocationAndRotation(PlacementLocation, PlacementRotation);
 }
 
 
@@ -253,63 +291,13 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement()
 void UEquipmentManagerComponent::SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value)
 {
 	float ScrollValue = Value.Get<float>();
-	if (ScrollValue == 0.f)
+	if (FMath::IsNearlyZero(ScrollValue))//not enough scroll movement
 		return;
 	
-	const float Sign = ScrollValue > 0.f ? 1.f : -1.f;
+	const bool bScrollUp = (ScrollValue > 0.f);
 
-
-	//===  Handle direction change ===//
-	if (bIsScrolling && Sign != PreviousScrollSign)
-	{
-		// End previous chunk immediately
-		OnScrollChunkEnd(PreviousScrollSign);
-		bIsScrolling = false;
-		bDidScrollStarted = false;
-	}
-
-	//=== Handle new chunk start ===//
-	if (!bIsScrolling)
-	{
-		OnScrollChunkStart(Sign);
-		bIsScrolling = true;
-		bDidScrollStarted = true;
-		PreviousScrollSign = Sign;
-	}
-
-	//===  Restart timer for this chunk ===//
-	GetWorld()->GetTimerManager().ClearTimer(ScrollEndTimerHandle);//reset timer
-	//set new timer
-	GetWorld()->GetTimerManager().SetTimer(
-		ScrollEndTimerHandle,
-		FTimerDelegate::CreateUObject(this, &UEquipmentManagerComponent::OnScrollChunkEnd, Sign),// make delegate to trigger function with delegate
-		ScrollEndDelay,
-		false
-	);
-
-	//===  Perform step logic (per scroll chunk movement) ===//
-	OnScrollChunkStep(Sign);
-
-}
-
-void UEquipmentManagerComponent::SetCurrentEquipment(AActor* NewEquipment)
-{
-	CurrentEquipment=NewEquipment;
-}
-
-void UEquipmentManagerComponent::SwtichWeapon_GP(const FInputActionValue& Value)
-{
-	
-}
-
-void UEquipmentManagerComponent::SelectItem_PC(const FInputActionValue& Value)
-{
-	
-}
-
-void UEquipmentManagerComponent::SelectItem_GP(const FInputActionValue& Value)
-{
-	
+	EEquipmentType TargetType=bIsHoldingMouseRightButton? EEquipmentType::Item:EEquipmentType::Weapon;
+	GetNextEquipmentSlot(TargetType,bScrollUp);
 }
 
 void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Value)
@@ -341,6 +329,7 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 
 		// should this qutomatically switch to the weapon and reload the weapon?
 		//TODO: decide the case. should this switch to weapon or do nothing and return
+		// swicth to weapon
 		return;
 	}
 	

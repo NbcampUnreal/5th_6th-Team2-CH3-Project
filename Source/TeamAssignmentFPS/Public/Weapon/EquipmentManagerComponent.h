@@ -48,7 +48,7 @@ protected:
 	// the id will be shared with the inventory. the information of the weapon will be aquired from the inventory
 	int32 CurrentItemID;*/
 
-	TMap<EEquipmentType, UEquipmentQuickSlots> EquipmentSlotsList;// for weapons, items and more in the future
+	TMap<EEquipmentType, TObjectPtr<UEquipmentQuickSlots>> EquipmentSlotsList;// for weapons, items and more in the future
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
@@ -103,26 +103,23 @@ private:
 	
 	//==== Inventory ====//
 	void CacheInventoryComponent();
-	
-	//== Mouse scroll action
-	void OnScrollChunkStart(float ScrollDirection);
-	void OnScrollChunkStep(float ScrollDirection);
-	void OnScrollChunkEnd(float ScrollDirection);
-	void ProcessScrollDetection(float ScrollDltaValue, float DeltaTime);
-
 
 	// Equipment setting
 	void SpawnEquipmentInSlot(int32 ID,  EEquipmentType Type,TMap<int32, TObjectPtr<AActor>>& Slot);
 	
 	void SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue);
+	// helper function for sequential switching
+	void GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight);
+
+	//helper for overall
+	bool DoesTypeOfQuickSlotExist(EEquipmentType Type) const;
+	
+	bool SwitchCurrentEquipmentByType(EEquipmentType Type);
+	
 public:
 
 	UFUNCTION(BlueprintCallable, Category="Equipment")
 	void SetPlacementComponent(USceneComponent* NewPlacement);
-
-	//Temp for controlling weapon without inventory( weapon in the editor )
-	UFUNCTION(BlueprintCallable, Category="Equipment")
-	void TestEquipWeapon(AActor* SettingWeapon);
 	
 	UFUNCTION(BlueprintCallable, Category="Equipment")
 	void UpdatePlacementComponent(USceneComponent* NewPlacement);// this will update where to be attatched
@@ -143,17 +140,20 @@ public:
 	void SwtichWeapon_PC_Numbkey5() { SwtichWeapon_PC_NumbKeys(5);}
 	//----- So, the weapon quick slot max count is 5
 	
+	//===== GamePad Swtich =====//
+	UFUNCTION()
+	void SwtichWeapon_GP_Next(const FInputActionValue& Value)// gamepad right face button
+	{ GetNextEquipmentSlot(EEquipmentType::Weapon, true);}
+	UFUNCTION()
+	void SwtichWeapon_GP_Previous(const FInputActionValue& Value)// gamepad Left face button
+	{ GetNextEquipmentSlot(EEquipmentType::Weapon, false);}
+	UFUNCTION()
+	void SwtichItem_GP_Next(const FInputActionValue& Value)
+	{ GetNextEquipmentSlot(EEquipmentType::Item, true);}
+	UFUNCTION()
+	void SwtichItem_GP_Previous(const FInputActionValue& Value)
+	{ GetNextEquipmentSlot(EEquipmentType::Item, false);}
 	
-	UFUNCTION()
-	void SwtichWeapon_GP(const FInputActionValue& Value);
-	void SetCurrentEquipment(AActor* NewEquipment);
-	UFUNCTION()
-	void SelectItem_PC(const FInputActionValue& Value);//
-	UFUNCTION()
-	void SelectItem_GP(const FInputActionValue& Value);//
-	
-
-
 	//---- Weapn and Item Interaction ----//----------------------------------------------------------------------------
 
 	//Actually binded functions
