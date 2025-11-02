@@ -28,6 +28,7 @@ bool FEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
 //----- ChildClasses---------------------------------------------------------------------------------------------------//
 bool FWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
 {
+	return false;//temp
 }
 
 // for EquipmentQuickSlot
