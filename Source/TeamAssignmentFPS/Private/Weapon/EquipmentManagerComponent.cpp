@@ -143,11 +143,7 @@ void UEquipmentManagerComponent::GetNextEquipmentSlot(EEquipmentType Type, bool 
 		return;
 	}
 	
-	CurrentEquipment=QuickSlots->GetCurrentEquipmentPtr();
-	SetCurrentEquipmentPlacement();
-	
-	UE_LOG(Equipment_Manager_Log, Log,
-				TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> Switching completed"));
+	SwitchCurrentEquipmentByType(Type);
 	// TODO: send signal to widget for update
 	// no need to , cause the slot it self will send signal
 }
