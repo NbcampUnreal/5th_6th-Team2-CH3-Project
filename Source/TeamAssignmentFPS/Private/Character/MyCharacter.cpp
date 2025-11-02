@@ -10,7 +10,7 @@
 #include "MaterialHLSLTree.h"
 #include "Components/TimelineComponent.h"
 #include "LockonTarget/LockonComponent.h"
-#include "Weapon/EquipmentManagerCompnent.h"
+#include "Weapon/EquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
 
@@ -27,7 +27,7 @@ AMyCharacter::AMyCharacter()
 	LockonComp=CreateDefaultSubobject<ULockonComponent>(TEXT("Lockon Component"));
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerCompnent>(TEXT("EquipmentManager Component"));
+	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
 	InventoryComp=CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Component"));
 }
 

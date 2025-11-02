@@ -8,8 +8,9 @@
 #include "Item/ItemBase.h"
 #include "Item/EquipmentData.h"
 
-#include "EquipmentManagerCompnent.generated.h"
+#include "EquipmentManagerComponent.generated.h"
 
+class UInventoryManagerComponent;
 class AWeaponBase;
 class AItemBase;
 
@@ -17,13 +18,13 @@ struct FInputActionValue;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TEAMASSIGNMENTFPS_API UEquipmentManagerCompnent : public UActorComponent
+class TEAMASSIGNMENTFPS_API UEquipmentManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UEquipmentManagerCompnent();
+	UEquipmentManagerComponent();
 	
 protected:
 
@@ -31,6 +32,11 @@ protected:
 	// confirmations
 
 	EEquipmentType CurrentEquipmentType=EEquipmentType::None;// default = none
+
+
+	// Inventory
+	UPROPERTY()
+	UInventoryManagerComponent* InventoryCompoent;// get this from player state
 	
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
 	bool bIsEquipping;//is current equipment empty or not*///--> no need, just check CurrentEquipment
@@ -55,14 +61,17 @@ protected:
 	USceneComponent* Placement;// the Scene component of where to attach equipment
 
 
-	//==== MouseWheel Tracking ====//
-	//for tracking holding to determine tap or hold
-	float CurrentHoldingTime=0.0f;
-	bool bDidHoldStarted=false;
 
-	// mouse wheele update ( to make it only work for once)
+
+	
 private:
 
+	//==== Inventory ====//
+	void CacheInventoryComponent();
+
+	//==== MouseWheel Tracking ====//
+	
+	// mouse wheele update ( to make it only work for once)
 	FTimerHandle ScrollEndTimerHandle;// for setting timer
 	
 	float ScrollEndDelay=0.2f;
@@ -70,6 +79,12 @@ private:
 	float PreviousScrollSign=0.f;//+ or - or 0
 	bool bIsScrolling=false;
 	bool bDidScrollStarted=false;
+
+
+	//for tracking holding to determine tap or hold
+	float CurrentHoldingTime=0.0f;
+	bool bDidHoldStarted=false;
+	
 
 	//Test Temp
 	UFUNCTION(BlueprintCallable, Category="Equipment")

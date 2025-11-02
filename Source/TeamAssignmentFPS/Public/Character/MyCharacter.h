@@ -26,7 +26,7 @@ enum class ECharacterMovementState:uint8
 class ULockonComponent;// to update the forward rotaion that character needs to update
 class UCameraManagerComponent;
 class UHealthComponent;
-class UEquipmentManagerCompnent;
+class UEquipmentManagerComponent;
 class UInventoryManagerComponent;
 //binding function
 struct FInputActionValue;
@@ -52,7 +52,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HealthComp")
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
-	UEquipmentManagerCompnent* EquipmentInteractionComp;
+	UEquipmentManagerComponent* EquipmentInteractionComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InventoryComp")
 	UInventoryManagerComponent* InventoryComp;
 
