@@ -37,16 +37,21 @@ public:
 	uint8 GetCurrentSlotIndex() const {return CurrentSlotIndex;}
 
 	bool SwitchCurrentSlot(uint8 SlotIndex);// set the current slot index and get the current values after that
-	
-	bool FindAvailableSlot(uint8& SlotIndex) const;// auto slot switch
+	bool SwitchToNextSlot(bool bIsDirectionRight);// for sequential switching
 	bool RemoveFromQuickSlot(uint8 SlotIndex);
 
 	
 	
-//Template Helper function
+
 protected:
+	// internally called functions
+	void OnEquipmentSlotHasNothing(uint8 RemovingSlotIndex);
+	bool CheckIfIndexIsValid(uint8 SlotIndex);
+	bool FindAvailableSlot(uint8& SlotIndex) const;// so that the tmap can be sorted in order(from small to big)
+	
+	//Template Helper function
 	template<typename T_SlotData>
-	bool AddToQuickSlot(T_SlotData SlotData)
+	bool AddToQuickSlot(T_SlotData* SlotData)// this is for 
 	{
 		if (!SlotData )
 		{
@@ -82,8 +87,8 @@ protected:
 		UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentQuickSlots::AddToSlot-> Slot Added"));
 		return true;
 	}
-	template<typename T_SlotClass>
-	T_SlotClass* GetSlot(uint8 SlotIndex)
+	template<typename T_SlotData>
+	T_SlotData* GetSlot(uint8 SlotIndex)
 	{
 		if (!EquipmentQuickSlot.Contains(SlotIndex))
 		{
@@ -91,9 +96,7 @@ protected:
 				TEXT("UEquipmentQuickSlots::GetSlot-> Index %d cannot be found"),SlotIndex);
 			return nullptr;
 		}
-		return Cast<T_SlotClass>(EquipmentQuickSlot[SlotIndex]);
+		return Cast<T_SlotData>(EquipmentQuickSlot[SlotIndex]);
 	}
-// internally called functions
-	void OnEquipmentSlotHasNothing(uint8 RemovingSlotIndex);
-	bool CheckIfIndexIsValid(uint8 SlotIndex);
+
 };

@@ -31,6 +31,7 @@ void UEquipmentManagerComponent::BeginPlay()
 	CacheInventoryComponent();
 }
 
+
 void UEquipmentManagerComponent::CacheInventoryComponent()
 {
 	if (!GetOwner())
@@ -143,6 +144,31 @@ void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType 
 	//TSubclassOf<AActor> EquipmentClass=InventoryCompoent->
 }
 
+void UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue)
+{
+	UEquipmentQuickSlots* WeaponQuickSlot = EquipmentSlotsList.Find(EEquipmentType::Weapon);
+	if (!WeaponQuickSlot)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> Cannot Find WeaponQuickSlot."));
+		// do nothing here.this is real problem
+		return;
+	}
+	//WeaponQuickSlot found
+
+	if (!WeaponQuickSlot->SwitchCurrentSlot(NumbKeyValue))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> %d has no available weapon.")
+		,NumbKeyValue);
+		// TODO: trigger slot widget to play error effect
+		return;
+	}
+
+	CurrentEquipment=WeaponQuickSlot->GetCurrentEquipmentPtr();
+	SetCurrentEquipmentPlacement();// set location to the hodling location; just in case
+}
+
 void UEquipmentManagerComponent::SpawnCurrentEquipment()
 {
 	if (!CurrentEquipment)
@@ -224,54 +250,8 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement()
 	CurrentEquipment->SetActorRelativeRotation(FRotator::ZeroRotator);//offset
 }
 
-void UEquipmentManagerComponent::SwtichWeapon_PC(const FInputActionValue& Value)
+void UEquipmentManagerComponent::SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value)
 {
-	/*float CurrentMouseWheelValue = Value.Get<float>();
-	UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC-> Value:%f"),CurrentMouseWheelValue);//temp
-	
-	// Detect first movement of the wheel (from 0 to non-zero)
-	if (PreviousMouseWheelValue == 0.f && CurrentMouseWheelValue != 0.f)
-	{
-		if (CurrentMouseWheelValue > 0.f)
-		{
-			// Scroll up -> next weapon
-			UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC -> [+]"));
-		}
-		else
-		{
-			// Scroll down -> previous weapon
-			UE_LOG(Equipment_Manager_Log, Log, TEXT("UEquipmentManagerCompnent::SwtichWeapon_PC -> [-]"));
-		}
-	}
-
-	// Store the current value for next frame
-	PreviousMouseWheelValue = CurrentMouseWheelValue;*/
-	/*float CurrentValue = Value.Get<float>();
-
-	if (CurrentValue != 0.f)
-	{
-		// Check if previous value had a different sign or was zero
-		if ((PreviousMouseWheelValue <= 0.f && CurrentValue > 0.f) || 
-			(PreviousMouseWheelValue >= 0.f && CurrentValue < 0.f))
-		{
-			if (CurrentValue > 0.f)
-			{
-				UE_LOG(Equipment_Manager_Log, Log, TEXT("SwitchWeapon_PC -> Next weapon"));
-			}
-			else
-			{
-				UE_LOG(Equipment_Manager_Log, Log, TEXT("SwitchWeapon_PC -> Previous weapon"));
-			}
-
-			// Reset previous value so next scroll gesture can trigger again
-			PreviousMouseWheelValue = CurrentValue;
-		}
-	}
-	else
-	{
-		// Wheel is idle, reset
-		PreviousMouseWheelValue = 0.f;
-	}*/
 	float ScrollValue = Value.Get<float>();
 	if (ScrollValue == 0.f)
 		return;

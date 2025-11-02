@@ -30,6 +30,41 @@ bool UEquipmentQuickSlots::SwitchCurrentSlot(uint8 SlotIndex)
 	return true;
 }
 
+bool UEquipmentQuickSlots::SwitchToNextSlot(bool bIsDirectionRight)
+{
+	if (EquipmentQuickSlot.IsEmpty()||EquipmentQuickSlot.Num()==1)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentQuickSlots::SwitchToNextSlot-> No Slot to Switch"));
+		return false;
+	}
+
+	uint8 NewIndex=CurrentSlotIndex;
+	do// wow, first time using this. fuck yeah
+	{
+		if (bIsDirectionRight)
+		{
+			++NewIndex;
+			if (NewIndex>SlotMaxCount)//when it go beyond max, start over
+			{
+				NewIndex=1;
+			}
+		}
+		else
+		{
+			--NewIndex;
+			if (NewIndex<1)// when it goes beyond the min, go to max count
+			{
+				NewIndex=SlotMaxCount;
+			}
+		}
+	}	while (!EquipmentQuickSlot.Contains(NewIndex));
+	
+	// scrolling done
+	
+	return SwitchCurrentSlot(NewIndex);
+}
+
 bool UEquipmentQuickSlots::FindAvailableSlot(uint8& SlotIndex) const
 {
 	for (uint8 i = 1; i <= SlotMaxCount; ++i)//simple loop
