@@ -11,10 +11,96 @@
 #include "PlayerState/MyPlayerState.h"
 
 #include "Debug/UELOGCategories.h"//debug log
+// For Slots
+bool FEquipmentSlot::InitializeEquipmentSlot(AActor* Equipment, int32 ID)
+{
+	if(!Equipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("FEquipmentSlot::InitializeEquipmentSlot-> Invalid EquipmentPtr"));
+		return false;
+	}
+	EquipmentPtr=Equipment;
+	EquipmentID=ID;
+	return true;
+}
+
+//----- ChildClasses---------------------------------------------------------------------------------------------------//
+bool FWeaponSlot::InitializeWeaponData(AActor* Equipment, int32 ID)
+{
+}
+
+// for EquipmentQuickSlot
+bool FEquipmentQuickSlots::AddToSlot(uint8 SlotIndex, TObjectPtr<AActor> Equipment)
+{
+	if(!Equipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error, 
+		TEXT("FEquipmentQuickSlot::AddToSlot-> Invalid Equipment"));
+		return false;
+	}
+	if (EquipmentQuickSlot.Contains(SlotIndex))
+	{
+		UE_LOG(Equipment_Manager_Log, Error, 
+		TEXT("FEquipmentQuickSlot::AddToSlot-> Slot.%d is already used"),SlotIndex);
+		return false;
+	}
+	if (UsedSlotCount>=SlotMaxCount)// no place to add
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("FEquipmentQuickSlot::AddToSlot-> Not enough slot to put"));
+		return false;
+	}
+	// checking completed
+	
+	EquipmentQuickSlot.Add(SlotIndex, Equipment);
+
+	if (UsedSlotCount==0)
+	{
+		CurrentSlotIndex=SlotIndex;
+		CurrentSlotEquipment=Equipment;
+	}
+	++UsedSlotCount;
+	return true;
+
+	//Should it set the currentEquipment to newly added one?
+	// ex. Gain weapon-> auto switch to new weapon
+	// or Gain Weapon-> stays in current weapon -> manually switch to new weapon if player request
+}
+
+bool FEquipmentQuickSlots::RemoveFromSlot(uint8 SlotIndex)
+{
+	if (!EquipmentQuickSlot.Contains(SlotIndex))
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("FEquipmentQuickSlot::RemoveFromSlot-> ID:%d not found in the slot"),ID);
+		return false;
+	}
+
+	EquipmentQuickSlot.Remove(SlotIndex);
+	--UsedSlotCount;
+
+	if (CurrentEquipmentID!=SlotIndex)// when removed equipment was not from current slot
+	{
+		return true;// just return
+	}
+
+	// removed one is current slot. find new slot to replace current slot
+
+	if (UsedSlotCount<=0)// empty slots. no equipments
+	{
+		CurrentSlotIndex=INDEX_NONE;
+		CurrentSlotEquipment=nullptr;
+		return true;
+		// should it set to the first one? or last one?
+	}
+	// when there is a replacement slot
+	
+}
 
 
+//----------------------------------------------------------------------------------------------------------------------//
+// for EquipmentManagerComponent
 
-// Sets default values for this component's properties
 UEquipmentManagerComponent::UEquipmentManagerComponent():
 	CurrentEquipment(nullptr),
 	Placement(nullptr)// where to put equipment
@@ -130,6 +216,20 @@ void UEquipmentManagerComponent::OnScrollChunkEnd(float Direction)
 void UEquipmentManagerComponent::ProcessScrollDetection(float ScrollDeltaValue, float DeltaTime)
 {
 	 
+}
+
+void UEquipmentManagerComponent::SpawnEquipmentInSlot(int32 ID,  EEquipmentType Type,TMap<int32, TObjectPtr<AActor>>& Slot)
+{
+	if (!InventoryCompoent)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SpawnEquipmentInSlot-> Invalid Inventory comp"));
+		return;
+	}
+
+	
+
+	TSubclassOf<AActor> EquipmentClass=InventoryCompoent->
 }
 
 void UEquipmentManagerComponent::UpdateQuickSlots()
