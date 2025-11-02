@@ -26,8 +26,6 @@ protected:
 	TMap<int32, FWeaponData> Weapons;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Weapon")
 
-	
-
 	TArray<int32> FreedWeaponIDs;
 	// this is where the removed item id is stored, so that when new id is required, it checks here first so that id gap to be filled
 	
