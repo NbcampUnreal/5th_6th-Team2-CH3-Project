@@ -2,6 +2,8 @@
 
 
 #include "Pooling/PoolingSubsystem.h"
+
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Pooling/PoolingInterface.h"
 
 void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize)
@@ -51,8 +53,16 @@ AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass, FVect
 			Actor->SetActorLocationAndRotation(Location, Rotation);
 			Actor->SetActorHiddenInGame(false);
 			Actor->SetActorEnableCollision(true);
+
+			UProjectileMovementComponent* ProjectileMovementComponent = Actor->FindComponentByClass<UProjectileMovementComponent>();
+			if (ProjectileMovementComponent)
+			{
+				//ProjectileMovementComponent->SetUpdatedComponent(Actor->GetRootComponent());
+				//ProjectileMovementComponent->Activate(true);
+				//ProjectileMovementComponent->InitializeComponent();
+			}
+			//Actor->SetActorTickEnabled(true);
 			IPoolingInterface::Execute_OnSpawnFromPool(Actor);
-			
 			return Actor;
 		}
 	}

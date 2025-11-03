@@ -4,6 +4,7 @@
 #include "Enemy/EnemyState/EnemyDataRow.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Pooling/PoolingSubsystem.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
@@ -102,7 +103,12 @@ void AEnemyBaseCharacter::EnemyDead()
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
 	
-	Destroy();
+	//Destroy();
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		PoolingSubsystem->ReturnToPool(this);
+	}
 	
 }
 
@@ -136,4 +142,25 @@ void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 void AEnemyBaseCharacter::DisableEnemyCollision()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
+{
+	IPoolingInterface::OnSpawnFromPool_Implementation();
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StartBehaviorTree();
+	}
+}
+
+void AEnemyBaseCharacter::OnReturnToPool_Implementation()
+{
+	IPoolingInterface::OnReturnToPool_Implementation();
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StopBehaviorTree();
+	}
+	
 }
