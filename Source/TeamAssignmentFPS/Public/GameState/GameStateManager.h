@@ -4,9 +4,13 @@
 #include "GameFramework/GameState.h"
 #include "GameStateManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPhaseOver);
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AGameStateManager : public AGameState
 {
+	
+
 	GENERATED_BODY()
 
 public:
@@ -46,6 +50,9 @@ public:
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
 	void UPdateHUD();
+
+	UPROPERTY()
+	FPhaseOver PhaseOver;
 };
 
 

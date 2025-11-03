@@ -2,6 +2,7 @@
 #include "Enemy/EnemyAIController.h"
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyState/EnemyDataRow.h"
+#include "GameState/GameStateManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -23,6 +24,7 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 
 	EnemyData.Range = 100.f;
 	EnemyData.Damage = 50;
+
 }
 
 
@@ -39,6 +41,12 @@ void AEnemyBaseCharacter::BeginPlay()
 
 	HealthComponent->SetMaxHealth(100);
 	HealthComponent->SetCurrentHealth(100);
+
+	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
+	if (GameStateManager)
+	{
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
+	}
 }
 
 void AEnemyBaseCharacter::EnemyAttack()
