@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interface/DamageInfo.h"// added for damage info transport
+#include "Pooling/PoolingInterface.h"
 
 #include "ProjectileBase.generated.h"
 
@@ -17,7 +18,7 @@ class UNiagaraComponent;
 class USoundBase;// SFX
 
 UCLASS()
-class TEAMASSIGNMENTFPS_API AProjectileBase : public AActor
+class TEAMASSIGNMENTFPS_API AProjectileBase : public AActor, public IPoolingInterface
 {
 	GENERATED_BODY()
 	
@@ -74,5 +75,8 @@ public:
 	
 	virtual void OnProjectileHit(const FHitResult& HitResult, AActor* OtherActor);// when the projectile collide
 
+
+	virtual void OnSpawnFromPool_Implementation() override;
+	virtual void OnReturnToPool_Implementation() override;
 	
 };
