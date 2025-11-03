@@ -10,6 +10,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "CharacterStat/HealthComponent.h"
+#include "Enemy/EnemyBaseCharacter.h"
 
 AProjectileBase::AProjectileBase()
 {
@@ -156,6 +157,16 @@ void AProjectileBase::OnProjectileHit(const FHitResult& HitResult, AActor* Other
 		//no sound effect
 	}
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+}
+
+void AProjectileBase::OnSpawnFromPool_Implementation()
+{
+	IPoolingInterface::OnSpawnFromPool_Implementation();
+}
+
+void AProjectileBase::OnReturnToPool_Implementation()
+{
+	IPoolingInterface::OnReturnToPool_Implementation();
 }
 
 
