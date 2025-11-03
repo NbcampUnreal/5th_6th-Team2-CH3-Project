@@ -33,7 +33,7 @@ struct FTargetInfo
 //forward declaration
 //class USphereComponent;// without sphere collision
 class AMyPlayerController;
-class UCameraManagerComp;
+class UCameraManagerComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TEAMASSIGNMENTFPS_API ULockonComponent : public UActorComponent
@@ -52,7 +52,7 @@ protected:
 	UPROPERTY()
 	AMyPlayerController* OwnerController;
 	UPROPERTY()
-	UCameraManagerComp* CameraManager;
+	UCameraManagerComponent* CameraManager;
 	
 	// Confirmation //
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="Lockon | Detection")
@@ -98,6 +98,8 @@ public:
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool GetDeprojectedCursorLocation(FVector& CursorWorldLocation);
 	
 protected:
 	void UpdateCameraBoomLocation();// middle location by BaseRootToTargetAlpha

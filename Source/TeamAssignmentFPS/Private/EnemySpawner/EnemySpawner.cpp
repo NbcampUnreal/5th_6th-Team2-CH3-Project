@@ -99,7 +99,7 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClas
 		return nullptr;
 	if (!MonsterClass->IsChildOf(AEnemyBaseCharacter::StaticClass()))
 		return nullptr;
-	const FVector SpawnLocation = Manager->GetRandomSpawnLocation(); // ¹Ú½º ³»ºÎ ·£´ý ÁÂÇ¥
+	const FVector SpawnLocation = Manager->GetRandomSpawnLocation(); // Â¹ÃšÂ½Âº Â³Â»ÂºÃŽ Â·Â£Â´Ã½ ÃÃ‚Ã‡Â¥
 	FActorSpawnParameters Params;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	return GetWorld()->SpawnActor<AEnemyBaseCharacter>(

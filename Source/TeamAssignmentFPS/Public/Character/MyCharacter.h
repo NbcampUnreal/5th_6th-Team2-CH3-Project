@@ -24,13 +24,20 @@ enum class ECharacterMovementState:uint8
 
 //Forward Declare
 class ULockonComponent;// to update the forward rotaion that character needs to update
-class UCameraManagerComp;
+class UCameraManagerComponent;
+class UHealthComponent;
+class UEquipmentManagerComponent;
+class UInventoryManagerComponent;
 //binding function
 struct FInputActionValue;
 
 //== Dodge/BackDash
 class UCurveFloat;
 class UTimelineComponent;
+
+/*DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementStateChanged, ECharacterMovementState, NewState);*/
+// why not using dynamic for this time?
+//--> no need
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
@@ -40,16 +47,19 @@ class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
 	ULockonComponent* LockonComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CameraComp")
-	UCameraManagerComp* CameraManagerComp;
+	UCameraManagerComponent* CameraManagerComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HealthComp")
+	UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
+	UEquipmentManagerComponent* EquipmentInteractionComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
-
 	
 	//==Stat
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
@@ -62,11 +72,14 @@ protected:
 	FVector2D MovementInputValue;
 
 	//=== Dodge ===//
-
+	float QuickMoveStartTime = 0.f;
+	bool bIsQuickMoving = false;
+	float HoldThreshold = 0.2f;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	bool bIsDodging=false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
-	UTimelineComponent* DodgeTimeLine;
+	UTimelineComponent* DodgeTimeline;
 	// function to bind with the timeline
 	/*FOnTimelineFloat ProgressFunction;
 	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
@@ -75,12 +88,17 @@ protected:
 	UCurveFloat* DodgeCurve;//ease in and out
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
-	float DodgeSpeedPlayrate=1.f;
+	float DodgeSpeedPlayrate=5.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float BackDashDistanceRatio=0.7f;//temp, make it shorter
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float BackDashTimeRatio=1.3f;//temp, but make it faster
 
+private:
+	FVector DodgeDirection;
 	
 	
 protected:
@@ -104,6 +122,15 @@ public:
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float DeltaTime);
+
+
+	UFUNCTION()
+	void EnableQuickMovement(const FInputActionValue& Value);
+	UFUNCTION()
+	void DisableQuickMovement(const FInputActionValue& Value);
+	void QuickMovementTick();
+
+	
 	UFUNCTION()
 	void StartSprinting();
 	UFUNCTION()
@@ -111,26 +138,12 @@ public:
 
 	//=== Dodge/BackDash ===//
 	UFUNCTION()
-	void Dodge(const FInputActionValue& Value);
+	void Dodge();
 	void DirectionalDodge();
 	void BackDash();
-
+	UFUNCTION()
 	void HandleDodgeAction(float DeltaTime);
+	UFUNCTION()
 	void OnDodgeFinished();
 
-	//Attack
-	UFUNCTION()
-	void TriggerBattleAction();// this can be differ by the current equipped weapon or item(ex. Itme-> use item, weapon-> use weapon)
-	UFUNCTION()
-	void SwitchAction(const FInputActionValue& Value);// use mouse wheel(pc)or face button?(gamepad)
-	//trigger battle action-->
-	void UseWeapon();// not so sure should i use interface for both weapon and item?
-	void UseItem();// inventory related action
-	
-	//UseItem
-	void SelectItem();// inventory related action
-	void SwitchToNewWeapon();// weapon to weapon swtich
-	void SwtichToWeapon();// itme to weapon--> same input of switch weapon, but when using item+input-> equip previously used weapon
-	
-	void LockonTarget();//gamepad only?
 };

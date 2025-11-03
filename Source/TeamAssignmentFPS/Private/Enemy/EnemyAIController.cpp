@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Debug/UELOGCategories.h"
+#include "BrainComponent.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -56,12 +57,10 @@ void AEnemyAIController::DefaultSettingBlackBoard()
 			//UE_LOG(Enemy_Log, Error, TEXT("EnemyStateChanged"));
 		}
 
-		/*if (NewState == EEnemyState::EES_Dead)
+		if (NewState == EEnemyState::EES_Dead)
 		{
-			UE_LOG(Enemy_Log, Log, TEXT("Before Stop Behavior tree"));
-
 			StopBehaviorTree();
-		}*/
+		}
 
 	});
 
@@ -98,11 +97,18 @@ void AEnemyAIController::StopBehaviorTree()
 {
 	/*if (BehaviorTreeAsset)
 	{
-		StopBehaviorTree();
-
 		
+
+		StopBehaviorTree();
 	}*/
 
-	UE_LOG(Enemy_Log, Log, TEXT("Stop Behavior tree"));
+	
+
+	if (UBrainComponent* Brain = BrainComponent)
+	{
+		Brain->StopLogic(TEXT("Dead"));
+		UE_LOG(Enemy_Log, Warning, TEXT("Stop Behavior tree"));
+		
+	}
 }
 

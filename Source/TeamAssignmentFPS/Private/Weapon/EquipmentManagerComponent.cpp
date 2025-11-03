@@ -1,0 +1,589 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Weapon/EquipmentManagerComponent.h"
+
+#include "Weapon/WeaponBase.h"
+#include "Item/ItemBase.h"
+#include "InputAction.h"
+#include "Interface/InputReactionInterface.h"
+#include "Interface/EquipmentInterface.h"
+#include "PlayerState/MyPlayerState.h"
+#include "Item/EquipmentSlot.h"
+#include "Item/InventoryManagerComponent.h"
+#include "Debug/UELOGCategories.h"//debug log
+
+UEquipmentManagerComponent::UEquipmentManagerComponent():
+	CurrentEquipment(nullptr),
+	Placement(nullptr)// where to put equipment
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+
+// Called when the game starts
+void UEquipmentManagerComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//bing inventory ptr to here
+	CacheInventoryComponent();
+
+}
+
+
+void UEquipmentManagerComponent::CacheInventoryComponent()
+{
+	if (!GetOwner())
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid Owner"));
+		return;
+	}
+
+	AController* OwnerController=GetOwner()->GetInstigatorController();
+	if (!OwnerController)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid OwnerController"));
+		return;
+	}
+
+	
+	AMyPlayerState* PlayerState=OwnerController->GetPlayerState<AMyPlayerState>();// get the player state from the controller
+	if (!PlayerState)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Invalid PlayerState"));
+		return;
+	}
+	
+	InventoryComponent=PlayerState->GetInventoryManager();
+
+	if (!InventoryComponent)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Cached Invalid InventoryComponent"));
+		return;
+	}
+
+	UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::CacheInventoryComponent-> Cached Completed"));
+}
+
+
+void UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue)
+{
+	if (!WeaponQuickSlot)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys -> WeaponQuickSlot is invalid"));
+		return;
+	}
+	//WeaponQuickSlot found
+
+	if (!WeaponQuickSlot->SwitchCurrentSlot(NumbKeyValue))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> %d has no available weapon.")
+		,NumbKeyValue);
+		// TODO: trigger slot widget to play error effect
+		return;
+	}
+
+	CurrentEquipment=WeaponQuickSlot->GetCurrentEquipmentPtr();
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> %d Weapon Setting is completed.")
+		,NumbKeyValue);
+	SetCurrentEquipmentPlacement(Placement);// set location to the hodling location; just in case
+}
+
+void UEquipmentManagerComponent::GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight)
+{
+	UEquipmentQuickSlots* QuickSlot = GetQuickSlotByType(Type);
+	if (!QuickSlot)
+		return;
+	
+	if (!QuickSlot->SwitchToNextSlot(bIsDirectionRight))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("UEquipmentManagerComponent::GetNextEquipmentSlot-> Failed to switch slot"));
+		return;
+	}
+	
+	SwitchCurrentEquipmentByType(Type);
+	// TODO: send signal to widget for update
+	// no need to , cause the slot it self will send signal
+}
+
+bool UEquipmentManagerComponent::DoesTypeOfQuickSlotExist(EEquipmentType Type) const
+{
+	bool bExists = false;
+
+	switch (Type)
+	{
+	case EEquipmentType::Weapon:
+		bExists = (WeaponQuickSlot != nullptr);
+		break;
+
+	case EEquipmentType::Item:
+		bExists = (ItemQuickSlot != nullptr);
+		break;
+
+	default:
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::DoesTypeOfQuickSlotExist -> Invalid EquipmentType"));
+		return false;
+	}
+
+	FString QuickSlotTypeStr = UEnum::GetValueAsString(Type);
+
+	if (!bExists)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::DoesTypeOfQuickSlotExist -> %s QuickSlot does not exist"), 
+			*QuickSlotTypeStr);
+	}
+	else
+	{
+		UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::DoesTypeOfQuickSlotExist -> %s QuickSlot exists"), 
+			*QuickSlotTypeStr);
+	}
+
+	return bExists;
+}
+
+bool UEquipmentManagerComponent::SwitchCurrentEquipmentByType(EEquipmentType Type)
+{
+	if (!DoesTypeOfQuickSlotExist(Type))
+		return false;
+
+	UEquipmentQuickSlots* QuickSlot = GetQuickSlotByType(Type);
+	if (!QuickSlot)
+		return false;
+
+	AActor* NewEquipment = QuickSlot->GetCurrentEquipmentPtr();
+	if (!NewEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SwitchCurrentEquipmentByType -> No valid equipment in current slot for %s"),
+			*UEnum::GetValueAsString(Type));
+		return false;
+	}
+
+	// unequip the current one for new one
+	if (CurrentEquipment)
+	{
+		EquipOrUnequip(CurrentEquipment, false);
+	}
+	// switch to new one
+	CurrentEquipment = NewEquipment;
+	CurrentEquipmentType = Type;
+
+	EquipOrUnequip(CurrentEquipment, true);
+	return true;
+}
+
+bool UEquipmentManagerComponent::AddQuickSlot(EEquipmentType Type, const FInitializeParams& Params)
+{
+	UEquipmentQuickSlots* QuickSlots = nullptr;
+
+	switch (Type)
+	{
+	case EEquipmentType::Weapon:
+		QuickSlots = WeaponQuickSlot;
+		break;
+	case EEquipmentType::Item:
+		QuickSlots = ItemQuickSlot;
+		break;
+	default:
+		UE_LOG(Equipment_Manager_Log, Error, 
+			TEXT("UEquipmentManagerComponent::AddQuickSlot -> Invalid EquipmentType"));
+		return false;
+	}
+
+	if (!QuickSlots)
+	{
+		QuickSlots = NewObject<UEquipmentQuickSlots>(this);
+
+		switch (Type)
+		{
+		case EEquipmentType::Weapon:
+			WeaponQuickSlot = Cast<UWeaponQuickSlots>(QuickSlots);
+			break;
+		case EEquipmentType::Item:
+			ItemQuickSlot = Cast<UItemQuickSlots>(QuickSlots);
+			break;
+		default:
+			UE_LOG(Equipment_Manager_Log, Error, 
+				TEXT("UEquipmentManagerComponent::AddQuickSlot -> Invalid EquipmentType"));
+			return false;
+		}
+	}
+
+	if (!QuickSlots->AddEquipment(Params))
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("UEquipmentManagerComponent::AddQuickSlot -> Failed to add equipment ID %d"), Params.ID);
+		return false;
+	}
+
+	// Activate the equipment if nothing is equipped
+	if (!CurrentEquipment)
+	{
+		CurrentEquipment = Params.Equipment;
+		CurrentEquipmentType = Type;
+		EquipOrUnequip(CurrentEquipment, true);
+	}
+
+	return true;
+}
+void UEquipmentManagerComponent::ActivateOrDeactivateActor(AActor* Actor, bool bActivate)// same as the quick slot base function
+{
+	if (!Actor) return;
+
+	// Visibility
+	Actor->SetActorHiddenInGame(!bActivate);
+
+	// Collision
+	Actor->SetActorEnableCollision(bActivate);
+
+	// Ticking
+	Actor->SetActorTickEnabled(bActivate);
+
+	// Physics / primitive components
+	TArray<UPrimitiveComponent*> Components;
+	Actor->GetComponents<UPrimitiveComponent>(Components);
+	for (UPrimitiveComponent* Comp : Components)
+	{
+		if (Comp)
+		{
+			Comp->SetSimulatePhysics(bActivate && Comp->IsSimulatingPhysics());
+			Comp->SetCollisionEnabled(bActivate ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+		}
+	}
+}
+
+void UEquipmentManagerComponent::EquipOrUnequip(AActor* EquipmentActor, bool bIsEquip)
+{
+	if (!EquipmentActor)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::EquipOrUnequip->Invalid EquipmentActor"));
+		return;
+	}
+
+	ActivateOrDeactivateActor(EquipmentActor, bIsEquip);
+
+	// Trigger interface
+	if (EquipmentActor->Implements<UEquipmentInterface>())
+	{
+		if (bIsEquip)
+			IEquipmentInterface::Execute_OnEquipped(EquipmentActor);
+		else
+			IEquipmentInterface::Execute_OnUnequipped(EquipmentActor);
+	}
+
+	if (bIsEquip)
+	{
+		SetCurrentEquipmentPlacement(Placement);
+	}
+}
+
+UEquipmentQuickSlots* UEquipmentManagerComponent::GetQuickSlotByType(EEquipmentType Type) const
+{
+	UEquipmentQuickSlots* QuickSlotPtr = nullptr;
+
+	switch (Type)
+	{
+	case EEquipmentType::Weapon:
+		QuickSlotPtr = WeaponQuickSlot;
+		break;
+	case EEquipmentType::Item:
+		QuickSlotPtr = ItemQuickSlot;
+		break;
+	default:
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::GetQuickSlotByType -> Invalid EquipmentType"));
+		return nullptr;
+	}
+
+	if (!QuickSlotPtr)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::GetQuickSlotByType -> QuickSlot is null for %s"),
+			*UEnum::GetValueAsString(Type));
+		return nullptr;
+	}
+
+	return QuickSlotPtr;
+}
+
+bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)
+{
+	if (!InventoryComponent)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::AddEquipmentFromInventory -> Invalid InventoryComponent"));
+		return false;
+	}
+
+	switch (Type)
+	{
+	case EEquipmentType::Weapon:
+	{
+		TMap<int32, FWeaponData>* Weapons = InventoryComponent->GetWeapons();
+		if (!Weapons)
+		{
+			UE_LOG(Equipment_Manager_Log, Error,
+				TEXT("UEquipmentManagerComponent::AddEquipmentFromInventory -> Invalid Weapon Map"));
+			return false;
+		}
+
+		FWeaponData* FoundData = Weapons->Find(EquipmentID);
+		if (!FoundData || !FoundData->EquipmentClass)
+		{
+			UE_LOG(Equipment_Manager_Log, Warning,
+				TEXT("Weapon ID %d not found or has invalid EquipmentClass"), EquipmentID);
+			return false;
+		}
+
+		if (!WeaponQuickSlot)
+			WeaponQuickSlot = NewObject<UWeaponQuickSlots>(this);
+
+		// let the quickslot handle the spawn
+		if (!WeaponQuickSlot->InitializeWeaponSlot(EquipmentID, FoundData->EquipmentClass))
+		{
+			UE_LOG(Equipment_Manager_Log, Warning,
+				TEXT("Failed to initialize WeaponQuickSlot for EquipmentID %d"), EquipmentID);
+			return false;
+		}
+
+		break;
+	}
+
+	case EEquipmentType::Item:
+	{
+		TMap<int32, FItemData>* Items = InventoryComponent->GetItems();
+		if (!Items)
+		{
+			UE_LOG(Equipment_Manager_Log, Error,
+				TEXT("UEquipmentManagerComponent::AddEquipmentFromInventory -> Invalid Item Map"));
+			return false;
+		}
+
+		FItemData* FoundData = Items->Find(EquipmentID);
+		if (!FoundData || !FoundData->EquipmentClass)
+		{
+			UE_LOG(Equipment_Manager_Log, Warning,
+				TEXT("Item ID %d not found or has invalid EquipmentClass"), EquipmentID);
+			return false;
+		}
+
+		if (!ItemQuickSlot)
+			ItemQuickSlot = NewObject<UItemQuickSlots>(this);
+
+		// let the quickslot handle the spawn
+		if (!ItemQuickSlot->InitializeItemSlot(EquipmentID, FoundData->EquipmentClass, FoundData->SlotStackMaxCount))
+		{
+			UE_LOG(Equipment_Manager_Log, Warning,
+				TEXT("Failed to initialize ItemQuickSlot for EquipmentID %d"), EquipmentID);
+			return false;
+		}
+
+		break;
+	}
+
+	default:
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::AddEquipmentFromInventory -> Invalid EquipmentType"));
+		return false;
+	}
+
+	return true;
+}
+
+
+void UEquipmentManagerComponent::SetCurrentEquipmentPlacement(USceneComponent* NewPlacement)
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> no equipment to place"));
+		return;
+	}
+	if (!NewPlacement)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> Invalid NewPlacement"));
+		return;
+	}
+
+	Placement = NewPlacement;
+
+	CurrentEquipment->AttachToComponent(Placement, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	CurrentEquipment->SetActorRelativeLocation(FVector::ZeroVector);//offset
+	CurrentEquipment->SetActorRelativeRotation(FRotator::ZeroRotator);//offset
+	UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> Placement Setting Completed"));
+}
+
+void UEquipmentManagerComponent::SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value)
+{
+	float ScrollValue = Value.Get<float>();
+	if (FMath::IsNearlyZero(ScrollValue))//not enough scroll movement
+		return;
+	
+	const bool bScrollUp = (ScrollValue > 0.f);
+
+	EEquipmentType TargetType=bIsHoldingMouseRightButton? EEquipmentType::Item:EEquipmentType::Weapon;
+	GetNextEquipmentSlot(TargetType,bScrollUp);
+}
+
+void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Value)
+{
+	/*if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment is invalid"));
+		return;
+	}
+
+	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(CurrentEquipment,
+		[](UObject* Equipment)
+	{
+		// Call reload to the currentdquipment
+		IWeaponInterface::Execute_OnReloadInputPressed(Equipment);
+	});
+
+	if (!bDidItWork)
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment does not implement IWeaponInterface"));
+	}*/// need to check if current equipment type is weapon
+
+	if (CurrentEquipmentType!=EEquipmentType::Weapon)
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> not holding weapon currently."));
+
+		// should this qutomatically switch to the weapon and reload the weapon?
+		//TODO: decide the case. should this switch to weapon or do nothing and return
+		// swicth to weapon
+		return;
+	}
+	
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> Invalid Equipment."));
+		return;
+	}
+
+	if (!CurrentEquipment->Implements<UWeaponInterface>())// when the current equipment does not have the reload interface function
+	{
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> Invalid Equipment."));
+		return;
+	}
+
+	//chekcing completed
+	IWeaponInterface::Execute_OnReloadInputPressed(CurrentEquipment);
+}
+
+void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Value)
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment is invalid"));
+		return;
+	}
+	bDidHoldStarted=true;
+	CurrentHoldingTime=0.0f;
+
+	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
+		CurrentEquipment,
+		[](UObject* Equipment)
+	{
+		IInputReactionInterface::Execute_OnInputPressed(Equipment);
+		IInputReactionInterface::Execute_OnInputHoldStart(Equipment);
+	});
+
+	if (!bDidItWork)// when calling failed
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment does not have required interface"));
+		// TODO:
+		// siganl ui that equipment trigger is invalid (ex. red highlight for current equipment widget)
+		// player character playing anim for invalid command?
+	}
+		
+}
+
+void UEquipmentManagerComponent::TriggerInput_Trigger(const FInputActionValue& Value)
+{
+	if (!CurrentEquipment)
+	{
+		//UE_LOG(Equipment_Manager_Log, Error,TEXT("UEquipmentManagerCompnent::TriggerInput_Trigger-> CurrentEquipment is invalid"));
+		// no equipment to update
+		return;
+	}
+	if (!bDidHoldStarted)
+	{
+		// not even started yet
+		return;
+	}
+	
+	CurrentHoldingTime += GetWorld()->GetDeltaSeconds();// update holding time
+
+	// Optionally trigger HoldUpdate events
+	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
+		CurrentEquipment,
+		[this](UObject* Equipment)
+	{
+		IInputReactionInterface::Execute_OnInputHoldUpdate(Equipment, CurrentHoldingTime);
+	});
+
+	if (!bDidItWork)
+	{
+		//error updating not working
+	}
+}
+
+void UEquipmentManagerComponent::TriggerInput_Complete(const FInputActionValue& Value)
+{
+	if (!CurrentEquipment) return;
+
+	float TapThreshold =0.2f;
+	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime,TapThreshold);
+
+	// Reset the variables
+	CurrentHoldingTime = 0.f;
+	bDidHoldStarted = false;
+}
+
+void UEquipmentManagerComponent::TriggerInput_Ongoing(const FInputActionValue& Value)
+{
+	// not decided yet. maybe update the ui?
+}
+
+void UEquipmentManagerComponent::TriggerInput_Canceled(const FInputActionValue& Value)// not so sure where to use this
+{
+	if (!CurrentEquipment)
+	{
+		//error
+		return;
+	}
+
+	// should this be treated as a release or just cancle and don't trigger the function? not so sure fuck
+	//IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
+
+	//cancled situation needs to be seperate from the completed case. just dont finish the prior process
+
+	CurrentHoldingTime = 0.f;
+	bDidHoldStarted = false;
+}
