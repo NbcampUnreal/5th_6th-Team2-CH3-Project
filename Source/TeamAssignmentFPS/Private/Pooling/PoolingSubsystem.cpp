@@ -27,6 +27,7 @@ void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxS
 			ObjectPool.Add(NewActor);
 		}
 	}
+	
 	//Pool 내부를 Maxsize만큼 반복해서 채우는 함수 
 }
 
