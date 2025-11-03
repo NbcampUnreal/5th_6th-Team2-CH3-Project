@@ -2,6 +2,7 @@
 
 
 #include "Controller/PlayerController/MyPlayerController.h"
+#include "Gamestate/GameStateManager.h"
 
 //=== Managers ===//
 #include "Camera/CameraManager.h"
@@ -22,6 +23,8 @@
 	CameraManager(nullptr),
 	IMCManager(nullptr),
 	UIManager(nullptr),
+    HUDWigetClass(nullptr),
+    HUDWidgetInstance(nullptr),
 
 
 	//----Control----//
@@ -42,8 +45,20 @@ void AMyPlayerController::BeginPlay()
  	//Camera
  	ActivateCameraManager();
  	
-		
- 	
+    if (HUDWigetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWigetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+        }
+    }
+ 
+    AGameStateManager* GameStateManager = GetWorld() ? GetWorld()->GetGameState<AGameStateManager>() : nullptr;
+    if (GameStateManager)
+    {
+        GameStateManager->UPdateHUD();
+    }
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -172,5 +187,10 @@ void AMyPlayerController::ActivateCameraManager()
 
  	UE_LOG(Camera_Log, Warning, TEXT("AMyPlayerController::ActivateCameraManager->No CameraRig found on spawned pawn."));
 
+}
+
+UUserWidget* AMyPlayerController::GetHUDWidget() const
+{
+    return HUDWidgetInstance;
 }
 

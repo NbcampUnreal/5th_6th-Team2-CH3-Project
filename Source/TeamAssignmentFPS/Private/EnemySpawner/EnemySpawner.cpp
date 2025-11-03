@@ -1,18 +1,14 @@
 #include "EnemySpawner/EnemySpawner.h"
-#include "Components/BoxComponent.h"
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
+#include "Enemy/EnemyBaseCharacter.h"
+#include "Components/CapsuleComponent.h"
+#include "EnemySpawner/EnemySpawnerManager.h"
 
 AEnemySpawner::AEnemySpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-	SetRootComponent(Scene);
-
-	SpawningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawingBox"));
-	SpawningBox->SetupAttachment(Scene);
 
 	MonsterDataTable = nullptr;
 }
@@ -21,17 +17,40 @@ AEnemySpawner::AEnemySpawner()
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 }
 
-AActor* AEnemySpawner::SpawnRandomMonster()
+void AEnemySpawner::Init(AEnemySpawnerManager* InManager)
 {
-	if (FEnemyDataRow* SelectedRow = GetRandomMonster())
+	Manager = InManager;
+}
+
+AEnemyBaseCharacter* AEnemySpawner::SpawnRandomMonster()
+{
+	if (!MonsterDataTable)
 	{
-		if (UClass* ActualClass = SelectedRow->EnemyClass.Get())
-		{
-			return SpawnMonster(ActualClass);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("EnemySpawner: MonsterDataTable is null."));
+		return nullptr;
 	}
+	if (!Manager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemySpawner: Manager is null. (Init not called?)"));
+		return nullptr;
+	}
+
+	FEnemyDataRow* Row = GetRandomMonster();
+	if (!Row)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemySpawner: GetRandomMonster returned null."));
+		return nullptr;
+	}
+
+	if (UClass* ActualClass = Row->EnemyClass.Get())
+	{
+		return SpawnMonster(ActualClass);
+	}
+
 	return nullptr;
 }
 
@@ -74,28 +93,19 @@ FEnemyDataRow* AEnemySpawner::GetRandomMonster() const
 	return nullptr;
 }
 
-FVector AEnemySpawner::GetRandomPontInVolume() const
+AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClass)
 {
-	FVector BoxExtent = SpawningBox->GetScaledBoxExtent();
-	FVector BoxOrigin = SpawningBox->GetComponentLocation();
-
-	return BoxOrigin + FVector(
-		FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
-		FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y),
-		0
-	);
-}
-
-AActor* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClass)
-{
-	if (!MonsterClass)
+	if (!GetWorld() || !Manager || !*MonsterClass)
 		return nullptr;
-
-	AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(
-		MonsterClass,
-		GetRandomPontInVolume(),
-		FRotator::ZeroRotator
+	if (!MonsterClass->IsChildOf(AEnemyBaseCharacter::StaticClass()))
+		return nullptr;
+	const FVector SpawnLocation = Manager->GetRandomSpawnLocation(); // ¹Ú½º ³»ºÎ ·£´ý ÁÂÇ¥
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	return GetWorld()->SpawnActor<AEnemyBaseCharacter>(
+		(TSubclassOf<AEnemyBaseCharacter>)MonsterClass,
+		SpawnLocation,
+		FRotator::ZeroRotator,
+		Params
 	);
-
-	return SpawnActor;
 }

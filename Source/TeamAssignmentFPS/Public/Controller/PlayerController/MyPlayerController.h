@@ -1,9 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Blueprint/UserWidget.h"
 #include "MyPlayerController.generated.h"
 
 class UCameraManagerComp;
@@ -79,6 +78,12 @@ public:
 
 	void ActivateCameraManager();
 	
-	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<UUserWidget> HUDWigetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	UUserWidget* HUDWidgetInstance;
+
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	UUserWidget* GetHUDWidget() const;
 };
