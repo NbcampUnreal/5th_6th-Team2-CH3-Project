@@ -58,14 +58,14 @@ protected:
 
 	// ========== 컴포넌트 ==========
 
-	/**
+	/*
 	 * 캐릭터 오버랩 감지용 박스 콜리전 컴포넌트
 	 * 기본 크기: 50x50x50
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UBoxComponent* TrapCollision;
 
-	/**
+	/*
 	 * 트랩의 비주얼 메시 컴포넌트
 	 * 블루프린트에서 원하는 외형으로 설정
 	 */
@@ -74,7 +74,7 @@ protected:
 
 	// ========== 트랩 설정 ==========
 
-	/**
+	/*
 	 * 데미지 적용 방식
 	 * - SingleTarget: 트랩을 밟은 캐릭터만 데미지
 	 * - AreaOfEffect: AOERadius 내 모든 캐릭터에게 데미지
@@ -82,14 +82,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trap Settings")
 	ETrapDamageType DamageType = ETrapDamageType::SingleTarget;
 
-	/**
+	/*
 	 * 적용할 데미지 양
 	 * 기본값: 50.0
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trap Settings")
 	float Damage = 50.0f;
 
-	/**
+	/*
 	 * 광역 데미지 반경 (언리얼 유닛)
 	 * DamageType이 AreaOfEffect일 때만 표시됨
 	 * 기본값: 500.0

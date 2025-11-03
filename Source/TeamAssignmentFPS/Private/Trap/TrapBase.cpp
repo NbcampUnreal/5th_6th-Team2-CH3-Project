@@ -3,7 +3,6 @@
 
 
 #include "Trap/TrapBase.h"
-
 #include "Character/MyCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
