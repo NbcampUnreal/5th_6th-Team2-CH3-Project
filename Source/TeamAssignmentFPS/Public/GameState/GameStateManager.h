@@ -27,6 +27,7 @@ public:
 	int32 MaxLevels;
 
 	FTimerHandle LevelTimerHandle;
+	FTimerHandle HUDUpdateTimerHandle;
 
 	UFUNCTION(BlueprintPure, Category = "Score")
 	int32 GetScore() const;
@@ -44,6 +45,7 @@ public:
 	void OnCoinCollected();
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
+	void UPdateHUD();
 };
 
 

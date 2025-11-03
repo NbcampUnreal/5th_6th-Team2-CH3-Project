@@ -7,8 +7,7 @@
 #include "NavigationSystem.h"                // UNavigationSystemV1
 #include "EnemySpawner.generated.h"
 
-class UBoxComponent;
-class ANavMeshBoundsVolume;
+class AEnemyBaseCharacter;
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemySpawner : public AActor
@@ -18,21 +17,25 @@ class TEAMASSIGNMENTFPS_API AEnemySpawner : public AActor
 public:
 	AEnemySpawner();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning")
-	USceneComponent* Scene;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning")
-	UBoxComponent* SpawningBox;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning")
-	UDataTable* MonsterDataTable;
+	UDataTable* MonsterDataTable = nullptr;
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	AActor* SpawnRandomMonster();
+	void Init(AEnemySpawnerManager* InManager);
+
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	AEnemyBaseCharacter* SpawnRandomMonster();
 
 	FEnemyDataRow* GetRandomMonster() const;
-	AActor* SpawnMonster(TSubclassOf<AActor> MonsterClass);
-	FVector GetRandomPontInVolume() const;
+	AEnemyBaseCharacter* SpawnMonster(TSubclassOf<AActor> MonsterClass);
 
 	virtual void BeginPlay() override;
+
+protected:
+
+	UPROPERTY()
+	AEnemySpawnerManager* Manager = nullptr;
+
 };
 
 
