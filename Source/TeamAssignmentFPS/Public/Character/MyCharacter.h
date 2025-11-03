@@ -35,6 +35,10 @@ struct FInputActionValue;
 class UCurveFloat;
 class UTimelineComponent;
 
+/*DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementStateChanged, ECharacterMovementState, NewState);*/
+// why not using dynamic for this time?
+//--> no need
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
 {
@@ -43,7 +47,7 @@ class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockonComp")
 	ULockonComponent* LockonComp;
@@ -141,4 +145,5 @@ public:
 	void HandleDodgeAction(float DeltaTime);
 	UFUNCTION()
 	void OnDodgeFinished();
+
 };
