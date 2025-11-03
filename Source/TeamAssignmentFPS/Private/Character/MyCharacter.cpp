@@ -14,7 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
 
-#include "Item/InventoryManagerComponent.h"
+
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
@@ -28,37 +28,37 @@ AMyCharacter::AMyCharacter()
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
+
+	DodgeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DodgeTimeline"));
 }
 
 // Called when the game starts or when spawned
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetupForDodgeAction();
 }
 
 void AMyCharacter::SetupForDodgeAction()
 {
-	if (!DodgeTimeLine)
+	if (!DodgeTimeline)
 	{
-		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupFordodge-> Invalid DodgeTimeLine"));
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupForDodge-> Invalid DodgeTimeLine"));
 		return;
 	}
 	if (!DodgeCurve)// it must be a 0 to 1 alpha curve!!!!!
 	{
-		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupFordodge-> Invalid DodgeCurve"));
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupForDodge-> Invalid DodgeCurve"));
 		return;
 	}
 
 	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
 	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
-	DodgeTimeLine->AddInterpFloat(DodgeCurve, ProgressFunction);
+	DodgeTimeline->AddInterpFloat(DodgeCurve, ProgressFunction);
 
 	FOnTimelineEvent FinishFunction;
 	FinishFunction.BindUFunction(this, FName("OnDodgeFinished"));
-	DodgeTimeLine->SetTimelineFinishedFunc(FinishFunction);
-	
-	
+	DodgeTimeline->SetTimelineFinishedFunc(FinishFunction);
 }
 
 // Called every frame
@@ -74,7 +74,8 @@ void AMyCharacter::Tick(float DeltaTime)
 
 	//temp rotaion without state case
 	RotateTowardTarget(DeltaTime);
-
+	//temp with simple trigger
+	QuickMovementTick();
 }
 
 // Called to bind functionality to input
@@ -117,16 +118,14 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 		if (!FMath::IsNearlyZero(MovementInputValue.X))// forward
 		{
 			AddMovementInput(Forward, MovementInputValue.X, false);
-			UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MovementInputValue.X)
+			//UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Forward : %f"),MovementInputValue.X);
 		}
 		if (!FMath::IsNearlyZero(MovementInputValue.Y))// right
 		{
 			AddMovementInput(Right, MovementInputValue.Y, false);
-			UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y)
+			//UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Right : %f"),MovementInputValue.Y);
 		}
 	}
-
-	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::MoveForwardAndRight-> Function is running"));
 }
 
 void AMyCharacter::RotateTowardTarget(float Deltatime)
@@ -160,6 +159,47 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	
 }
 
+void AMyCharacter::EnableQuickMovement(const FInputActionValue& Value)
+{
+	QuickMoveStartTime = GetWorld()->GetTimeSeconds();
+	bIsQuickMoving = false; // not yet considered "hold". it needs to be reach the threshold
+}
+
+
+void AMyCharacter::DisableQuickMovement(const FInputActionValue& Value)
+{
+	float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
+
+	if (HeldTime < HoldThreshold)
+	{
+		// Tap
+		Dodge();
+	}
+	else
+	{
+		// Hold release
+		StopSprinting();
+	}
+
+	// Reset
+	QuickMoveStartTime = 0.f;
+	bIsQuickMoving = false;
+}
+
+void AMyCharacter::QuickMovementTick()
+{
+	if (!bIsQuickMoving && QuickMoveStartTime > 0.f)
+	{
+		float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
+		if (HeldTime >= HoldThreshold)
+		{
+			// Hold start
+			StartSprinting();
+			bIsQuickMoving = true; // only trigger once
+		}
+	}
+}
+
 void AMyCharacter::StartSprinting()
 {
 	if (!Controller)
@@ -168,11 +208,12 @@ void AMyCharacter::StartSprinting()
 		return;
 	}
 	CurrentMaxSpeed=MovementSpeed*SprintSpeedMultiplier;
+	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::StartSprinting-> Start Sprint"));
 	
 	GetCharacterMovement()->MaxWalkSpeed=CurrentMaxSpeed;
 	LockonComp->SetCameraBlendAlpha(0.f);// camera to character base
 
-	
+	SetMovementState(ECharacterMovementState::Sprinting);
 }
 
 void AMyCharacter::StopSprinting()
@@ -183,15 +224,24 @@ void AMyCharacter::StopSprinting()
 		return;
 	}
 	CurrentMaxSpeed=MovementSpeed;
+	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::StopSprinting-> Stop Sprinting"));
 	
 	GetCharacterMovement()->MaxWalkSpeed=CurrentMaxSpeed;
 	LockonComp->SetCameraBlendAlpha(0.2f);//temp--> find a way to reset to its value
 
 }
 
-void AMyCharacter::Dodge(const FInputActionValue& Value)
+void AMyCharacter::Dodge()
 {
-	if (GetCharacterMovement()->Velocity.Size()==KINDA_SMALL_NUMBER)//when speed is nearly zero
+	if (bIsDodging)
+	{
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::Dodge-> Dodge already in progress"));
+		return;
+	}
+	float MinSpeedForDirectionalDodge=10.f;//temp
+	UE_LOG(Movement_Log, Log, TEXT("AMyCharacter::Dodge-> Start Dodge"));
+	
+	if (GetCharacterMovement()->Velocity.Size()<=MinSpeedForDirectionalDodge)//when speed is nearly zero
 	{
 		BackDash();
 	}
@@ -203,30 +253,62 @@ void AMyCharacter::Dodge(const FInputActionValue& Value)
 
 void AMyCharacter::DirectionalDodge()
 {
+	if (!DodgeCurve || !DodgeTimeline)
+	{
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::DirectionalDodge -> Missing curve or timeline"));
+		return;
+	}
+	
 	FVector Forward, Right, Up;
 	FVector GravityDirection = FVector(0,0,-1);
-
-	if (CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
+	
+	if (!CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
 	{
-		//launch character to the current input direction
-		//float DodgeDistance=600;// use timeline for the dodge update so that the 
-		
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::DirectionalDodge -> Cannot Calculate vectors based on camera"));
+		return;
 	}
+	const FVector2D Input = MovementInputValue;
+	DodgeDirection = (Forward * Input.X + Right * Input.Y).GetSafeNormal();
+	
+	bIsDodging = true;
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayrate));
+	DodgeTimeline->PlayFromStart();
+
+	SetMovementState(ECharacterMovementState::Dodging);
 }
 
 void AMyCharacter::BackDash()
 {
-	//launch character to the back
+	if (!DodgeCurve || !DodgeTimeline)
+	{
+		UE_LOG(Movement_Log, Error, TEXT("BackDash -> Missing curve or timeline"));
+		return;
+	}
+
+	DodgeDirection = -GetActorForwardVector() * BackDashDistanceRatio;
+
+	bIsDodging = true;
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f, DodgeSpeedPlayrate*BackDashTimeRatio));
+	DodgeTimeline->PlayFromStart();
+
+	SetMovementState(ECharacterMovementState::Dodging);
 }
 
 void AMyCharacter::HandleDodgeAction(float DeltaTime)
 {
+	if (!bIsDodging)
+		return;
+	
+	const FVector DodgeOffset = DodgeDirection * DodgeDistance * DeltaTime;
+
+	FVector NewLocation = GetActorLocation() + DodgeOffset * GetWorld()->GetDeltaSeconds();
+	SetActorLocation(NewLocation, true);
 }
 
 void AMyCharacter::OnDodgeFinished()
 {
-	bIsDodging=false;
-	GetCharacterMovement()->Velocity=FVector::ZeroVector;
+	bIsDodging = false;
+	GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	SetMovementState(ECharacterMovementState::Idle);
 }
-
 

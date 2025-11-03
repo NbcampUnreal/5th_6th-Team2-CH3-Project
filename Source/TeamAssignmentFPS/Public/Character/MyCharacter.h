@@ -68,11 +68,14 @@ protected:
 	FVector2D MovementInputValue;
 
 	//=== Dodge ===//
-
+	float QuickMoveStartTime = 0.f;
+	bool bIsQuickMoving = false;
+	float HoldThreshold = 0.2f;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	bool bIsDodging=false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
-	UTimelineComponent* DodgeTimeLine;
+	UTimelineComponent* DodgeTimeline;
 	// function to bind with the timeline
 	/*FOnTimelineFloat ProgressFunction;
 	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
@@ -85,6 +88,14 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float BackDashDistanceRatio=0.7f;//temp, make it shorter
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
+	float BackDashTimeRatio=1.3f;//temp, but make it faster
+
+private:
+	FVector DodgeDirection;
+	
 	
 protected:
 	// Called when the game starts or when spawned
@@ -107,6 +118,15 @@ public:
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float DeltaTime);
+
+
+	UFUNCTION()
+	void EnableQuickMovement(const FInputActionValue& Value);
+	UFUNCTION()
+	void DisableQuickMovement(const FInputActionValue& Value);
+	void QuickMovementTick();
+
+	
 	UFUNCTION()
 	void StartSprinting();
 	UFUNCTION()
@@ -114,7 +134,7 @@ public:
 
 	//=== Dodge/BackDash ===//
 	UFUNCTION()
-	void Dodge(const FInputActionValue& Value);
+	void Dodge();
 	void DirectionalDodge();
 	void BackDash();
 
