@@ -84,7 +84,7 @@ protected:
 	UCurveFloat* DodgeCurve;//ease in and out
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
-	float DodgeSpeedPlayrate=1.f;
+	float DodgeSpeedPlayrate=5.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance
@@ -137,7 +137,8 @@ public:
 	void Dodge();
 	void DirectionalDodge();
 	void BackDash();
-
+	UFUNCTION()
 	void HandleDodgeAction(float DeltaTime);
+	UFUNCTION()
 	void OnDodgeFinished();
 };

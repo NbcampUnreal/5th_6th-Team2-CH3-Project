@@ -262,7 +262,7 @@ void AMyCharacter::DirectionalDodge()
 	FVector Forward, Right, Up;
 	FVector GravityDirection = FVector(0,0,-1);
 	
-	if (!CameraManagerComp && CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
+	if (!CameraManagerComp || !CameraManagerComp->GetVectorsByCameraAndGravityDirection(GravityDirection, Forward, Right, Up))
 	{
 		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::DirectionalDodge -> Cannot Calculate vectors based on camera"));
 		return;
