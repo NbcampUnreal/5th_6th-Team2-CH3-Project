@@ -37,6 +37,7 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupForDodgeAction();
+	OnMovementStateChanged.AddDynamic(this, &AMyCharacter::HandleMovementStateChange);
 }
 
 void AMyCharacter::SetupForDodgeAction()
@@ -311,4 +312,5 @@ void AMyCharacter::OnDodgeFinished()
 	GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	SetMovementState(ECharacterMovementState::Idle);
 }
+
 
