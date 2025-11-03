@@ -35,9 +35,9 @@ void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxS
 
 
 
-void UPoolingSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
+AActor* UPoolingSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
 {
-	GetActorFromPool(PoolClass, Location, Rotation);
+	return GetActorFromPool(PoolClass, Location, Rotation);
 }
 
 
@@ -53,15 +53,7 @@ AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass, FVect
 			Actor->SetActorLocationAndRotation(Location, Rotation);
 			Actor->SetActorHiddenInGame(false);
 			Actor->SetActorEnableCollision(true);
-
-			UProjectileMovementComponent* ProjectileMovementComponent = Actor->FindComponentByClass<UProjectileMovementComponent>();
-			if (ProjectileMovementComponent)
-			{
-				//ProjectileMovementComponent->SetUpdatedComponent(Actor->GetRootComponent());
-				//ProjectileMovementComponent->Activate(true);
-				//ProjectileMovementComponent->InitializeComponent();
-			}
-			//Actor->SetActorTickEnabled(true);
+			
 			IPoolingInterface::Execute_OnSpawnFromPool(Actor);
 			return Actor;
 		}

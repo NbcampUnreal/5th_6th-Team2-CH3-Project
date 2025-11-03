@@ -57,6 +57,7 @@ void AProjectileBase::BeginPlay()
 			);
 	}
 	
+	MovementComponent->SetUpdatedComponent(NULL);
 }
 
 void AProjectileBase::DestroyProjectile()
