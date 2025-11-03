@@ -7,7 +7,6 @@
 #include "InputAction.h"
 
 // components
-#include "MaterialHLSLTree.h"
 #include "Components/TimelineComponent.h"
 #include "LockonTarget/LockonComponent.h"
 #include "Weapon/EquipmentManagerComponent.h"
@@ -37,7 +36,6 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupForDodgeAction();
-	OnMovementStateChanged.AddDynamic(this, &AMyCharacter::HandleMovementStateChange);
 }
 
 void AMyCharacter::SetupForDodgeAction()
