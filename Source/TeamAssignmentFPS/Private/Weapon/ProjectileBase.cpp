@@ -11,6 +11,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyBaseCharacter.h"
+#include "GameState/GameStateManager.h"
 #include "Pooling/PoolingSubsystem.h"
 
 AProjectileBase::AProjectileBase()
@@ -55,6 +56,13 @@ void AProjectileBase::BeginPlay()
 			EAttachLocation::KeepRelativeOffset,//how to attatch
 			true//automatic destruction
 			);
+	}
+	
+	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
+	if (GameStateManager)
+	{
+		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
+		GameStateManager->PhaseOver.AddDynamic(this, &AProjectileBase::DestroyProjectile);
 	}
 	
 	MovementComponent->SetUpdatedComponent(NULL);
@@ -167,6 +175,7 @@ void AProjectileBase::OnSpawnFromPool_Implementation()
 void AProjectileBase::OnReturnToPool_Implementation()
 {
 	DeactivateTimerHandle();
+	MovementComponent->SetUpdatedComponent(NULL);
 }
 
 

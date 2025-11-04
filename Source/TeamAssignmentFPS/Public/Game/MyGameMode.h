@@ -14,6 +14,10 @@ class TEAMASSIGNMENTFPS_API AMyGameMode : public AGameMode
 public:
 	AMyGameMode();
 
+protected:
+
+	virtual void BeginPlay() override;	
+	
 private:
 	UPROPERTY(EditAnywhere, Category= "Pooling")
 	TSubclassOf<AActor> MeleeEnemyClass;
