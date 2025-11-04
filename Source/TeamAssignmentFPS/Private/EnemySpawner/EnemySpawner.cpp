@@ -5,6 +5,7 @@
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "EnemySpawner/EnemySpawnerManager.h"
+#include "Pooling/PoolingSubsystem.h"
 
 AEnemySpawner::AEnemySpawner()
 {
@@ -50,6 +51,9 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnRandomMonster()
 
 	if (UClass* ActualClass = Row->EnemyClass.Get())
 	{
+		AEnemyBaseCharacter* SpawnedEnemy = SpawnMonster(ActualClass);
+		SpawnedEnemy->InitializeEnemyData(Row);
+		
 		return SpawnMonster(ActualClass);
 	}
 
@@ -102,12 +106,21 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClas
 	if (!MonsterClass->IsChildOf(AEnemyBaseCharacter::StaticClass()))
 		return nullptr;
 	const FVector SpawnLocation = Manager->GetRandomSpawnLocation(); // ¹Ú½º ³»ºÎ ·£´ý ÁÂÇ¥
-	FActorSpawnParameters Params;
-	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	return GetWorld()->SpawnActor<AEnemyBaseCharacter>(
-		(TSubclassOf<AEnemyBaseCharacter>)MonsterClass,
-		SpawnLocation,
-		FRotator::ZeroRotator,
-		Params
-	);
+	// FActorSpawnParameters Params;
+	// Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	// return GetWorld()->SpawnActor<AEnemyBaseCharacter>(
+	// 	(TSubclassOf<AEnemyBaseCharacter>)MonsterClass,
+	// 	SpawnLocation,
+	// 	FRotator::ZeroRotator,
+	// 	Params
+	// );
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		AEnemyBaseCharacter* SpawnedEnemy = Cast<AEnemyBaseCharacter>(PoolingSubsystem->SpawnFromPool(MonsterClass, SpawnLocation, FRotator::ZeroRotator));
+		
+		 return SpawnedEnemy;
+	}
+
+	return nullptr;
 }

@@ -107,7 +107,8 @@ public:
 	void SetCurrentEquipmentPlacement(USceneComponent* NewPlacement);// this will attatch the current weapon or item to the placementcomponent
 	UFUNCTION()
 	void SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
-
+	
+	
 	//==== Number Key Input Binding =====//
 	UFUNCTION()
 	void SwtichWeapon_PC_Numbkey1() { SwtichWeapon_PC_NumbKeys(1);}
@@ -142,6 +143,7 @@ public:
 	//-- basic input reactions
 	UFUNCTION()
 	void TriggerInput_Reload(const FInputActionValue& Value);
+	
 	UFUNCTION()
 	void TriggerInput_Start(const FInputActionValue& Value);
 	UFUNCTION()

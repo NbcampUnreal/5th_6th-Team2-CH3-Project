@@ -29,9 +29,7 @@ struct FPoolArray
 	{
 		ObjectPool.Add(ActorToAdd);
 	}
-	
 };
-
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API UPoolingSubsystem : public UWorldSubsystem
@@ -40,7 +38,7 @@ class TEAMASSIGNMENTFPS_API UPoolingSubsystem : public UWorldSubsystem
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Pool Subsystem")
-	void SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation);
+	AActor* SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation);
 
 	UFUNCTION(BlueprintCallable, Category = "Pool Subsystem")
 	void ReturnToPool(AActor* Poolable);
