@@ -2,6 +2,8 @@
 
 
 #include "Pooling/PoolingSubsystem.h"
+
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Pooling/PoolingInterface.h"
 
 void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize)
@@ -33,9 +35,9 @@ void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxS
 
 
 
-void UPoolingSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
+AActor* UPoolingSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
 {
-	GetActorFromPool(PoolClass, Location, Rotation);
+	return GetActorFromPool(PoolClass, Location, Rotation);
 }
 
 
@@ -51,8 +53,8 @@ AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass, FVect
 			Actor->SetActorLocationAndRotation(Location, Rotation);
 			Actor->SetActorHiddenInGame(false);
 			Actor->SetActorEnableCollision(true);
-			IPoolingInterface::Execute_OnSpawnFromPool(Actor);
 			
+			IPoolingInterface::Execute_OnSpawnFromPool(Actor);
 			return Actor;
 		}
 	}
