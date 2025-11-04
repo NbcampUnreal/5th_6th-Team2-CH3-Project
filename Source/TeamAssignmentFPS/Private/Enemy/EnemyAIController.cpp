@@ -71,11 +71,12 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 	Super::OnMoveCompleted(RequestID, Result);
 
 	//UE_LOG(Enemy_Log, Error, TEXT("Move Completed"));
+
+	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
+
 	
-	if (AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn()))
-	{
-		Enemy->EnemyAttack();
-	}
+	Enemy->EnemyAttack();
+	
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
