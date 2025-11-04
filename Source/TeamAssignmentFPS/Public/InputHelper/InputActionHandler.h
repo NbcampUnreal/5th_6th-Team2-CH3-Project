@@ -83,7 +83,9 @@ public:
 	{
 		if (!Owner) return false;
 
-		FOnInputHoldUpdate<T_ParamValueType> OnHoldUpdate;
+		//FOnInputHoldUpdate<T_ParamValueType> OnHoldUpdate;
+
+		return false; // temp not done
 	}
 
 	

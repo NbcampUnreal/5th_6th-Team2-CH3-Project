@@ -46,4 +46,12 @@ bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivat
 	
 }
 
+void UInteractionComponent::OnInputInteract_Pressed(const FInputActionValue& Value)
+{
+}
+
+void UInteractionComponent::OnInputInteract_Released(const FInputActionValue& Value)
+{
+}
+
 
