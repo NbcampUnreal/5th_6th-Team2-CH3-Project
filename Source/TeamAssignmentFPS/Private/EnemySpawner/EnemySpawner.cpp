@@ -10,7 +10,9 @@ AEnemySpawner::AEnemySpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	MonsterDataTable = nullptr;
+	if (MonsterDataTable == nullptr)
+		UE_LOG(GameState_Log, Error, TEXT("MonsterDataTable is NULL"));
+	//MonsterDataTable = nullptr;
 }
 
 

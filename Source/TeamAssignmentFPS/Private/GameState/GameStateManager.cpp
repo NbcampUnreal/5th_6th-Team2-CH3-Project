@@ -119,20 +119,22 @@ void AGameStateManager::OnCoinCollected()
 
 void AGameStateManager::EndLevel()
 {
-	// 타이머 해제
-	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
+
 	// 다음 레벨 인덱스로
-	CurrentLevelIndex++;
+	//CurrentLevelIndex++;
 
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UGameInstanceManager* SpartaGameInstance = Cast<UGameInstanceManager>(GameInstance);
 		if (SpartaGameInstance)
 		{
+			// 타이머 해제
+			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
 			CurrentLevelIndex++;
 			SpartaGameInstance->CurrentLevelIndex = CurrentLevelIndex;
-			StartLevel();
+			//StartLevel();
+			PhaseOver.Broadcast();
 
 			if (CurrentLevelIndex >= MaxLevels)
 			{
