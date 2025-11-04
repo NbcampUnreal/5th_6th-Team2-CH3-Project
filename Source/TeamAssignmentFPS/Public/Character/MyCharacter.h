@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
+#include "InputHelper/InputActionHandler.h"
 #include "LockonTarget/LockonComponent.h"
 
 #include "MyCharacter.generated.h"
@@ -72,14 +73,15 @@ protected:
 	FVector2D MovementInputValue;
 
 	//=== Dodge ===//
-	float QuickMoveStartTime = 0.f;
-	bool bIsQuickMoving = false;
-	float HoldThreshold = 0.2f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stat")
+	UInputActionHandler* DodgeInputDetectionHelper;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	bool bIsDodging=false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	UTimelineComponent* DodgeTimeline;
+	
 	// function to bind with the timeline
 	/*FOnTimelineFloat ProgressFunction;
 	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
@@ -122,23 +124,15 @@ public:
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float DeltaTime);
-
-
-	UFUNCTION()
-	void EnableQuickMovement(const FInputActionValue& Value);
-	UFUNCTION()
-	void DisableQuickMovement(const FInputActionValue& Value);
-	void QuickMovementTick();
-
 	
 	UFUNCTION()
-	void StartSprinting();
+	void StartSprinting(const FInputActionValue& Value);
 	UFUNCTION()
-	void StopSprinting();
+	void StopSprinting(const FInputActionValue& Value);
 
 	//=== Dodge/BackDash ===//
 	UFUNCTION()
-	void Dodge();
+	void Dodge(const FInputActionValue& Value);
 	void DirectionalDodge();
 	void BackDash();
 	UFUNCTION()
