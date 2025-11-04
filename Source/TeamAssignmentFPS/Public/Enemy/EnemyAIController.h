@@ -17,6 +17,8 @@ class TEAMASSIGNMENTFPS_API AEnemyAIController : public AAIController
 public:
 	AEnemyAIController();
 
+	void StartBehaviorTree();
+	void StopBehaviorTree();
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
@@ -33,8 +35,7 @@ protected:
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
 private:
-	void StartBehaviorTree();
-	void StopBehaviorTree();
+	
 
 public:
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }
