@@ -7,16 +7,19 @@
 #include "InputAction.h"
 
 // components
+#include "EnhancedInputComponent.h"
 #include "Components/TimelineComponent.h"
 #include "LockonTarget/LockonComponent.h"
 #include "Weapon/EquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
+#include "Bell/Bell.h"
 
 
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
+#include "Developer/AITestSuite/Public/AITestsCommon.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -82,6 +85,40 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		
+		EnhancedInput->BindAction(InputAction_Interact, ETriggerEvent::Started, this, &AMyCharacter::Interact);
+	}
+
+}
+
+void AMyCharacter::Interact()
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * 200.0f; 
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	// 라인트레이스 실행
+	if (FAITestHelpers::GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor)
+		{
+			// Bell 감지 시 Interact 실행
+			if (ABell* Bell = Cast<ABell>(HitActor))
+			{
+				Bell->Interact(this);
+				UE_LOG(LogTemp, Log, TEXT("Bell과 상호작용!"));
+				return;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("상호작용 가능한 대상이 없습니다."));
 }
 
 void AMyCharacter::SetMovementState(ECharacterMovementState NewMovementState)
