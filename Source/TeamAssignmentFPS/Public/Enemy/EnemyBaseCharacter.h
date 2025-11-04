@@ -6,7 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Enemy/EnemyState/EnemyTypes.h"
 #include "Debug/UELOGCategories.h"
-//#include "Interface/InterfaceHP.h"
+#include "Interface/InterfaceHP.h"
+#include "Interface/DamageInfo.h"
 #include "EnemyBaseCharacter.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
@@ -78,6 +79,9 @@ public:
 	UFUNCTION()
 	virtual void EnemyDead();
 
+	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
+	
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -94,7 +98,6 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	virtual void EnemyAttackEnd();
-	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
 
 	//void Knockback();
 	

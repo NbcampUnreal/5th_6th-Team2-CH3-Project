@@ -11,6 +11,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Sound/SoundBase.h"
 #include "CharacterStat/HealthComponent.h"
+#include "Enemy/EnemyBaseCharacter.h"
 #include "Engine/OverlapResult.h"
 #include "Interface/DamageInfo.h"
 
@@ -70,7 +71,9 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	// 오버랩한 액터가 캐릭터인지 확인
 	AMyCharacter* Character = Cast<AMyCharacter>(OtherActor);
-	if (Character)
+	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(OtherActor);
+
+	if (Character || Enemy)
 	{
 		// 트랩 타입에 따라 데미지 적용
 		if (DamageType == ETrapDamageType::SingleTarget)
@@ -101,26 +104,38 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 /**
  * 단일 타겟 데미지 적용
- * 트랩을 밟은 캐릭터 한 명에게만 데미지를 줌
+ * 트랩을 밟은 플레이어나 Enemy 한 명에게 데미지를 줌
  */
-void ATrapBase::ApplySingleTargetDamage(AMyCharacter* Character)
+
+void ATrapBase::ApplySingleTargetDamage(AActor* Target)
 {
-	if (!Character) return;
+	if (!Target) return;
 
-	// 캐릭터의 HealthComponent 가져오기
-	UHealthComponent* HealthComp = Character->FindComponentByClass<UHealthComponent>();
-	if (HealthComp)
+	//플레이어
+	if (AMyCharacter* Character = Cast<AMyCharacter>(Target))
 	{
-		// 데미지 정보 생성
-		FDamageInfo DamageInfo;
-		DamageInfo.DamageCauser = this; // 데미지 원인 (이 트랩)
-		DamageInfo.DamageAmount = Damage; // 데미지 양
-		DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal(); // 데미지 방향
+		if (UHealthComponent* HealthComp = Character->FindComponentByClass<UHealthComponent>())
+		{
+			FDamageInfo DamageInfo;
+			DamageInfo.DamageCauser = this;
+			DamageInfo.DamageAmount = Damage;
+			DamageInfo.DamageDirection = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+			HealthComp->GetDamage_Implementation(DamageInfo);
+		}
+	}
 
-		// HealthComponent를 통해 데미지 전달
-		HealthComp->GetDamage_Implementation(DamageInfo);
+	// Enemy
+	else if (AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(Target))
+	{
+		FDamageInfo DamageInfo;
+		DamageInfo.DamageCauser = this;
+		DamageInfo.DamageAmount = Damage;
+		DamageInfo.DamageDirection = (Enemy->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		
+		Enemy->EnemyTakeDamage(DamageInfo);
 	}
 }
+	
 
 /**
  * 광역 데미지 적용

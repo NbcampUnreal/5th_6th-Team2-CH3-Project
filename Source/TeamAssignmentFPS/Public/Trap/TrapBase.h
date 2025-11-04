@@ -135,7 +135,7 @@ protected:
 	 *
 	 * @param Character - 데미지를 받을 캐릭터
 	 */
-	void ApplySingleTargetDamage(class AMyCharacter* Character);
+	void ApplySingleTargetDamage(class AActor* Target);
 
 	/**
 	 * AOERadius 내 모든 캐릭터에게 데미지 적용
