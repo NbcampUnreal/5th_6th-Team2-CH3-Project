@@ -11,6 +11,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyBaseCharacter.h"
+#include "GameState/GameStateManager.h"
+#include "Pooling/PoolingSubsystem.h"
 
 AProjectileBase::AProjectileBase()
 {
@@ -56,24 +58,14 @@ void AProjectileBase::BeginPlay()
 			);
 	}
 	
-	/*FTimerHandle LifeTimeHandle;
-	GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AProjectileBase::DestroyProjectileAfterLifetime, LifeTime, false);*/
-	//--> this may cause the issue when the actor got spawned during gameplay. 
-
-	// wait for next tick for safety (one tick delay)
-	GetWorldTimerManager().SetTimerForNextTick([this]()// make a reservation for lambda to run on next tick
+	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
+	if (GameStateManager)
 	{
-		//next tick-> triggert the set timer function
-		FTimerHandle LifeTimeHandle;
-		GetWorldTimerManager().SetTimer(
-			LifeTimeHandle,
-			this,
-			&AProjectileBase::DestroyProjectileAfterLifetime,
-			LifeTime,
-			false
-			);
-	});
+		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
+		GameStateManager->PhaseOver.AddDynamic(this, &AProjectileBase::DestroyProjectile);
+	}
 	
+	MovementComponent->SetUpdatedComponent(NULL);
 }
 
 void AProjectileBase::DestroyProjectile()
@@ -84,9 +76,11 @@ void AProjectileBase::DestroyProjectile()
 	{
 		// no trail component to destroy
 	}
-	TrailComponent->Deactivate();
+	//TrailComponent->Deactivate();
 
-	Destroy();//destroy the projectile actor
+	//Destroy();//destroy the projectile actor
+
+	ReturnToPool();
 }
 
 void AProjectileBase::DestroyProjectileAfterLifetime()
@@ -157,16 +151,60 @@ void AProjectileBase::OnProjectileHit(const FHitResult& HitResult, AActor* Other
 		//no sound effect
 	}
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+
+	DestroyProjectile();
 }
+
+void AProjectileBase::ReturnToPool()
+{
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		PoolingSubsystem->ReturnToPool(this);
+	}
+}
+
 
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
-	IPoolingInterface::OnSpawnFromPool_Implementation();
+	MovementComponent->SetUpdatedComponent(this->GetRootComponent());
+	MovementComponent->Velocity = GetActorForwardVector() * MovementComponent->InitialSpeed;
+
+	ActivateLifeTimeHandle();
 }
 
 void AProjectileBase::OnReturnToPool_Implementation()
 {
-	IPoolingInterface::OnReturnToPool_Implementation();
+	DeactivateTimerHandle();
+	MovementComponent->SetUpdatedComponent(NULL);
 }
 
+
+
+void AProjectileBase::ActivateLifeTimeHandle()
+{
+	/*FTimerHandle LifeTimeHandle;
+GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AProjectileBase::DestroyProjectileAfterLifetime, LifeTime, false);*/
+	//--> this may cause the issue when the actor got spawned during gameplay. 
+
+	// wait for next tick for safety (one tick delay)
+	GetWorldTimerManager().SetTimerForNextTick([this]()// make a reservation for lambda to run on next tick
+	{
+		//next tick-> triggert the set timer function
+		LifeTimeHandle;
+		GetWorldTimerManager().SetTimer(
+			LifeTimeHandle,
+			this,
+			&AProjectileBase::DestroyProjectileAfterLifetime,
+			LifeTime,
+			false
+			);
+	});
+}
+void AProjectileBase::DeactivateTimerHandle()
+{
+	if (LifeTimeHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(LifeTimeHandle);
+	}
+}
 
