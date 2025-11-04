@@ -3,6 +3,9 @@
 
 #include "Controller/PlayerController/MyPlayerController.h"
 #include "Gamestate/GameStateManager.h"
+#include "GameInstance/GameInstanceManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/TextBlock.h"
 
 //=== Managers ===//
 #include "Camera/CameraManager.h"
@@ -24,8 +27,9 @@
 	IMCManager(nullptr),
 	UIManager(nullptr),
     HUDWigetClass(nullptr),
-    HUDWidgetInstance(nullptr),
-
+    HUDWidgetInstance(nullptr), 
+    MainMenuWidgetClass(nullptr),
+    MainMenuWidgetInstance(nullptr),
 
 	//----Control----//
 	bIsGamepad(false),
@@ -44,20 +48,11 @@ void AMyPlayerController::BeginPlay()
 
  	//Camera
  	ActivateCameraManager();
- 	
-    if (HUDWigetClass)
-    {
-        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWigetClass);
-        if (HUDWidgetInstance)
-        {
-            HUDWidgetInstance->AddToViewport();
-        }
-    }
  
-    AGameStateManager* GameStateManager = GetWorld() ? GetWorld()->GetGameState<AGameStateManager>() : nullptr;
-    if (GameStateManager)
+    FString CurrentMapName = GetWorld()->GetMapName();
+    if (CurrentMapName.Contains("MenuLevel"))
     {
-        GameStateManager->UPdateHUD();
+        ShowMainMenu(false);
     }
 }
 
@@ -192,5 +187,91 @@ void AMyPlayerController::ActivateCameraManager()
 UUserWidget* AMyPlayerController::GetHUDWidget() const
 {
     return HUDWidgetInstance;
+}
+
+void AMyPlayerController::ShowGameHUD()
+{
+    // HUD가 켜져 있다면 닫기
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->RemoveFromParent();
+        HUDWidgetInstance = nullptr;
+    }
+
+    // 이미 메뉴가 떠 있으면 제거
+    if (MainMenuWidgetInstance)
+    {
+        MainMenuWidgetInstance->RemoveFromParent();
+        MainMenuWidgetInstance = nullptr;
+    }
+
+    if (HUDWigetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWigetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+
+            bShowMouseCursor = false;
+            SetInputMode(FInputModeGameOnly());
+
+            AGameStateManager* GameStateManager = GetWorld() ? GetWorld()->GetGameState<AGameStateManager>() : nullptr;
+            if (GameStateManager)
+            {
+                GameStateManager->UPdateHUD();
+            }
+        }
+
+    }
+}
+
+void AMyPlayerController::ShowMainMenu(bool bIsRestart)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->RemoveFromParent();
+        HUDWidgetInstance = nullptr;
+    }
+
+    if (MainMenuWidgetInstance)
+    {
+        MainMenuWidgetInstance->RemoveFromParent();
+        MainMenuWidgetInstance = nullptr;
+    }
+
+    if (MainMenuWidgetClass)
+    {
+        MainMenuWidgetInstance = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+        if (MainMenuWidgetInstance)
+        {
+            MainMenuWidgetInstance->AddToViewport();
+
+            bShowMouseCursor = true;
+            SetInputMode(FInputModeUIOnly());
+        }
+
+        if (UTextBlock* ButteonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("StartButtonText"))))
+        {
+            if (bIsRestart)
+            {
+                ButteonText->SetText(FText::FromString(TEXT("ReStart")));
+            }
+            else
+            {
+                ButteonText->SetText(FText::FromString(TEXT("Start")));
+            }
+        }
+    }
+}
+
+void AMyPlayerController::StartGame()
+{
+    if (UGameInstanceManager* GameInstance = Cast<UGameInstanceManager>(UGameplayStatics::GetGameInstance(this)))
+    {
+        GameInstance->CurrentLevelIndex = 0;
+        GameInstance->TotalScore = 0;
+    }
+
+    UGameplayStatics::OpenLevel(GetWorld(), FName("CharacterTestLevel"));
 }
 
