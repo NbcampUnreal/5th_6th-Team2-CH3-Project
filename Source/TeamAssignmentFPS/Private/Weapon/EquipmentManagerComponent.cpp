@@ -335,7 +335,7 @@ bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EE
 	{
 	case EEquipmentType::Weapon:
 	{
-		TMap<int32, FWeaponData>* Weapons = InventoryComponent->GetWeapons();
+		TMap<int32, FWeaponData>* Weapons = InventoryComponent->GetWeaponsPtr();
 		if (!Weapons)
 		{
 			UE_LOG(Equipment_Manager_Log, Error,
@@ -367,7 +367,7 @@ bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EE
 
 	case EEquipmentType::Item:
 	{
-		TMap<int32, FItemData>* Items = InventoryComponent->GetItems();
+		TMap<int32, FItemData>* Items = InventoryComponent->GetItemsPtr();
 		if (!Items)
 		{
 			UE_LOG(Equipment_Manager_Log, Error,

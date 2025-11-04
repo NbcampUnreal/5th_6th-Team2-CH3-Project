@@ -29,9 +29,7 @@ struct FPoolArray
 	{
 		ObjectPool.Add(ActorToAdd);
 	}
-	
 };
-
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API UPoolingSubsystem : public UWorldSubsystem
