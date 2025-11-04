@@ -16,7 +16,6 @@
 #include "Bell/Bell.h"
 
 
-
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
 #include "Developer/AITestSuite/Public/AITestsCommon.h"
@@ -53,7 +52,7 @@ void AMyCharacter::SetupForDodgeAction()
 		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupForDodge-> Invalid DodgeCurve"));
 		return;
 	}
-
+	
 	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
 	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
 	DodgeTimeline->AddInterpFloat(DodgeCurve, ProgressFunction);
@@ -77,7 +76,6 @@ void AMyCharacter::Tick(float DeltaTime)
 	//temp rotaion without state case
 	RotateTowardTarget(DeltaTime);
 	//temp with simple trigger
-	QuickMovementTick();
 }
 
 // Called to bind functionality to input
@@ -192,51 +190,9 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 
 	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
 	SetActorRotation(NewRotation);
-	
 }
 
-void AMyCharacter::EnableQuickMovement(const FInputActionValue& Value)
-{
-	QuickMoveStartTime = GetWorld()->GetTimeSeconds();
-	bIsQuickMoving = false; // not yet considered "hold". it needs to be reach the threshold
-}
-
-
-void AMyCharacter::DisableQuickMovement(const FInputActionValue& Value)
-{
-	float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
-
-	if (HeldTime < HoldThreshold)
-	{
-		// Tap
-		Dodge();
-	}
-	else
-	{
-		// Hold release
-		StopSprinting();
-	}
-
-	// Reset
-	QuickMoveStartTime = 0.f;
-	bIsQuickMoving = false;
-}
-
-void AMyCharacter::QuickMovementTick()
-{
-	if (!bIsQuickMoving && QuickMoveStartTime > 0.f)
-	{
-		float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
-		if (HeldTime >= HoldThreshold)
-		{
-			// Hold start
-			StartSprinting();
-			bIsQuickMoving = true; // only trigger once
-		}
-	}
-}
-
-void AMyCharacter::StartSprinting()
+void AMyCharacter::StartSprinting(const FInputActionValue& Value)
 {
 	if (!Controller)
 	{
@@ -252,7 +208,7 @@ void AMyCharacter::StartSprinting()
 	SetMovementState(ECharacterMovementState::Sprinting);
 }
 
-void AMyCharacter::StopSprinting()
+void AMyCharacter::StopSprinting(const FInputActionValue& Value)
 {
 	if (!Controller)
 	{
@@ -267,7 +223,7 @@ void AMyCharacter::StopSprinting()
 
 }
 
-void AMyCharacter::Dodge()
+void AMyCharacter::Dodge(const FInputActionValue& Value)
 {
 	if (bIsDodging)
 	{
