@@ -22,7 +22,7 @@ void UInputActionHandler::SetShouldTriggerWhenCanceled(bool bIsYes)
 }
 
 
-void UInputActionHandler::OnTriggerStarted(float Value)
+void UInputActionHandler::OnTriggerPressed(float Value)
 {
 	ElapsedTime+=GetWorld()->GetDeltaSeconds();// record times
 		

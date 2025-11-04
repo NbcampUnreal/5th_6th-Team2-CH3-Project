@@ -143,6 +143,7 @@ public:
 	//-- basic input reactions
 	UFUNCTION()
 	void TriggerInput_Reload(const FInputActionValue& Value);
+	
 	UFUNCTION()
 	void TriggerInput_Start(const FInputActionValue& Value);
 	UFUNCTION()

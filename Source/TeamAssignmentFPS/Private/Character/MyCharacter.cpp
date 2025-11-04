@@ -38,6 +38,19 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupForDodgeAction();
+	SetupForInputTypeHelper();
+}
+
+void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	//Delete unnecessary
+	//1. Helper
+	if (DodgeInputDetectionHelper)
+	{
+		DodgeInputDetectionHelper->RemoveFromRoot();
+		DodgeInputDetectionHelper=nullptr;
+	}
 }
 
 void AMyCharacter::SetupForDodgeAction()
@@ -53,13 +66,35 @@ void AMyCharacter::SetupForDodgeAction()
 		return;
 	}
 	
-	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
+	FOnTimelineFloat ProgressFunction;
 	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
 	DodgeTimeline->AddInterpFloat(DodgeCurve, ProgressFunction);
 
 	FOnTimelineEvent FinishFunction;
 	FinishFunction.BindUFunction(this, FName("OnDodgeFinished"));
 	DodgeTimeline->SetTimelineFinishedFunc(FinishFunction);
+}
+
+void AMyCharacter::SetupForInputTypeHelper()
+{
+	//create it first
+	DodgeInputDetectionHelper=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
+	
+	if (!DodgeInputDetectionHelper)
+	{
+		UE_LOG(Movement_Log, Error,
+			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Failed"));
+		return;
+	}
+	DodgeInputDetectionHelper->AddToRoot();//for safety--> need to remove when leave
+
+	DodgeInputDetectionHelper->SetShouldTriggerWhenCanceled(false);// do nothing when the trigger is canceled
+	
+	DodgeInputDetectionHelper->OnTapped.BindUObject(this, &AMyCharacter::Dodge);
+	DodgeInputDetectionHelper->OnHoldStart.BindUObject(this, &AMyCharacter::StartSprinting);
+	DodgeInputDetectionHelper->OnReleased.BindUObject(this, &AMyCharacter::StopSprinting);
+	UE_LOG(Movement_Log, Log,
+			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Completed"));
 }
 
 // Called every frame
@@ -117,18 +152,6 @@ void AMyCharacter::Interact()
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("상호작용 가능한 대상이 없습니다."));
-}
-
-void AMyCharacter::SetMovementState(ECharacterMovementState NewMovementState)
-{
-	if (CurrentMovementState == NewMovementState)
-	{
-		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetMovementState-> Same MovementState"))
-		return;
-	}
-	
-	/*CurrentMovementState = NewMovementState;
-	//need to signal the state update.*/
 }
 
 void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
@@ -192,7 +215,26 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	SetActorRotation(NewRotation);
 }
 
-void AMyCharacter::StartSprinting(const FInputActionValue& Value)
+void AMyCharacter::TriggerQuickMovement_Pressed(const FInputActionValue& Value)
+{
+	float FloatValue=Value.Get<float>();
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerPressed(FloatValue);
+}
+
+void AMyCharacter::TriggerQuickMovement_Released(const FInputActionValue& Value)
+{
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerCompleted();
+}
+
+void AMyCharacter::TriggerQuickMovement_Canceled(const FInputActionValue& Value)
+{
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerCanceled();
+}
+
+void AMyCharacter::StartSprinting()
 {
 	if (!Controller)
 	{
@@ -208,7 +250,7 @@ void AMyCharacter::StartSprinting(const FInputActionValue& Value)
 	SetMovementState(ECharacterMovementState::Sprinting);
 }
 
-void AMyCharacter::StopSprinting(const FInputActionValue& Value)
+void AMyCharacter::StopSprinting()
 {
 	if (!Controller)
 	{
@@ -223,7 +265,7 @@ void AMyCharacter::StopSprinting(const FInputActionValue& Value)
 
 }
 
-void AMyCharacter::Dodge(const FInputActionValue& Value)
+void AMyCharacter::Dodge()
 {
 	if (bIsDodging)
 	{

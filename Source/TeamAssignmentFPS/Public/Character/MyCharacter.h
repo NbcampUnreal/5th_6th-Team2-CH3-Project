@@ -106,7 +106,11 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//Setups
 	void SetupForDodgeAction();
+	void SetupForInputTypeHelper();
 
 public:	
 	// Called every frame
@@ -118,26 +122,39 @@ public:
 
 	//Movement
 //State
-	void SetMovementState(ECharacterMovementState NewMovementState);
+	void SetMovementState(ECharacterMovementState NewMovementState){CurrentMovementState=NewMovementState;}
 	
 	UFUNCTION()// must put ufunction for binding fuck
 	void MoveForwardAndRight(const FInputActionValue& Value);
 
 	void RotateTowardTarget(float DeltaTime);
+
+
+	UFUNCTION()
+	void TriggerQuickMovement_Pressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void TriggerQuickMovement_Released(const FInputActionValue& Value);
+	UFUNCTION()
+	void TriggerQuickMovement_Canceled(const FInputActionValue& Value);
 	
 	UFUNCTION()
-	void StartSprinting(const FInputActionValue& Value);
+	void StartSprinting();
 	UFUNCTION()
-	void StopSprinting(const FInputActionValue& Value);
+	void StopSprinting();
 
 	//=== Dodge/BackDash ===//
 	UFUNCTION()
-	void Dodge(const FInputActionValue& Value);
+	void Dodge();
 	void DirectionalDodge();
 	void BackDash();
 	UFUNCTION()
 	void HandleDodgeAction(float DeltaTime);
 	UFUNCTION()
 	void OnDodgeFinished();
+
+
+	//==== Cleanup
+	//virtual void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 
 };
