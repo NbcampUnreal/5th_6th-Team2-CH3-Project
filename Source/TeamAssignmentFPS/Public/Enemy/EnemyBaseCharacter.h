@@ -24,34 +24,28 @@ struct FEnemyData
 
 public:
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	int32 MaxHealth;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	int32 CurrentHealth;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	float MoveSpeed;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	float HeightMinRatio;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	float HeightMaxRatio;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	int32 Damage;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	float Range;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	float Delay;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	int32 Score;
 };
 
@@ -74,7 +68,7 @@ public:
 
 	FVector knockbackDirection;
 
-	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
+	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
 	virtual void EnemyAttack();
 
 	UFUNCTION()

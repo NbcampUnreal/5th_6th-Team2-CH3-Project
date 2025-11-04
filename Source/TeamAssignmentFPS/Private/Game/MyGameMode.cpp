@@ -15,12 +15,19 @@ AMyGameMode::AMyGameMode()
 
 }
 
+void AMyGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitializePooling();
+}
+
 void AMyGameMode::InitializePooling() const
 {
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		PoolingSubsystem->InitializePool(MeleeEnemyClass, 10);
-		PoolingSubsystem->InitializePool(RangeEnemyClass, 10);
+		PoolingSubsystem->InitializePool(MeleeEnemyClass, 20);
+		PoolingSubsystem->InitializePool(RangeEnemyClass, 20);
 		PoolingSubsystem->InitializePool(PlayerProjectileClass, 10);
 		PoolingSubsystem->InitializePool(EnemyProjectileClass, 10);
 	}

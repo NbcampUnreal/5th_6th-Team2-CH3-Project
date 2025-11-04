@@ -28,24 +28,17 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 
 }
 
-
-
-
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
 	HealthComponent->OnDamage.BindUObject(this, &AEnemyBaseCharacter::EnemyTakeDamage);
 	//Enemy->OnEnemyDead.BindUObject(this, &GamestateManager::AddScore);
-
 	
-
-	HealthComponent->SetMaxHealth(100);
-	HealthComponent->SetCurrentHealth(100);
-
 	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
 	if (GameStateManager)
 	{
+		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 	}
 }
@@ -120,18 +113,20 @@ void AEnemyBaseCharacter::EnemyDead()
 	
 }
 
-void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
+void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
 {
-	EnemyData.EnemyType = InData.EnemyType;
-	EnemyData.MaxHealth = InData.MaxHP;
-	EnemyData.CurrentHealth = InData.MaxHP;
-	EnemyData.MoveSpeed = InData.MoveSpeed;
-	EnemyData.HeightMinRatio = InData.HeightMinRatio;
-	EnemyData.HeightMaxRatio = InData.HeightMaxRatio;
-	EnemyData.Damage = InData.Damage;
-	EnemyData.Range = InData.Range;
-	EnemyData.Delay = InData.Delay;
-	EnemyData.Score = InData.Score;
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Data Initialized"));
+	
+	EnemyData.EnemyType = InData->EnemyType;
+	HealthComponent->SetMaxHealth(InData->MaxHP);
+	HealthComponent->SetCurrentHealth(InData->MaxHP);
+	EnemyData.MoveSpeed = InData->MoveSpeed;
+	EnemyData.HeightMinRatio = InData->HeightMinRatio;
+	EnemyData.HeightMaxRatio = InData->HeightMaxRatio;
+	EnemyData.Damage = InData->Damage;
+	EnemyData.Range = InData->Range;
+	EnemyData.Delay = InData->Delay;
+	EnemyData.Score = InData->Score;
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	//Movement->bOrientRotationToMovement = true;
