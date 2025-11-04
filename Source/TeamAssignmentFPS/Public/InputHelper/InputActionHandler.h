@@ -4,7 +4,7 @@
 #include "UObject/Object.h"
 #include "InputActionHandler.generated.h"
 
-UENUM()
+/*UENUM()
 enum EInputActionReactionType : uint8 // these are for binding without params to pass
 {
 	None UMETA(DisplayName = "None"),
@@ -12,7 +12,7 @@ enum EInputActionReactionType : uint8 // these are for binding without params to
 	HoldStart UMETA(DisplayName = "HoldStart"),
 	HoldUpdate UMETA(DisplayName = "HoldUpdate"),
 	HoldRelease UMETA(DisplayName = "HoldRelease")
-};
+};*/
 
 UCLASS(Blueprintable, BlueprintType)
 class TEAMASSIGNMENTFPS_API UInputActionHandler : public UObject
@@ -54,7 +54,7 @@ private:
 	
 public:
 	//=== Activation / Binding ===//
-	template<typename TClass>
+	/*template<typename TClass>
 	bool BindOnAction(TClass* Owner,EInputActionReactionType Binder, void (TClass::*Function)(void))
 	{
 		if (!Owner) return false;
@@ -83,17 +83,15 @@ public:
 	{
 		if (!Owner) return false;
 
-		//FOnInputHoldUpdate<T_ParamValueType> OnHoldUpdate;
+		FOnInputHoldUpdate<T_ParamValueType> OnHoldUpdate;
 
 		return false; // temp not done
-	}
-
+	}*/
 	
-
 	void SetShouldTriggerWhenCanceled(bool bIsYes);// this is for setting the bool ShouldTriggerWhenCancled
 
 	//=== Trigger Manage ===//
-	void OnTriggerStarted(float Value);
+	void OnTriggerPressed(float Value);
 	void OnTriggerCompleted();
 	void OnTriggerCanceled();
 	
