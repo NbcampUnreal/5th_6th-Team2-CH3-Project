@@ -7,6 +7,7 @@
 #include "GameInstance/GameInstanceManager.h"
 #include "Components/TextBlock.h"
 #include "Blueprint/UserWidget.h"
+#include "Trap/TrapBase.h"
 #include "Debug/UELOGCategories.h"
 
 
@@ -17,6 +18,7 @@ AGameStateManager::AGameStateManager()
 	LevelDuration = 5.0f; // 한 레벨당 30초
 	CurrentLevelIndex = 0;
 	MaxLevels = 3;
+
 }
 
 void AGameStateManager::BeginPlay()
@@ -54,6 +56,14 @@ void AGameStateManager::AddScore(int32 Amount)
 
 void AGameStateManager::StartLevel()
 {
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
+		{
+			MyPlayerController->ShowGameHUD();
+		}
+	}
+
 	AEnemySpawnerManager* SpawnerManager = Cast<AEnemySpawnerManager>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), AEnemySpawnerManager::StaticClass())
 	);
@@ -79,8 +89,6 @@ void AGameStateManager::StartLevel()
 		}
 	}
 
-	UPdateHUD();
-
 	// 30초 후에 OnLevelTimeUp()가 호출되도록 타이머 설정
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
@@ -89,10 +97,6 @@ void AGameStateManager::StartLevel()
 		LevelDuration,
 		false
 	);
-
-	//UE_LOG(LogTemp, Warning, TEXT("Level %d Start!, Spawned %d coin"),
-	//	CurrentLevelIndex + 1,
-	//	SpawnedCoinCount);
 }
 
 void AGameStateManager::OnLevelTimeUp()
@@ -131,10 +135,11 @@ void AGameStateManager::EndLevel()
 			// 타이머 해제
 			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
-			CurrentLevelIndex++;
-			SpartaGameInstance->CurrentLevelIndex = CurrentLevelIndex;
-			//StartLevel();
 			PhaseOver.Broadcast();
+			FindTrap();
+			//CurrentLevelIndex++;
+			//SpartaGameInstance->CurrentLevelIndex = CurrentLevelIndex;
+			//StartLevel();
 
 			if (CurrentLevelIndex >= MaxLevels)
 			{
@@ -142,14 +147,6 @@ void AGameStateManager::EndLevel()
 				return;
 			}
 
-			//if (LevelMapNames.IsValidIndex(CurrentLevelIndex))
-			//{
-			//	UGameplayStatics::OpenLevel(GetWorld(), LevelMapNames[CurrentLevelIndex]);
-			//}
-			//else
-			//{
-			//	OnGameOver();
-			//}
 		}
 	}
 
@@ -192,9 +189,32 @@ void AGameStateManager::UPdateHUD()
 	}
 }
 
+void AGameStateManager::FindTrap()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(World, ATrapBase::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		ATrapBase* Found = Cast<ATrapBase>(Actor);
+		if (Found)
+		{
+			Found->TrapOn();
+			//UE_LOG(LogTemp, Warning, TEXT("Found Actor: %s"), *Found->GetName());
+		}
+	}
+}
+
 void AGameStateManager::OnGameOver()
 {
-	UPdateHUD();
-	UE_LOG(LogTemp, Warning, TEXT("Game Over!!"));
-	// 여기서 UI를 띄운다거나, 재시작 기능을 넣을 수도 있음
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
+		{
+			MyPlayerController->ShowMainMenu(true);
+		}
+	}
 }

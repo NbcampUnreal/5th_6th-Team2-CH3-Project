@@ -50,6 +50,7 @@ public:
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
 	void UPdateHUD();
+	void FindTrap();
 
 	UPROPERTY()
 	FPhaseOver PhaseOver;
