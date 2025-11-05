@@ -33,6 +33,8 @@ AWeaponBase::AWeaponBase()
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle location"));// where bullet is spawned
 	Muzzle->SetupAttachment(SkeletalMeshComponent);
 
+	WeaponType = EWeaponType::None;// default
+	
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 }
 
@@ -40,7 +42,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	CurrentAmmoCount = MaxAmmoCount;
 }
 
 // Called every frame
@@ -53,6 +56,8 @@ void AWeaponBase::Tick(float DeltaTime)
 void AWeaponBase::OnReloadInputPressed_Implementation()
 {
 	IWeaponInterface::OnReloadInputPressed_Implementation();
+
+	UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::OnReloadInputPressed_Implementation -> 1111111111111111."));
 
 	ReloadWeapon();
 }
@@ -70,6 +75,7 @@ void AWeaponBase::OnInputTap_Implementation()
 {
 	IInputReactionInterface::OnInputTap_Implementation();
 	// tap -->
+
 	if (bIsReloading) return;
 
 	if (WeaponType != EWeaponType::Shot) return;
@@ -81,7 +87,7 @@ void AWeaponBase::OnInputTap_Implementation()
 void AWeaponBase::OnInputHoldStart_Implementation()
 {
 	IInputReactionInterface::OnInputHoldStart_Implementation();
-	
+
 	if (bIsReloading) return;
 
 	if (WeaponType != EWeaponType::AutoShot) return;
@@ -89,7 +95,7 @@ void AWeaponBase::OnInputHoldStart_Implementation()
 	bIsFiring=true;
 
 	GetWorldTimerManager().
-	SetTimer(AutoFireTimerHandle,this,&AWeaponBase::FireWeapon,SpawnInterval,true,0.f);
+	SetTimer(AutoFireTimerHandle,this,&AWeaponBase::FireWeapon,SpawnInterval,true);
 }
 
 void AWeaponBase::OnInputHoldUpdate_Implementation(float InputValue)
@@ -139,9 +145,10 @@ void AWeaponBase::FireWeapon()
 	if (CurrentAmmoCount<=0)
 	{
 		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> Not enough amo to shoot."));
+		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> %d"), CurrentAmmoCount);
 		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);//same here
 		// TODO:UI-> signal ui manager to show fire failed
-		
+		ReloadWeapon();
 		return;
 	}
 
@@ -179,6 +186,8 @@ void AWeaponBase::FireWeapon()
 
 void AWeaponBase::ReloadWeapon()
 {
+	UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> 00."));
+
 	if (bIsReloading)
 	{
 		UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> Already fire while reloading."));

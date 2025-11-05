@@ -54,7 +54,7 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
 	TSubclassOf<AProjectileBase> Projectile;// projectile to be fired
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	EWeaponType WeaponType=EWeaponType::None;//default
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
