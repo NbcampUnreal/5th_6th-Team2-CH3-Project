@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "PickupItem.generated.h"
 
-// this is not a item, this is the spawned holder that has information of itme to be put on inventory by character
-
 UCLASS()
 class TEAMASSIGNMENTFPS_API APickupItem : public AActor
 {
