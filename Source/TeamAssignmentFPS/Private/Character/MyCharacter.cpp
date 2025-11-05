@@ -12,10 +12,13 @@
 #include "Weapon/EquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
+#include "Item/InteractionComponent.h"
+#include "InputHelper/InputActionHandler.h"
 
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
+
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -26,7 +29,8 @@ AMyCharacter::AMyCharacter()
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
-
+	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("Interaction Component"));
+	
 	DodgeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DodgeTimeline"));
 }
 
@@ -172,8 +176,6 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	TargetRotatioin.Pitch=GetActorRotation().Pitch;
 	TargetRotatioin.Roll=GetActorRotation().Roll;
 
-	float RoationInterpSpeed=6.f;// temp
-
 	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
 	SetActorRotation(NewRotation);
 }
@@ -268,7 +270,7 @@ void AMyCharacter::DirectionalDodge()
 	DodgeDirection = (Forward * Input.X + Right * Input.Y).GetSafeNormal();
 	
 	bIsDodging = true;
-	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayrate));
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayRate));
 	DodgeTimeline->PlayFromStart();
 
 	SetMovementState(ECharacterMovementState::Dodging);
@@ -285,7 +287,7 @@ void AMyCharacter::BackDash()
 	DodgeDirection = -GetActorForwardVector() * BackDashDistanceRatio;
 
 	bIsDodging = true;
-	DodgeTimeline->SetPlayRate(FMath::Max(0.01f, DodgeSpeedPlayrate*BackDashTimeRatio));
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f, DodgeSpeedPlayRate*BackDashTimeRatio));
 	DodgeTimeline->PlayFromStart();
 
 	SetMovementState(ECharacterMovementState::Dodging);

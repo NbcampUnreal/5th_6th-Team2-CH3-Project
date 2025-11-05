@@ -90,6 +90,8 @@ public:
 	
 	void SetShouldTriggerWhenCanceled(bool bIsYes);// this is for setting the bool ShouldTriggerWhenCancled
 
+	void SetThresholdTime(float Time) {TapThresholdTime=FMath::Clamp(Time,0,1);}
+	
 	//=== Trigger Manage ===//
 	void OnTriggerPressed(float Value);
 	void OnTriggerCompleted();

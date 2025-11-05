@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "InputHelper/InputActionHandler.h"
 #include "LockonTarget/LockonComponent.h"
 
 #include "MyCharacter.generated.h"
@@ -28,7 +27,9 @@ class ULockonComponent;// to update the forward rotaion that character needs to 
 class UCameraManagerComponent;
 class UHealthComponent;
 class UEquipmentManagerComponent;
-class UInventoryManagerComponent;
+class UInteractionComponent;
+class UInputActionHandler;
+
 //binding function
 struct FInputActionValue;
 
@@ -58,14 +59,21 @@ protected:
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
 	UEquipmentManagerComponent* EquipmentInteractionComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InteractionComp")
+	UInteractionComponent* InteractionComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
+
+
+	// Rotation
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
+	float RoationInterpSpeed=5.f;
 	
 	//==Stat
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
 	float MovementSpeed=600;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
 	float SprintSpeedMultiplier=1.5;
 
 	float CurrentMaxSpeed=600.f;//default
@@ -74,7 +82,7 @@ protected:
 
 	//=== Dodge ===//
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Dodge")
 	UInputActionHandler* DodgeInputDetectionHelper;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
@@ -90,7 +98,7 @@ protected:
 	UCurveFloat* DodgeCurve;//ease in and out
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
-	float DodgeSpeedPlayrate=5.f;
+	float DodgeSpeedPlayRate=5.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance

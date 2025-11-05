@@ -52,6 +52,7 @@ public:
 };
 
 
+/*
 struct FInputTypeHelper
 {
 	template<typename FunctionType>
@@ -81,3 +82,4 @@ struct FInputTypeHelper
 	}
 	
 };
+*/
