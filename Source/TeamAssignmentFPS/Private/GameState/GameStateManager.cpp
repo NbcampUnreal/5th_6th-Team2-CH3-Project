@@ -14,7 +14,7 @@
 AGameStateManager::AGameStateManager()
 {
 	Score = 0;
-	LevelDuration = 5.0f; // ÇÑ ·¹º§´ç 30ÃÊ
+	LevelDuration = 5.0f; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 30ï¿½ï¿½
 	CurrentLevelIndex = 0;
 	MaxLevels = 3;
 }
@@ -23,7 +23,7 @@ void AGameStateManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// °ÔÀÓ ½ÃÀÛ ½Ã Ã¹ ·¹º§ºÎÅÍ ÁøÇà
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	StartLevel();
 
 	GetWorldTimerManager().SetTimer(
@@ -65,14 +65,12 @@ void AGameStateManager::StartLevel()
 	}
 
 	AEnemySpawner* EnemySpawner = SpawnerManager->LocateSpawnerAt(SpawnerManager->GetRandomSpawnLocation());
-
-
+	
 	const int32 MonsterToSpawn = 10;
 
 	for (int32 i = 0; i < MonsterToSpawn; ++i)
 	{
-
-		AEnemyBaseCharacter* Spawned = EnemySpawner->SpawnRandomMonster(); // EnemySpawner ÂÊ¿¡ ±¸Çö ÇÊ¿ä
+		AEnemyBaseCharacter* Spawned = EnemySpawner->SpawnRandomMonster(); // EnemySpawner ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 		if (!Spawned)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[%d] Monster spawn failed"), i);
@@ -81,7 +79,7 @@ void AGameStateManager::StartLevel()
 
 	UPdateHUD();
 
-	// 30ÃÊ ÈÄ¿¡ OnLevelTimeUp()°¡ È£ÃâµÇµµ·Ï Å¸ÀÌ¸Ó ¼³Á¤
+	// 30ï¿½ï¿½ ï¿½Ä¿ï¿½ OnLevelTimeUp()ï¿½ï¿½ È£ï¿½ï¿½Çµï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
 		this,
@@ -90,6 +88,8 @@ void AGameStateManager::StartLevel()
 		false
 	);
 
+
+	
 	//UE_LOG(LogTemp, Warning, TEXT("Level %d Start!, Spawned %d coin"),
 	//	CurrentLevelIndex + 1,
 	//	SpawnedCoinCount);
@@ -97,7 +97,7 @@ void AGameStateManager::StartLevel()
 
 void AGameStateManager::OnLevelTimeUp()
 {
-	// ½Ã°£ÀÌ ´Ù µÇ¸é ·¹º§À» Á¾·á
+	// ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	
 	EndLevel();
 }
@@ -110,7 +110,7 @@ void AGameStateManager::OnCoinCollected()
 	//	CollectedCoinCount,
 	//	SpawnedCoinCount)
 
-	//	// ÇöÀç ·¹º§¿¡¼­ ½ºÆùµÈ ÄÚÀÎÀ» ÀüºÎ ÁÖ¿ü´Ù¸é Áï½Ã ·¹º§ Á¾·á
+	//	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¿ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//	if (SpawnedCoinCount > 0 && CollectedCoinCount >= SpawnedCoinCount)
 	//	{
 	//		EndLevel();
@@ -120,7 +120,7 @@ void AGameStateManager::OnCoinCollected()
 void AGameStateManager::EndLevel()
 {
 
-	// ´ÙÀ½ ·¹º§ ÀÎµ¦½º·Î
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½
 	//CurrentLevelIndex++;
 
 	if (UGameInstance* GameInstance = GetGameInstance())
@@ -128,7 +128,7 @@ void AGameStateManager::EndLevel()
 		UGameInstanceManager* SpartaGameInstance = Cast<UGameInstanceManager>(GameInstance);
 		if (SpartaGameInstance)
 		{
-			// Å¸ÀÌ¸Ó ÇØÁ¦
+			// Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
 			CurrentLevelIndex++;
@@ -196,5 +196,5 @@ void AGameStateManager::OnGameOver()
 {
 	UPdateHUD();
 	UE_LOG(LogTemp, Warning, TEXT("Game Over!!"));
-	// ¿©±â¼­ UI¸¦ ¶ç¿î´Ù°Å³ª, Àç½ÃÀÛ ±â´ÉÀ» ³ÖÀ» ¼öµµ ÀÖÀ½
+	// ï¿½ï¿½ï¿½â¼­ UIï¿½ï¿½ ï¿½ï¿½ï¿½Ù°Å³ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }

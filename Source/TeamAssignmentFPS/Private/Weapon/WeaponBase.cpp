@@ -10,7 +10,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Sound/SoundBase.h"
 #include "Debug/UELOGCategories.h"
-
+#include "Pooling/PoolingSubsystem.h"
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -69,7 +69,7 @@ void AWeaponBase::OnInputHoldStart_Implementation()
 	IInputReactionInterface::OnInputHoldStart_Implementation();
 	
 	if (bIsReloading) return;
-	
+
 	bIsFiring=true;
 
 	GetWorldTimerManager().
@@ -117,15 +117,17 @@ void AWeaponBase::FireWeapon()
 	FRotator SpawnRotation=Muzzle->GetComponentRotation();
 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner=this;
-	SpawnParams.Instigator=GetInstigator();
-
+	// SpawnParams.Owner=this;
+	// SpawnParams.Instigator=GetInstigator();
+	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	AProjectileBase* SpawnedProjectile=GetWorld()->SpawnActor<AProjectileBase>(Projectile,SpawnLocation,SpawnRotation,SpawnParams );
 	if (!SpawnedProjectile)
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
+		
 		return;
 	}
+	
 	
 	// spawning success
 	CurrentAmmoCount--;//subtract the ammo count

@@ -54,7 +54,7 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnRandomMonster()
 		AEnemyBaseCharacter* SpawnedEnemy = SpawnMonster(ActualClass);
 		SpawnedEnemy->InitializeEnemyData(Row);
 		
-		return SpawnMonster(ActualClass);
+		return SpawnedEnemy;
 	}
 
 	return nullptr;
@@ -118,7 +118,6 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClas
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 		AEnemyBaseCharacter* SpawnedEnemy = Cast<AEnemyBaseCharacter>(PoolingSubsystem->SpawnFromPool(MonsterClass, SpawnLocation, FRotator::ZeroRotator));
-		
 		 return SpawnedEnemy;
 	}
 

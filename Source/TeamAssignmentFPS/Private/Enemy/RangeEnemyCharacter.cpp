@@ -26,8 +26,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 	{
 		return;
 	}
-
-	UE_LOG(Enemy_Log, Error, TEXT("Range Attack"));
+	
 	LookAtPlayer();
 	//GetWorld()->SpawnActor<AActor>(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 
@@ -38,20 +37,5 @@ void ARangeEnemyCharacter::EnemyAttack()
 	
 }
 
-void ARangeEnemyCharacter::LookAtPlayer()
-{
-	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	if (!Player)
-	{
-		return;
-	}
-
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
-	TargetRotation.Roll = 0.f;
-	TargetRotation.Pitch = 0.f;
-
-	SetActorRotation(TargetRotation);
-}
 
 
