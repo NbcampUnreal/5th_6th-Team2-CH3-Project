@@ -176,8 +176,6 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	TargetRotatioin.Pitch=GetActorRotation().Pitch;
 	TargetRotatioin.Roll=GetActorRotation().Roll;
 
-	float RoationInterpSpeed=6.f;// temp
-
 	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
 	SetActorRotation(NewRotation);
 }

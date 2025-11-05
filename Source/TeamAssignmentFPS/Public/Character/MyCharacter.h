@@ -64,11 +64,16 @@ protected:
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
+
+
+	// Rotation
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
+	float RoationInterpSpeed=5.f;
 	
 	//==Stat
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
 	float MovementSpeed=600;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
 	float SprintSpeedMultiplier=1.5;
 
 	float CurrentMaxSpeed=600.f;//default
@@ -77,7 +82,7 @@ protected:
 
 	//=== Dodge ===//
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Dodge")
 	UInputActionHandler* DodgeInputDetectionHelper;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
