@@ -24,9 +24,10 @@ UENUM(BlueprintType)
 enum class EWeaponType:uint8
 {
 	None UMETA(DisplayName = "None"),
-	
+	Shot UMETA(DisplayName = "Shot"),
+	AutoShot UMETA(DisplayName = "AutoShot"),
+	ChargingShot UMETA(DisplayName = "ChargingShot"),
 };
-
 
 
 UCLASS()
@@ -65,10 +66,18 @@ protected:
 
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+	float Damage;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon | Projectile")
 	int32 CurrentAmmoCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
+	float CurrentChargingTime;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
+	float MinChargingTime;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging ")
+	float MaxChargingTime;
 
 	bool bIsReloading=false;
 	bool bIsFiring=false;
@@ -99,6 +108,7 @@ protected:
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon | Animation")
 	TObjectPtr<UAnimMontage> FireFailedAnimMontage;
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -121,6 +131,7 @@ protected:
 	virtual void PlayMuzzleEffect();
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
+
 	
 	
 
