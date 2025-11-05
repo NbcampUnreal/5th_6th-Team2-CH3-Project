@@ -14,6 +14,7 @@ class UInventoryManagerComponent;
 class AWeaponBase;
 class AItemBase;
 class UEquipmentSlot;
+class UInputActionHandler;
 struct FInputActionValue;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -52,7 +53,7 @@ private:
 	// this is for switching item quick slot.(hold rightmousebutton+ mouse wheel scroll=switch to next item)
 	// if not, switch weapon
 	
-	//==== MouseWheel Tracking ====//
+	/*//==== MouseWheel Tracking ====//
 	
 	// mouse wheele update ( to make it only work for once)
 	FTimerHandle ScrollEndTimerHandle;// for setting timer
@@ -65,11 +66,15 @@ private:
 	
 	//for tracking holding to determine tap or hold
 	float CurrentHoldingTime=0.0f;
-	bool bDidHoldStarted=false;
+	bool bDidHoldStarted=false;*/
+
+	UPROPERTY()
+	UInputActionHandler* EquipmentTriggerHelper;
 	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;// for deleting the helper 
 	//void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
 
 private:
@@ -143,6 +148,11 @@ public:
 	//-- basic input reactions
 	UFUNCTION()
 	void TriggerInput_Reload(const FInputActionValue& Value);
+
+
+	//==== Trigger Input Helper
+	UFUNCTION()
+	void SetupTriggerHelper();
 	
 	UFUNCTION()
 	void TriggerInput_Start(const FInputActionValue& Value);
@@ -150,10 +160,22 @@ public:
 	void TriggerInput_Trigger(const FInputActionValue& Value);
 	UFUNCTION()
 	void TriggerInput_Complete(const FInputActionValue& Value);
-	UFUNCTION()
-	void TriggerInput_Ongoing(const FInputActionValue& Value);
+	/*UFUNCTION()
+	void TriggerInput_Ongoing(const FInputActionValue& Value);*/
 	UFUNCTION()
 	void TriggerInput_Canceled(const FInputActionValue& Value);
+
+	// Executing Interface here
+	UFUNCTION()
+	void TriggerTap();
+	UFUNCTION()
+	void TriggerHoldStart();
+	UFUNCTION()
+	void TriggerHoldUpdate(float Value);
+	UFUNCTION()
+	void TriggerReleased();
+	
+	
 //----------------------------------------------------------------------------------------------------------------------
 
 };

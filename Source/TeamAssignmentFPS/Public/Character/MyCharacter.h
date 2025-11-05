@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "InputHelper/InputActionHandler.h"
 #include "LockonTarget/LockonComponent.h"
 
 #include "MyCharacter.generated.h"
@@ -28,7 +27,9 @@ class ULockonComponent;// to update the forward rotaion that character needs to 
 class UCameraManagerComponent;
 class UHealthComponent;
 class UEquipmentManagerComponent;
-class UInventoryManagerComponent;
+class UInteractionComponent;
+class UInputActionHandler;
+
 //binding function
 struct FInputActionValue;
 
@@ -58,6 +59,8 @@ protected:
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentComp")
 	UEquipmentManagerComponent* EquipmentInteractionComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InteractionComp")
+	UInteractionComponent* InteractionComp;
 
 	//Character Movement State
 	ECharacterMovementState CurrentMovementState;
@@ -90,7 +93,7 @@ protected:
 	UCurveFloat* DodgeCurve;//ease in and out
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
-	float DodgeSpeedPlayrate=5.f;
+	float DodgeSpeedPlayRate=5.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementInput | Dodge")
 	float DodgeDistance=600;//temp base dodge distance
