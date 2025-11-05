@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "InputHelper/InputActionHandler.h"
 #include "LockonTarget/LockonComponent.h"
 
 #include "MyCharacter.generated.h"
@@ -73,15 +72,14 @@ protected:
 	FVector2D MovementInputValue;
 
 	//=== Dodge ===//
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stat")
-	UInputActionHandler* DodgeInputDetectionHelper;
+	float QuickMoveStartTime = 0.f;
+	bool bIsQuickMoving = false;
+	float HoldThreshold = 0.2f;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	bool bIsDodging=false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovementInput | Dodge")
 	UTimelineComponent* DodgeTimeline;
-	
 	// function to bind with the timeline
 	/*FOnTimelineFloat ProgressFunction;
 	FOnTimelineEvent FinishFunction;*/// no need to store it as varaible, timeline stores the binding 
@@ -106,11 +104,7 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	//Setups
 	void SetupForDodgeAction();
-	void SetupForInputTypeHelper();
 
 public:	
 	// Called every frame
@@ -122,7 +116,7 @@ public:
 
 	//Movement
 //State
-	void SetMovementState(ECharacterMovementState NewMovementState){CurrentMovementState=NewMovementState;}
+	void SetMovementState(ECharacterMovementState NewMovementState);
 	
 	UFUNCTION()// must put ufunction for binding fuck
 	void MoveForwardAndRight(const FInputActionValue& Value);
@@ -131,11 +125,11 @@ public:
 
 
 	UFUNCTION()
-	void TriggerQuickMovement_Pressed(const FInputActionValue& Value);
+	void EnableQuickMovement(const FInputActionValue& Value);
 	UFUNCTION()
-	void TriggerQuickMovement_Released(const FInputActionValue& Value);
-	UFUNCTION()
-	void TriggerQuickMovement_Canceled(const FInputActionValue& Value);
+	void DisableQuickMovement(const FInputActionValue& Value);
+	void QuickMovementTick();
+
 	
 	UFUNCTION()
 	void StartSprinting();
@@ -151,10 +145,5 @@ public:
 	void HandleDodgeAction(float DeltaTime);
 	UFUNCTION()
 	void OnDodgeFinished();
-
-
-	//==== Cleanup
-	//virtual void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 
 };

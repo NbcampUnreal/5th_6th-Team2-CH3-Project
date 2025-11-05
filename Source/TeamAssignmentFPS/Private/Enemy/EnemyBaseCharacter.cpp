@@ -5,7 +5,6 @@
 #include "GameState/GameStateManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Pooling/PoolingSubsystem.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
@@ -28,17 +27,24 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 
 }
 
+
+
+
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
 	HealthComponent->OnDamage.BindUObject(this, &AEnemyBaseCharacter::EnemyTakeDamage);
 	//Enemy->OnEnemyDead.BindUObject(this, &GamestateManager::AddScore);
+
 	
+
+	HealthComponent->SetMaxHealth(100);
+	HealthComponent->SetCurrentHealth(100);
+
 	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
 	if (GameStateManager)
 	{
-		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 	}
 }
@@ -104,29 +110,22 @@ void AEnemyBaseCharacter::EnemyDead()
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
 	
-	//Destroy();
-
-	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-	{
-		PoolingSubsystem->ReturnToPool(this);
-	}
+	Destroy();
 	
 }
 
-void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
+void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow& InData)
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Data Initialized"));
-	
-	EnemyData.EnemyType = InData->EnemyType;
-	HealthComponent->SetMaxHealth(InData->MaxHP);
-	HealthComponent->SetCurrentHealth(InData->MaxHP);
-	EnemyData.MoveSpeed = InData->MoveSpeed;
-	EnemyData.HeightMinRatio = InData->HeightMinRatio;
-	EnemyData.HeightMaxRatio = InData->HeightMaxRatio;
-	EnemyData.Damage = InData->Damage;
-	EnemyData.Range = InData->Range;
-	EnemyData.Delay = InData->Delay;
-	EnemyData.Score = InData->Score;
+	EnemyData.EnemyType = InData.EnemyType;
+	EnemyData.MaxHealth = InData.MaxHP;
+	EnemyData.CurrentHealth = InData.MaxHP;
+	EnemyData.MoveSpeed = InData.MoveSpeed;
+	EnemyData.HeightMinRatio = InData.HeightMinRatio;
+	EnemyData.HeightMaxRatio = InData.HeightMaxRatio;
+	EnemyData.Damage = InData.Damage;
+	EnemyData.Range = InData.Range;
+	EnemyData.Delay = InData.Delay;
+	EnemyData.Score = InData.Score;
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	//Movement->bOrientRotationToMovement = true;
@@ -145,25 +144,4 @@ void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 void AEnemyBaseCharacter::DisableEnemyCollision()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
-{
-	IPoolingInterface::OnSpawnFromPool_Implementation();
-
-	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
-	{
-		AIController->StartBehaviorTree();
-	}
-}
-
-void AEnemyBaseCharacter::OnReturnToPool_Implementation()
-{
-	IPoolingInterface::OnReturnToPool_Implementation();
-
-	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
-	{
-		AIController->StopBehaviorTree();
-	}
-	
 }

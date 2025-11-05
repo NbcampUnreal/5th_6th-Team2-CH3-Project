@@ -63,8 +63,7 @@ protected:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;//basically when it spawned
-	
-	UFUNCTION()
+
 	void DestroyProjectile();
 	void DestroyProjectileAfterLifetime();
 public:	
@@ -75,15 +74,9 @@ public:
 	void HandleProjectileHit(UPrimitiveComponent* HitComp,AActor* OtherActor,UPrimitiveComponent* OtherComp,FVector NormalImpulse,const FHitResult& Hit);
 	
 	virtual void OnProjectileHit(const FHitResult& HitResult, AActor* OtherActor);// when the projectile collide
-	
+
+
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
-
-private:
-
-	FTimerHandle LifeTimeHandle;
-	void ReturnToPool(); 
 	
-	void ActivateLifeTimeHandle();
-	void DeactivateTimerHandle();
 };

@@ -7,18 +7,16 @@
 #include "InputAction.h"
 
 // components
-#include "EnhancedInputComponent.h"
 #include "Components/TimelineComponent.h"
 #include "LockonTarget/LockonComponent.h"
 #include "Weapon/EquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
-#include "Bell/Bell.h"
+
 
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
-#include "Developer/AITestSuite/Public/AITestsCommon.h"
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -38,19 +36,6 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupForDodgeAction();
-	SetupForInputTypeHelper();
-}
-
-void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	//Delete unnecessary
-	//1. Helper
-	if (DodgeInputDetectionHelper)
-	{
-		DodgeInputDetectionHelper->RemoveFromRoot();
-		DodgeInputDetectionHelper=nullptr;
-	}
 }
 
 void AMyCharacter::SetupForDodgeAction()
@@ -65,36 +50,14 @@ void AMyCharacter::SetupForDodgeAction()
 		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetupForDodge-> Invalid DodgeCurve"));
 		return;
 	}
-	
-	FOnTimelineFloat ProgressFunction;
+
+	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
 	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
 	DodgeTimeline->AddInterpFloat(DodgeCurve, ProgressFunction);
 
 	FOnTimelineEvent FinishFunction;
 	FinishFunction.BindUFunction(this, FName("OnDodgeFinished"));
 	DodgeTimeline->SetTimelineFinishedFunc(FinishFunction);
-}
-
-void AMyCharacter::SetupForInputTypeHelper()
-{
-	//create it first
-	DodgeInputDetectionHelper=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
-	
-	if (!DodgeInputDetectionHelper)
-	{
-		UE_LOG(Movement_Log, Error,
-			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Failed"));
-		return;
-	}
-	DodgeInputDetectionHelper->AddToRoot();//for safety--> need to remove when leave
-
-	DodgeInputDetectionHelper->SetShouldTriggerWhenCanceled(false);// do nothing when the trigger is canceled
-	
-	DodgeInputDetectionHelper->OnTapped.BindUObject(this, &AMyCharacter::Dodge);
-	DodgeInputDetectionHelper->OnHoldStart.BindUObject(this, &AMyCharacter::StartSprinting);
-	DodgeInputDetectionHelper->OnReleased.BindUObject(this, &AMyCharacter::StopSprinting);
-	UE_LOG(Movement_Log, Log,
-			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Completed"));
 }
 
 // Called every frame
@@ -111,6 +74,7 @@ void AMyCharacter::Tick(float DeltaTime)
 	//temp rotaion without state case
 	RotateTowardTarget(DeltaTime);
 	//temp with simple trigger
+	QuickMovementTick();
 }
 
 // Called to bind functionality to input
@@ -118,40 +82,18 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		
-		EnhancedInput->BindAction(InputAction_Interact, ETriggerEvent::Started, this, &AMyCharacter::Interact);
-	}
-
 }
 
-void AMyCharacter::Interact()
+void AMyCharacter::SetMovementState(ECharacterMovementState NewMovementState)
 {
-	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * 200.0f; 
-
-	FHitResult HitResult;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	// 라인트레이스 실행
-	if (FAITestHelpers::GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	if (CurrentMovementState == NewMovementState)
 	{
-		AActor* HitActor = HitResult.GetActor();
-		if (HitActor)
-		{
-			// Bell 감지 시 Interact 실행
-			if (ABell* Bell = Cast<ABell>(HitActor))
-			{
-				Bell->Interact(this);
-				UE_LOG(LogTemp, Log, TEXT("Bell과 상호작용!"));
-				return;
-			}
-		}
+		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetMovementState-> Same MovementState"))
+		return;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("상호작용 가능한 대상이 없습니다."));
+	
+	/*CurrentMovementState = NewMovementState;
+	//need to signal the state update.*/
 }
 
 void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
@@ -213,25 +155,48 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 
 	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
 	SetActorRotation(NewRotation);
+	
 }
 
-void AMyCharacter::TriggerQuickMovement_Pressed(const FInputActionValue& Value)
+void AMyCharacter::EnableQuickMovement(const FInputActionValue& Value)
 {
-	float FloatValue=Value.Get<float>();
-	if (!DodgeInputDetectionHelper) return;
-	DodgeInputDetectionHelper->OnTriggerPressed(FloatValue);
+	QuickMoveStartTime = GetWorld()->GetTimeSeconds();
+	bIsQuickMoving = false; // not yet considered "hold". it needs to be reach the threshold
 }
 
-void AMyCharacter::TriggerQuickMovement_Released(const FInputActionValue& Value)
+
+void AMyCharacter::DisableQuickMovement(const FInputActionValue& Value)
 {
-	if (!DodgeInputDetectionHelper) return;
-	DodgeInputDetectionHelper->OnTriggerCompleted();
+	float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
+
+	if (HeldTime < HoldThreshold)
+	{
+		// Tap
+		Dodge();
+	}
+	else
+	{
+		// Hold release
+		StopSprinting();
+	}
+
+	// Reset
+	QuickMoveStartTime = 0.f;
+	bIsQuickMoving = false;
 }
 
-void AMyCharacter::TriggerQuickMovement_Canceled(const FInputActionValue& Value)
+void AMyCharacter::QuickMovementTick()
 {
-	if (!DodgeInputDetectionHelper) return;
-	DodgeInputDetectionHelper->OnTriggerCanceled();
+	if (!bIsQuickMoving && QuickMoveStartTime > 0.f)
+	{
+		float HeldTime = GetWorld()->GetTimeSeconds() - QuickMoveStartTime;
+		if (HeldTime >= HoldThreshold)
+		{
+			// Hold start
+			StartSprinting();
+			bIsQuickMoving = true; // only trigger once
+		}
+	}
 }
 
 void AMyCharacter::StartSprinting()

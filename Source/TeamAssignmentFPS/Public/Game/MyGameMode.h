@@ -6,6 +6,9 @@
 #include "GameFramework/GameMode.h"
 #include "MyGameMode.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyGameMode : public AGameMode
 {
@@ -13,24 +16,4 @@ class TEAMASSIGNMENTFPS_API AMyGameMode : public AGameMode
 	
 public:
 	AMyGameMode();
-
-protected:
-
-	virtual void BeginPlay() override;	
-	
-private:
-	UPROPERTY(EditAnywhere, Category= "Pooling")
-	TSubclassOf<AActor> MeleeEnemyClass;
-
-	UPROPERTY(EditAnywhere, Category= "Pooling")
-	TSubclassOf<AActor> RangeEnemyClass;
-	
-	UPROPERTY(EditAnywhere, Category= "Pooling")
-	TSubclassOf<AActor> PlayerProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category= "Pooling")
-	TSubclassOf<AActor> EnemyProjectileClass;
-
-	void InitializePooling() const;
-	
 };

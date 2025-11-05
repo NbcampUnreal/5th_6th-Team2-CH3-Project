@@ -6,9 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Enemy/EnemyState/EnemyTypes.h"
 #include "Debug/UELOGCategories.h"
+#include "Interface/InterfaceHP.h"
 #include "Interface/DamageInfo.h"
-#include "Pooling/PoolingInterface.h"
-//#include "Interface/InterfaceHP.h"
 #include "EnemyBaseCharacter.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
@@ -24,28 +23,34 @@ struct FEnemyData
 
 public:
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxHealth;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 CurrentHealth;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float MoveSpeed;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float HeightMinRatio;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float HeightMaxRatio;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Damage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float Range;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	float Delay;
 
-	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 Score;
 };
 
@@ -53,7 +58,7 @@ public:
 class UHealthComponent;
 
 UCLASS()
-class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter , public IPoolingInterface
+class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -68,7 +73,7 @@ public:
 
 	FVector knockbackDirection;
 
-	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
+	void InitializeEnemyData(FEnemyDataRow& InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
 	virtual void EnemyAttack();
 
 	UFUNCTION()
@@ -104,9 +109,6 @@ private:
 	void DisableEnemyCollision();
 public:
 
-	virtual void OnSpawnFromPool_Implementation() override;
-	virtual void OnReturnToPool_Implementation() override;
-	
 	FORCEINLINE FEnemyData GetEnemyData() const { return EnemyData; }
 	FORCEINLINE EEnemyState GetEnemyState() const { return EnemyState; }
 };

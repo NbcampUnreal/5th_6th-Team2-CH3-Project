@@ -52,8 +52,8 @@ public:
 
 	TSubclassOf<AActor> GetWeaponByID(int32 ID);
 	TSubclassOf<AActor>  GetItemByID(int32 ID);
-	TMap<int32, FWeaponData>* GetWeaponsPtr() {return &Weapons;}
-	TMap<int32, FItemData>* GetItemsPtr() {return &Items;}
+	TMap<int32, FWeaponData>* GetWeapons() {return &Weapons;}
+	TMap<int32, FItemData>* GetItems() {return &Items;}
 	
 
 

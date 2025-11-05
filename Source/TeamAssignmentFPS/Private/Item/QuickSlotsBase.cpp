@@ -163,7 +163,6 @@ void UEquipmentQuickSlots::ActivateOrDeactivateSpawnedActor(AActor* Actor, bool 
 
 	// Ticking
 	Actor->SetActorTickEnabled(bActivate);
-	Actor->SetActorTickEnabled(true);
 
 	// Physics / primitive components
 	TArray<UPrimitiveComponent*> Components;
