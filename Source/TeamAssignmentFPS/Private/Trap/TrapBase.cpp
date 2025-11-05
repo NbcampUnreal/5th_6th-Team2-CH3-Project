@@ -13,7 +13,6 @@
 #include "CharacterStat/HealthComponent.h"
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Engine/OverlapResult.h"
-#include "Controller/PlayerController/MyPlayerController.h"
 #include "Interface/DamageInfo.h"
 
 /**
@@ -37,8 +36,6 @@ ATrapBase::ATrapBase()
 	TrapMesh->SetupAttachment(RootComponent);
 	TrapMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 메시는 콜리전 비활성화
 	TrapMesh->SetCanEverAffectNavigation(false); // AI가 트랩을 피하지 않도록 NavMesh 영향 제거
-
-	TrapMesh->SetVisibility(false);
 }
 
 /**
@@ -62,11 +59,6 @@ void ATrapBase::BeginPlay()
 void ATrapBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ATrapBase::TrapOn()
-{
-	TrapMesh->SetVisibility(true);
 }
 
 /**
@@ -103,14 +95,6 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 		if (ExplosionSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
-		}
-
-		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-		{
-			if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
-			{
-				MyPlayerController->ShowMainMenu(true);
-			}
 		}
 
 		// 트랩 제거

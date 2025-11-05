@@ -148,5 +148,4 @@ public:
 	/** 매 프레임 호출 (현재 성능을 위해 비활성화) */
 	virtual void Tick(float DeltaTime) override;
 
-	void TrapOn();
 };
