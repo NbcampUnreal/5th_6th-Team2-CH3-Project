@@ -89,7 +89,7 @@ void UEquipmentManagerComponent::CacheInventoryComponent()
 }
 
 
-void UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue)
+void UEquipmentManagerComponent::SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue)
 {
 	if (!WeaponQuickSlot)
 	{
@@ -446,7 +446,7 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement(USceneComponent* N
 			TEXT("UEquipmentManagerComponent::SetCurrentEquipmentPlacement-> Placement Setting Completed"));
 }
 
-void UEquipmentManagerComponent::SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value)
+void UEquipmentManagerComponent::SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value)
 {
 	float ScrollValue = Value.Get<float>();
 	if (FMath::IsNearlyZero(ScrollValue))//not enough scroll movement
@@ -456,6 +456,14 @@ void UEquipmentManagerComponent::SwtichWeapon_PC_MouseWheel(const FInputActionVa
 
 	EEquipmentType TargetType=bIsHoldingMouseRightButton? EEquipmentType::Item:EEquipmentType::Weapon;
 	GetNextEquipmentSlot(TargetType,bScrollUp);
+}
+
+void UEquipmentManagerComponent::SwitchWeapon_GP(const FInputActionValue& Value)
+{
+	float InputValue = Value.Get<float>();
+	bool bIsNextOrPrevious =( InputValue > 0);
+
+	GetNextEquipmentSlot(EEquipmentType::Weapon, bIsNextOrPrevious);
 }
 
 void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Value)
