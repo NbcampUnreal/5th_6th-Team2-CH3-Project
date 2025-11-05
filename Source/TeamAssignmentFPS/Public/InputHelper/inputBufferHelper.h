@@ -8,7 +8,7 @@
 #include "inputBufferHelper.generated.h"
 
 /*
-	this is for saving input action into a buffer and re call it after the action is over.
+	this is for saving input action into a buffer and recall it after the action is over.
 	more smooth and natural control
  */
 
