@@ -6,11 +6,13 @@
 #include "Weapon/WeaponBase.h"
 #include "Item/ItemBase.h"
 #include "InputAction.h"
+#include "Character/MyCharacter.h"
 #include "Interface/InputReactionInterface.h"
 #include "Interface/EquipmentInterface.h"
 #include "PlayerState/MyPlayerState.h"
 #include "Item/EquipmentSlot.h"
 #include "Item/InventoryManagerComponent.h"
+#include "InputHelper/InputActionHandler.h"//for input action helper
 #include "Debug/UELOGCategories.h"//debug log
 
 UEquipmentManagerComponent::UEquipmentManagerComponent():
@@ -30,7 +32,20 @@ void UEquipmentManagerComponent::BeginPlay()
 
 	//bing inventory ptr to here
 	CacheInventoryComponent();
+	// equipment trigger input helper
+	SetupTriggerHelper();
 
+}
+
+void UEquipmentManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (EquipmentTriggerHelper)
+	{
+		EquipmentTriggerHelper->RemoveFromRoot();
+		EquipmentTriggerHelper=nullptr;
+	}
 }
 
 
@@ -494,96 +509,128 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 	IWeaponInterface::Execute_OnReloadInputPressed(CurrentEquipment);
 }
 
-void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Value)
+void UEquipmentManagerComponent::SetupTriggerHelper()
 {
-	if (!CurrentEquipment)
+	EquipmentTriggerHelper=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
+	if (!EquipmentTriggerHelper)
 	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment is invalid"));
+		UE_LOG(Equipment_Manager_Log,Error,
+			TEXT(" UEquipmentManagerComponent::SetupTriggerHelper-> Invalid EquipmentTriggerHelper."));
 		return;
 	}
-	bDidHoldStarted=true;
-	CurrentHoldingTime=0.0f;
 
-	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
-		CurrentEquipment,
-		[](UObject* Equipment)
-	{
-		IInputReactionInterface::Execute_OnInputPressed(Equipment);
-		IInputReactionInterface::Execute_OnInputHoldStart(Equipment);
-	});
+	EquipmentTriggerHelper->AddToRoot();//for safety--> need to remove when leave
 
-	if (!bDidItWork)// when calling failed
-	{
-		UE_LOG(Equipment_Manager_Log, Error,
-			TEXT("UEquipmentManagerComponent::TriggerInput_Start-> CurrentEquipment does not have required interface"));
-		// TODO:
-		// siganl ui that equipment trigger is invalid (ex. red highlight for current equipment widget)
-		// player character playing anim for invalid command?
-	}
-		
+	EquipmentTriggerHelper->SetShouldTriggerWhenCanceled(false);// do nothing when the trigger is canceled
+
+	EquipmentTriggerHelper->OnTapped.BindUObject(this, &UEquipmentManagerComponent::TriggerTap);
+	EquipmentTriggerHelper->OnHoldStart.BindUObject(this, &UEquipmentManagerComponent::TriggerHoldStart);
+	EquipmentTriggerHelper->OnHoldUpdate_Float.BindUObject(this, &UEquipmentManagerComponent::TriggerHoldUpdate);
+	EquipmentTriggerHelper->OnReleased.BindUObject(this, &UEquipmentManagerComponent::TriggerReleased);
+
+	UE_LOG(Equipment_Manager_Log,Log,
+	TEXT(" UEquipmentManagerComponent::SetupTriggerHelper-> Helper Bound complete."));
+	
+}
+
+void UEquipmentManagerComponent::TriggerInput_Start(const FInputActionValue& Value)
+{
 }
 
 void UEquipmentManagerComponent::TriggerInput_Trigger(const FInputActionValue& Value)
 {
-	if (!CurrentEquipment)
-	{
-		//UE_LOG(Equipment_Manager_Log, Error,TEXT("UEquipmentManagerCompnent::TriggerInput_Trigger-> CurrentEquipment is invalid"));
-		// no equipment to update
-		return;
-	}
-	if (!bDidHoldStarted)
-	{
-		// not even started yet
-		return;
-	}
-	
-	CurrentHoldingTime += GetWorld()->GetDeltaSeconds();// update holding time
-
-	// Optionally trigger HoldUpdate events
-	const bool bDidItWork = FInputTypeHelper::TryCallingInterface(
-		CurrentEquipment,
-		[this](UObject* Equipment)
-	{
-		IInputReactionInterface::Execute_OnInputHoldUpdate(Equipment, CurrentHoldingTime);
-	});
-
-	if (!bDidItWork)
-	{
-		//error updating not working
-	}
+	if (!EquipmentTriggerHelper) return;
+	float FloatValue = Value.Get<float>();
+	EquipmentTriggerHelper->OnTriggerPressed(FloatValue);
 }
 
 void UEquipmentManagerComponent::TriggerInput_Complete(const FInputActionValue& Value)
 {
-	if (!CurrentEquipment) return;
-
-	float TapThreshold =0.2f;
-	FInputTypeHelper::HandleTapOrHoldRelease(CurrentEquipment, CurrentHoldingTime,TapThreshold);
-
-	// Reset the variables
-	CurrentHoldingTime = 0.f;
-	bDidHoldStarted = false;
+	if (!EquipmentTriggerHelper) return;
+	EquipmentTriggerHelper->OnTriggerCompleted();
 }
 
-void UEquipmentManagerComponent::TriggerInput_Ongoing(const FInputActionValue& Value)
-{
-	// not decided yet. maybe update the ui?
-}
 
 void UEquipmentManagerComponent::TriggerInput_Canceled(const FInputActionValue& Value)// not so sure where to use this
 {
+	if (!EquipmentTriggerHelper) return;
+	EquipmentTriggerHelper->OnTriggerCanceled();
+}
+
+void UEquipmentManagerComponent::TriggerTap()
+{
 	if (!CurrentEquipment)
 	{
-		//error
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerTap-> Invalid Current Equipment"));
 		return;
 	}
+	if (!CurrentEquipment->Implements<UInputReactionInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerTap-> Current Equipment has no Tap"));
+		return;
+	}
+	
+	IInputReactionInterface::Execute_OnInputTap(CurrentEquipment);
+	UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::TriggerTap->Tap"));
+	
+}
 
-	// should this be treated as a release or just cancle and don't trigger the function? not so sure fuck
-	//IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
+void UEquipmentManagerComponent::TriggerHoldStart()
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerHoldStart-> Invalid Current Equipment"));
+		return;
+	}
+	if (!CurrentEquipment->Implements<UInputReactionInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerHoldStart-> Current Equipment has no HoldStart"));
+		return;
+	}
+	IInputReactionInterface::Execute_OnInputHoldStart(CurrentEquipment);
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT("UEquipmentManagerComponent::TriggerHoldStart-> HoldStart"));
+}
 
-	//cancled situation needs to be seperate from the completed case. just dont finish the prior process
+void UEquipmentManagerComponent::TriggerHoldUpdate(float Value)
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerHoldUpdate-> Invalid Current Equipment"));
+		return;
+	}
+	if (!CurrentEquipment->Implements<UInputReactionInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerHoldUpdate-> Current Equipment has no HoldUpdate"));
+		return;
+	}
+	IInputReactionInterface::Execute_OnInputHoldUpdate(CurrentEquipment, Value);
+	UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::TriggerHoldUpdate->Hold Update"));
+}
 
-	CurrentHoldingTime = 0.f;
-	bDidHoldStarted = false;
+void UEquipmentManagerComponent::TriggerReleased()
+{
+	if (!CurrentEquipment)
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerReleased-> Invalid Current Release"));
+		return;
+	}
+	if (!CurrentEquipment->Implements<UInputReactionInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Error,
+			TEXT("UEquipmentManagerComponent::TriggerReleased-> Current Equipment has no Release"));
+		return;
+	}
+	IInputReactionInterface::Execute_OnInputRelease(CurrentEquipment);
+	UE_LOG(Equipment_Manager_Log, Log,
+	TEXT("UEquipmentManagerComponent::TriggerReleased-> Hold Released"));
 }

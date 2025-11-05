@@ -12,10 +12,13 @@
 #include "Weapon/EquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterStat/HealthComponent.h"
+#include "Item/InteractionComponent.h"
+#include "InputHelper/InputActionHandler.h"
 
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
+
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -26,7 +29,8 @@ AMyCharacter::AMyCharacter()
 	CameraManagerComp=CreateDefaultSubobject<UCameraManagerComponent>(TEXT("CameraManager Component"));
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	EquipmentInteractionComp=CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager Component"));
-
+	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("Interaction Component"));
+	
 	DodgeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DodgeTimeline"));
 }
 
@@ -35,6 +39,19 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupForDodgeAction();
+	SetupForInputTypeHelper();
+}
+
+void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	//Delete unnecessary
+	//1. Helper
+	if (DodgeInputDetectionHelper)
+	{
+		DodgeInputDetectionHelper->RemoveFromRoot();
+		DodgeInputDetectionHelper=nullptr;
+	}
 }
 
 void AMyCharacter::SetupForDodgeAction()
@@ -50,13 +67,35 @@ void AMyCharacter::SetupForDodgeAction()
 		return;
 	}
 	
-	FOnTimelineFloat ProgressFunction;// why ufucntion is not working?
+	FOnTimelineFloat ProgressFunction;
 	ProgressFunction.BindUFunction(this, FName("HandleDodgeAction"));
 	DodgeTimeline->AddInterpFloat(DodgeCurve, ProgressFunction);
 
 	FOnTimelineEvent FinishFunction;
 	FinishFunction.BindUFunction(this, FName("OnDodgeFinished"));
 	DodgeTimeline->SetTimelineFinishedFunc(FinishFunction);
+}
+
+void AMyCharacter::SetupForInputTypeHelper()
+{
+	//create it first
+	DodgeInputDetectionHelper=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
+	
+	if (!DodgeInputDetectionHelper)
+	{
+		UE_LOG(Movement_Log, Error,
+			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Failed"));
+		return;
+	}
+	DodgeInputDetectionHelper->AddToRoot();//for safety--> need to remove when leave
+
+	DodgeInputDetectionHelper->SetShouldTriggerWhenCanceled(false);// do nothing when the trigger is canceled
+	
+	DodgeInputDetectionHelper->OnTapped.BindUObject(this, &AMyCharacter::Dodge);
+	DodgeInputDetectionHelper->OnHoldStart.BindUObject(this, &AMyCharacter::StartSprinting);
+	DodgeInputDetectionHelper->OnReleased.BindUObject(this, &AMyCharacter::StopSprinting);
+	UE_LOG(Movement_Log, Log,
+			TEXT("void AMyCharacter::BindActionsForInputTypeHelper-> Invalid Helper, Binding Completed"));
 }
 
 // Called every frame
@@ -80,18 +119,6 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-void AMyCharacter::SetMovementState(ECharacterMovementState NewMovementState)
-{
-	if (CurrentMovementState == NewMovementState)
-	{
-		UE_LOG(Movement_Log, Error, TEXT("AMyCharacter::SetMovementState-> Same MovementState"))
-		return;
-	}
-	
-	/*CurrentMovementState = NewMovementState;
-	//need to signal the state update.*/
 }
 
 void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
@@ -149,13 +176,30 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	TargetRotatioin.Pitch=GetActorRotation().Pitch;
 	TargetRotatioin.Roll=GetActorRotation().Roll;
 
-	float RoationInterpSpeed=6.f;// temp
-
 	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
 	SetActorRotation(NewRotation);
 }
 
-void AMyCharacter::StartSprinting(const FInputActionValue& Value)
+void AMyCharacter::TriggerQuickMovement_Pressed(const FInputActionValue& Value)
+{
+	float FloatValue=Value.Get<float>();
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerPressed(FloatValue);
+}
+
+void AMyCharacter::TriggerQuickMovement_Released(const FInputActionValue& Value)
+{
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerCompleted();
+}
+
+void AMyCharacter::TriggerQuickMovement_Canceled(const FInputActionValue& Value)
+{
+	if (!DodgeInputDetectionHelper) return;
+	DodgeInputDetectionHelper->OnTriggerCanceled();
+}
+
+void AMyCharacter::StartSprinting()
 {
 	if (!Controller)
 	{
@@ -171,7 +215,7 @@ void AMyCharacter::StartSprinting(const FInputActionValue& Value)
 	SetMovementState(ECharacterMovementState::Sprinting);
 }
 
-void AMyCharacter::StopSprinting(const FInputActionValue& Value)
+void AMyCharacter::StopSprinting()
 {
 	if (!Controller)
 	{
@@ -186,7 +230,7 @@ void AMyCharacter::StopSprinting(const FInputActionValue& Value)
 
 }
 
-void AMyCharacter::Dodge(const FInputActionValue& Value)
+void AMyCharacter::Dodge()
 {
 	if (bIsDodging)
 	{
@@ -226,7 +270,7 @@ void AMyCharacter::DirectionalDodge()
 	DodgeDirection = (Forward * Input.X + Right * Input.Y).GetSafeNormal();
 	
 	bIsDodging = true;
-	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayrate));
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayRate));
 	DodgeTimeline->PlayFromStart();
 
 	SetMovementState(ECharacterMovementState::Dodging);
@@ -243,7 +287,7 @@ void AMyCharacter::BackDash()
 	DodgeDirection = -GetActorForwardVector() * BackDashDistanceRatio;
 
 	bIsDodging = true;
-	DodgeTimeline->SetPlayRate(FMath::Max(0.01f, DodgeSpeedPlayrate*BackDashTimeRatio));
+	DodgeTimeline->SetPlayRate(FMath::Max(0.01f, DodgeSpeedPlayRate*BackDashTimeRatio));
 	DodgeTimeline->PlayFromStart();
 
 	SetMovementState(ECharacterMovementState::Dodging);
