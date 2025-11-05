@@ -42,6 +42,13 @@ void AMeleeEnemyCharacter::BeginPlay()
 
 }
 
+void AMeleeEnemyCharacter::EnemyAttack()
+{
+	Super::EnemyAttack();
+
+	UE_LOG(Enemy_Log, Error, TEXT("Melee Attack"));
+}
+
 void AMeleeEnemyCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 {
 	Super::EnemyTakeDamage(DamageInfo);

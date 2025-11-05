@@ -12,7 +12,7 @@
 #include "EnemyBaseCharacter.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnEnemyDead, int Score);
-DECLARE_DELEGATE_OneParam(FOnEnemyStateChanged, EEnemyState NewState);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyStateChanged, EEnemyState NewState);
 
 struct FEnemyDataRow;
 struct FDamageInfo;
@@ -68,13 +68,18 @@ public:
 
 	FVector knockbackDirection;
 
-	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
-	virtual void EnemyAttack();
-
+	bool bCanAttack = true;
 	UFUNCTION()
 	virtual void EnemyDead();
+	
+	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
+	void ChangeEnemyState(EEnemyState NewEnemyState);
 
+	virtual void EndEnemySpawn();
+	void EndChase();
+	virtual void EnemyAttack();
 	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
+
 	
 
 protected:
@@ -93,17 +98,18 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	virtual void EnemyAttackEnd();
-
+	void LookAtPlayer();
 	//void Knockback();
 	
 	//void EnemyDestroy();
 
 private:
 
-	void ChangeEnemyState(EEnemyState NewEnemyState);
+	
 	void DisableEnemyCollision();
 public:
-
+	
+	
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
 	

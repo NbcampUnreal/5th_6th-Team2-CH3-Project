@@ -28,8 +28,5 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<AProjectileBase> Projectile;
-
 	
-	
-	void LookAtPlayer();
 };

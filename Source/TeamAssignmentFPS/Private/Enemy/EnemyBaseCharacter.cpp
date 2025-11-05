@@ -5,6 +5,8 @@
 #include "GameState/GameStateManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Pooling/PoolingSubsystem.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
@@ -16,16 +18,29 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+
+	EnemyState = EEnemyState::EES_None;
+
+}
+void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
+{
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Data Initialized"));
 	
-	
+	EnemyData.EnemyType = InData->EnemyType;
+	HealthComponent->SetMaxHealth(InData->MaxHP);
+	HealthComponent->SetCurrentHealth(InData->MaxHP);
+	EnemyData.MoveSpeed = InData->MoveSpeed;
+	EnemyData.HeightMinRatio = InData->HeightMinRatio;
+	EnemyData.HeightMaxRatio = InData->HeightMaxRatio;
+	EnemyData.Damage = InData->Damage;
+	EnemyData.Range = InData->Range;
+	EnemyData.Delay = InData->Delay;
+	EnemyData.Score = InData->Score;
+
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = true;
+	//Movement->bOrientRotationToMovement = true;
 
-	Movement->MaxWalkSpeed = 250.f;
-
-	EnemyData.Range = 100.f;
-	EnemyData.Damage = 50;
-
+	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
 }
 
 void AEnemyBaseCharacter::BeginPlay()
@@ -33,7 +48,6 @@ void AEnemyBaseCharacter::BeginPlay()
 	Super::BeginPlay();
 	HealthComponent->OnDeath.AddUObject(this, &AEnemyBaseCharacter::EnemyDead);
 	HealthComponent->OnDamage.BindUObject(this, &AEnemyBaseCharacter::EnemyTakeDamage);
-	//Enemy->OnEnemyDead.BindUObject(this, &GamestateManager::AddScore);
 	
 	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
 	if (GameStateManager)
@@ -47,7 +61,12 @@ void AEnemyBaseCharacter::EnemyAttack()
 {
 	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
 
-	if (EnemyState == EEnemyState::EES_Dead)
+	if (EnemyState == EEnemyState::EES_Dead || EnemyState == EEnemyState::EES_Attack)
+	{
+		return;
+	}
+
+	if (bCanAttack == false)
 	{
 		return;
 	}
@@ -99,7 +118,7 @@ void AEnemyBaseCharacter::EnemyDead()
 {
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
 
-	DisableEnemyCollision();
+	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
 	ChangeEnemyState(EEnemyState::EES_Dead);
@@ -113,33 +132,30 @@ void AEnemyBaseCharacter::EnemyDead()
 	
 }
 
-void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
-{
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Data Initialized"));
-	
-	EnemyData.EnemyType = InData->EnemyType;
-	HealthComponent->SetMaxHealth(InData->MaxHP);
-	HealthComponent->SetCurrentHealth(InData->MaxHP);
-	EnemyData.MoveSpeed = InData->MoveSpeed;
-	EnemyData.HeightMinRatio = InData->HeightMinRatio;
-	EnemyData.HeightMaxRatio = InData->HeightMaxRatio;
-	EnemyData.Damage = InData->Damage;
-	EnemyData.Range = InData->Range;
-	EnemyData.Delay = InData->Delay;
-	EnemyData.Score = InData->Score;
 
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	//Movement->bOrientRotationToMovement = true;
-
-	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
-}
 
 
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
 	EnemyState = NewEnemyState;
 
-	OnEnemyStateChanged.ExecuteIfBound(EnemyState);
+	OnEnemyStateChanged.Broadcast(EnemyState);
+}
+
+void AEnemyBaseCharacter::EndEnemySpawn()
+{
+	ChangeEnemyState(EEnemyState::EES_Chase);
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Spawn End"));
+}
+
+void AEnemyBaseCharacter::EndChase()
+{
+	ChangeEnemyState(EEnemyState::EES_Idle);
+	if (bCanAttack == false)
+	{
+		return;
+	}
+	EnemyAttack();
 }
 
 void AEnemyBaseCharacter::DisableEnemyCollision()
@@ -151,9 +167,12 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 {
 	IPoolingInterface::OnSpawnFromPool_Implementation();
 
+	ChangeEnemyState(EEnemyState::EES_Spawn);
+	LookAtPlayer();
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		AIController->StartBehaviorTree();
+		
 	}
 }
 
@@ -161,9 +180,27 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 {
 	IPoolingInterface::OnReturnToPool_Implementation();
 
+	ChangeEnemyState(EEnemyState::EES_None);
+	
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		AIController->StopBehaviorTree();
 	}
 	
+}
+
+void AEnemyBaseCharacter::LookAtPlayer()
+{
+	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!Player)
+	{
+		return;
+	}
+
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+	TargetRotation.Roll = 0.f;
+	TargetRotation.Pitch = 0.f;
+
+	SetActorRotation(TargetRotation);
 }
