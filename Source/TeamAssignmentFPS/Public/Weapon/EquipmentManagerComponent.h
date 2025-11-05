@@ -104,6 +104,9 @@ private:
 
 	
 public:
+	// Temp For Weapon Test
+	UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
+	void SetCurrentEquipment(AActor* Equipment) {CurrentEquipment=Equipment;}
 
 	UFUNCTION(BlueprintCallable, Category="Equipment")// this is to populate the quickslots from the inventory
 	bool AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type);
