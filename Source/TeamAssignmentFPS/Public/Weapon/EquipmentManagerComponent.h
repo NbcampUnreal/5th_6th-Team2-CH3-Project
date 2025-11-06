@@ -176,8 +176,6 @@ public:
 	void TriggerHoldUpdate(float Value);
 	UFUNCTION()
 	void TriggerReleased();
-	
-	
 //----------------------------------------------------------------------------------------------------------------------
 
 };
