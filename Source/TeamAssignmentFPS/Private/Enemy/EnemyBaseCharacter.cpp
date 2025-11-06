@@ -52,7 +52,6 @@ void AEnemyBaseCharacter::BeginPlay()
 	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
 	if (GameStateManager)
 	{
-		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 	}
 }
@@ -116,8 +115,7 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 
 void AEnemyBaseCharacter::EnemyDead()
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
-
+	
 	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
@@ -172,8 +170,8 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		AIController->StartBehaviorTree();
-		
 	}
+	EndEnemySpawn();
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()

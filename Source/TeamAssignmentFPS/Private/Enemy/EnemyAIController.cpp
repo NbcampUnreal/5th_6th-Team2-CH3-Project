@@ -71,7 +71,7 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	StartBehaviorTree();
+	//StartBehaviorTree();
 	DefaultSettingBlackBoard();
 }
 
