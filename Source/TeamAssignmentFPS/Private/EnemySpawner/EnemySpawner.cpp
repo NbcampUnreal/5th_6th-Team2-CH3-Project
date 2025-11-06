@@ -7,6 +7,8 @@
 #include "EnemySpawner/EnemySpawnerManager.h"
 #include "Pooling/PoolingSubsystem.h"
 
+#include "DrawDebugHelpers.h"
+
 AEnemySpawner::AEnemySpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -118,6 +120,16 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClas
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 		AEnemyBaseCharacter* SpawnedEnemy = Cast<AEnemyBaseCharacter>(PoolingSubsystem->SpawnFromPool(MonsterClass, SpawnLocation, FRotator::ZeroRotator));
+		if (!SpawnedEnemy)
+		{
+			UE_LOG(GameState_Log, Error, TEXT("AEnemySpawner::SpawnMonster-> Casting or Bringing from Pool Failed"));
+			return nullptr;
+		}
+		//Draw debug sphere on the spawn location
+		FColor SpawnColor = FColor::Red;
+		DrawDebugSphere(GetWorld(), SpawnLocation, 30, 8,SpawnColor,false,10,0,0.5);
+		
+		
 		 return SpawnedEnemy;
 	}
 
