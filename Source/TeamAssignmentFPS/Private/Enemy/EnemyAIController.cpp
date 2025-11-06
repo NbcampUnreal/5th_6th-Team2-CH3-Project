@@ -44,19 +44,13 @@ void AEnemyAIController::DefaultSettingBlackBoard()
 		BlackboardComp->SetValueAsFloat(TEXT("EnemyAttackRange"), Enemy->GetEnemyData().Range);
 	}
 
-	Enemy->OnEnemyStateChanged.BindLambda([this](EEnemyState NewState)
+	Enemy->OnEnemyStateChanged.AddLambda([this](EEnemyState NewState)
 	{
 		if (BlackboardComp)
 		{
 			BlackboardComp->SetValueAsEnum(TEXT("EnemyState"), (uint8)NewState);
-			//UE_LOG(Enemy_Log, Error, TEXT("EnemyStateChanged"));
 		}
-
-		if (NewState == EEnemyState::EES_Dead)
-		{
-			StopBehaviorTree();
-		}
-
+		
 	});
 
 }
@@ -69,7 +63,7 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 	
 	if (AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn()))
 	{
-		Enemy->EnemyAttack();
+		Enemy->EndChase();
 	}
 }
 

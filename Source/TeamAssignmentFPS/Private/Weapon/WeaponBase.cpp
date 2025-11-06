@@ -11,12 +11,15 @@
 #include "Sound/SoundBase.h"
 #include "Debug/UELOGCategories.h"
 #include "Pooling/PoolingSubsystem.h"
+<<<<<<< HEAD
 
 
 
 
 
 
+=======
+>>>>>>> New_New-DevBranch
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -90,8 +93,11 @@ void AWeaponBase::OnInputHoldStart_Implementation()
 
 	if (bIsReloading) return;
 
+<<<<<<< HEAD
 	if (WeaponType != EWeaponType::AutoShot) return;
 
+=======
+>>>>>>> New_New-DevBranch
 	bIsFiring=true;
 
 	GetWorldTimerManager().
@@ -156,6 +162,7 @@ void AWeaponBase::FireWeapon()
 	FRotator SpawnRotation=Muzzle->GetComponentRotation();
 
 	FActorSpawnParameters SpawnParams;
+<<<<<<< HEAD
 	SpawnParams.Owner=this;
 	SpawnParams.Instigator=GetInstigator();
 
@@ -180,6 +187,21 @@ void AWeaponBase::FireWeapon()
 		}
 	}
 	// spawning success	
+=======
+	// SpawnParams.Owner=this;
+	// SpawnParams.Instigator=GetInstigator();
+	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AProjectileBase* SpawnedProjectile=GetWorld()->SpawnActor<AProjectileBase>(Projectile,SpawnLocation,SpawnRotation,SpawnParams );
+	if (!SpawnedProjectile)
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
+		
+		return;
+	}
+	
+	
+	// spawning success
+>>>>>>> New_New-DevBranch
 	CurrentAmmoCount--;//subtract the ammo count
 	PlayMuzzleEffect();
 }
