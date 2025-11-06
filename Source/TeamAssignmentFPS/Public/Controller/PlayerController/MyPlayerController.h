@@ -42,6 +42,9 @@ protected:
 	
 public:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	
 	//Manager Comp Getter
 	UFUNCTION(BlueprintPure, Category = "Manager")
 	UCameraManagerComponent* GetCameraManager()const {return CameraManager;}

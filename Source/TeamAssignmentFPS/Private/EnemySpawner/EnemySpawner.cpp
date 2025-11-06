@@ -23,7 +23,6 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 }
 
 void AEnemySpawner::Init(AEnemySpawnerManager* InManager)
