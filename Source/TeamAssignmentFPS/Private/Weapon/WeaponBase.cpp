@@ -27,6 +27,8 @@ AWeaponBase::AWeaponBase()
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle location"));// where bullet is spawned
 	Muzzle->SetupAttachment(SkeletalMeshComponent);
 
+	WeaponType = EWeaponType::None;// default
+
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 }
 
@@ -34,6 +36,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CurrentAmmoCount = MaxAmmoCount;
 	
 }
 
@@ -54,14 +58,22 @@ void AWeaponBase::OnReloadInputPressed_Implementation()
 void AWeaponBase::OnInputPressed_Implementation()
 {
 	IInputReactionInterface::OnInputPressed_Implementation();
-	
-	FireWeapon();
+
+	//if (bIsReloading) return;
+
+	//FireWeapon();
 }
 
 void AWeaponBase::OnInputTap_Implementation()
 {
 	IInputReactionInterface::OnInputTap_Implementation();
 	// tap -->
+	if (bIsReloading) return;
+
+	if (WeaponType != EWeaponType::Shot) return;
+
+	FireWeapon();
+	bIsFiring = true;
 }
 
 void AWeaponBase::OnInputHoldStart_Implementation()
@@ -69,6 +81,8 @@ void AWeaponBase::OnInputHoldStart_Implementation()
 	IInputReactionInterface::OnInputHoldStart_Implementation();
 	
 	if (bIsReloading) return;
+
+	if (WeaponType != EWeaponType::AutoShot) return;
 
 	bIsFiring=true;
 
@@ -79,12 +93,28 @@ void AWeaponBase::OnInputHoldStart_Implementation()
 void AWeaponBase::OnInputHoldUpdate_Implementation(float InputValue)
 {
 	IInputReactionInterface::OnInputHoldUpdate_Implementation(InputValue);
+
+	if (bIsReloading) return;
+
+	if (WeaponType != EWeaponType::ChargingShot) return;
+
+	CurrentChargingTime += GetWorld()->GetDeltaSeconds();
+	CurrentChargingTime = FMath::Clamp(CurrentChargingTime, 0.f, MaxChargingTime);
 }
 
 
 void AWeaponBase::OnInputRelease_Implementation()
 {
 	IInputReactionInterface::OnInputRelease_Implementation();
+	if (WeaponType == EWeaponType::ChargingShot)
+	{
+		if (CurrentChargingTime >= MinChargingTime)
+		{
+			FireWeapon();
+		}
+	}
+
+	CurrentChargingTime = 0.f;
 	bIsFiring=false;
 
 	GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);
@@ -113,47 +143,75 @@ void AWeaponBase::FireWeapon()
 		return;
 	}
 
-	FVector SpawnLocation=Muzzle->GetComponentLocation();
-	FRotator SpawnRotation=Muzzle->GetComponentRotation();
+	FVector SpawnLocation = Muzzle->GetComponentLocation();
+	FRotator SpawnRotation = Muzzle->GetComponentRotation();
 
 	FActorSpawnParameters SpawnParams;
+
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+	float FinalDamage = Damage;
+
+	//AProjectileBase* SpawnedProjectile=GetWorld()->SpawnActor<AProjectileBase>(Projectile,SpawnLocation,SpawnRotation,SpawnParams );
+	//if (!SpawnedProjectile)
+	//{
+		//UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
+		//return;q
+	//
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		// SpawnFromPool의 반환값을 임시 변수에 저장 후 Cast
+		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+			DamageInfo.DamageAmount = Damage;
+			SpawnedProjectile->SetDamageInfo(DamageInfo);
+		}
+	}
+	// spawning success	
+
 	// SpawnParams.Owner=this;
 	// SpawnParams.Instigator=GetInstigator();
 	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AProjectileBase* SpawnedProjectile=GetWorld()->SpawnActor<AProjectileBase>(Projectile,SpawnLocation,SpawnRotation,SpawnParams );
+	AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
 	if (!SpawnedProjectile)
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
-		
+
 		return;
 	}
-	
-	
+
+
 	// spawning success
+
 	CurrentAmmoCount--;//subtract the ammo count
 	PlayMuzzleEffect();
-	PlayFiringFailedEffect();
 }
 
 void AWeaponBase::ReloadWeapon()
 {
+	UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> 00."));
+
 	if (bIsReloading)
 	{
 		UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> Already fire while reloading."));
 		return;
 	}
-	
-	bIsReloading=true;
+
+	bIsReloading = true;
 
 	PlayReloadEffect();
 	FTimerHandle ReloadTimerHandle;
 	GetWorldTimerManager().SetTimer(ReloadTimerHandle,
 		[this]()// do this after ReloadTime
-	{
-		CurrentAmmoCount = MaxAmmoCount;
-		bIsReloading = false;
-		
-	}, ReloadTime, false);
+		{
+			CurrentAmmoCount = MaxAmmoCount;
+			bIsReloading = false;
+
+		}, ReloadTime, false);
 }
 
 void AWeaponBase::PlayMuzzleEffect()
