@@ -61,7 +61,7 @@ void AWeaponBase::OnInputPressed_Implementation()
 
 	//if (bIsReloading) return;
 
-	//FireWeapon();
+	FireWeapon();
 }
 
 void AWeaponBase::OnInputTap_Implementation()
