@@ -49,7 +49,6 @@ AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass, FVect
 		AActor* Actor = ObjectPool.Pop();
 		if (Actor)
 		{
-			
 			Actor->SetActorLocationAndRotation(Location, Rotation);
 			Actor->SetActorHiddenInGame(false);
 			Actor->SetActorEnableCollision(true);

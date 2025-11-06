@@ -79,6 +79,8 @@ public:
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
 
+	FORCEINLINE void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
+
 private:
 
 	FTimerHandle LifeTimeHandle;
