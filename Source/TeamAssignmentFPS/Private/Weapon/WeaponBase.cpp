@@ -163,8 +163,6 @@ void AWeaponBase::FireWeapon()
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> 111111111."));
-
 		// SpawnFromPool의 반환값을 임시 변수에 저장 후 Cast
 		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
@@ -196,7 +194,6 @@ void AWeaponBase::FireWeapon()
 
 void AWeaponBase::ReloadWeapon()
 {
-	UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> 00."));
 
 	if (bIsReloading)
 	{
