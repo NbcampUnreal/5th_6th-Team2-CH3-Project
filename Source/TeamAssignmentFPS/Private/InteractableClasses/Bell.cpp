@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Character/MyCharacter.h"
 #include "GameFramework/PlayerController.h"
+#include "GameState/GameStateManager.h"
 
 ABell::ABell()
 {
@@ -58,10 +59,16 @@ void ABell::Interact_Implementation(AActor* Interactor)
         if (RingEffect)
             UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RingEffect, GetActorTransform());
 
-        // "다음 페이지" 기능 수행
-        UGameplayStatics::OpenLevel(this, FName("NextLevel")); // 예시: Next Level로 이동
-
-        UE_LOG(LogTemp, Warning, TEXT("다음 페이지로 이동"));
+        AGameStateManager* GameState = Cast<AGameStateManager>(UGameplayStatics::GetGameState(this));
+        if (GameState)
+        {
+            GameState->NextPhase();
+            UE_LOG(LogTemp, Warning, TEXT("플레이어가 종을 울려 다음 페이즈로 이동"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("GameStateManager를 찾을 수 없습니다!"));
+        }
     }
 
 }
