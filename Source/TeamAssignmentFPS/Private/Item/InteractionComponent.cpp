@@ -5,7 +5,7 @@
 #include "InputAction.h"
 #include "Character/MyCharacter.h"
 #include "Components/SphereComponent.h"
-
+#include "DrawDebugHelpers.h"
 #include "Debug/UELOGCategories.h"
 #include "Interface/InputReactionInterface.h"
 
@@ -13,9 +13,10 @@
 UInteractionComponent::UInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 
-	DetectionSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Detection Sphere"));
-
+	//DetectionSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Detection Sphere"));
+	//--> this is crashing. create it dynamically
 
 
 }
@@ -37,9 +38,19 @@ void UInteractionComponent::BeginPlay()
 	SetupInputHandler();
 	//Set up for a Detection sphere
 	SetupDetectionSphere();
+<<<<<<< HEAD
 =======
 	SetupInputHandler();
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+
+	//set debug draw-> enable or disable tick
+	if (bDebugOn)//enable tick
+	{
+		PrimaryComponentTick.bCanEverTick = true;
+		SetComponentTickEnabled(true);
+	}
+>>>>>>> d9de3b3 (weapon bp setting updated)
 }
 
 void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -53,13 +64,84 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		InteractionInputHandler=nullptr;
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+	//remove detection sphere
+	if (DetectionSphere)
+	{
+		DetectionSphere->RemoveFromRoot();
+		DetectionSphere->DestroyComponent();
+		DetectionSphere=nullptr;
+	}
+>>>>>>> d9de3b3 (weapon bp setting updated)
 }
 
-void UInteractionComponent::DrawDebugForInteractables()
+void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
 {
+<<<<<<< HEAD
 =======
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bDebugOn)//draw if it is true
+	{
+		DrawDebugsForInteractables();
+	}
+>>>>>>> d9de3b3 (weapon bp setting updated)
 }
+
+void UInteractionComponent::DrawDebugsForInteractables()
+{
+	if (!GetWorld()) return;
+
+	if (DetectionSphere)// draw detection sphere
+	{
+		DrawDebugSphere(
+			GetWorld(),
+			DetectionSphere->GetComponentLocation(),
+			DetectionSphere->GetScaledSphereRadius(),
+			16,
+			FColor::Red,
+			false,
+			-1,
+			0,
+			0.5f);
+	}
+
+	for (AActor* Interactable:InteractableCandidates)//draw spehre except currentinteractable
+	{
+		if (Interactable&& Interactable!=CurrentInteractable)//current one is with different color
+		{
+			DrawDebugSphere(
+				GetWorld(),
+				Interactable->GetActorLocation(),
+				20.f,
+				12,
+				FColor::Green,
+				false,
+				-1,
+				1,
+				0.5f);
+		}
+	}
+
+	if (CurrentInteractable)// draw only for current interactable
+	{
+		DrawDebugSphere(
+			GetWorld(),
+			CurrentInteractable->GetActorLocation(),
+			30.f,
+			12,
+			FColor::Red,
+			false,
+			-1,
+			2,
+			0.6f);
+	}
+}
+
 
 bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivate)
 {
@@ -348,22 +430,40 @@ void UInteractionComponent::SetupDetectionSphere()
 		return;
 	}
 
-	if (!DetectionSphere)
+	USceneComponent* RootComp = OwnerActor->GetRootComponent();
+	if (!RootComp)
 	{
 		UE_LOG(World_Interaction_Log, Error,
-			TEXT("UInteractionComponent::SetupDetectionSphere -> Detection Sphere not created"));
+			TEXT("SetupDetectionSphere -> OwnerActor has no RootComponent"));
 		return;
 	}
 
-	//bind Overlap events
-	DetectionSphere->OnComponentBeginOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereBeginOverlap );
-	DetectionSphere->OnComponentEndOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereEndOverlap);
-	
-	DetectionSphere->SetupAttachment(OwnerActor->GetRootComponent());
-	DetectionSphere->SetSphereRadius(DetectionRadius);
-	DetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);// no physics needed
-	DetectionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DetectionSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	if (!DetectionSphere)
+	{
+		DetectionSphere =
+			NewObject<USphereComponent>(OwnerActor, USphereComponent::StaticClass(), TEXT("DetectionSphere"));
+		if (!DetectionSphere)
+		{
+			UE_LOG(World_Interaction_Log, Error,
+				TEXT("SetupDetectionSphere -> Failed to create DetectionSphere"));
+			return;
+		}
+
+		// Register it so it exists in the world
+		DetectionSphere->SetupAttachment(RootComp);
+		DetectionSphere->RegisterComponent();// important !!!!!
+
+		//bind Overlap events
+		DetectionSphere->OnComponentBeginOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereBeginOverlap );
+		DetectionSphere->OnComponentEndOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereEndOverlap);
+
+		// Collision setting
+		DetectionSphere->SetSphereRadius(DetectionRadius);
+		DetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);// no physics needed
+		DetectionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		DetectionSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	}
+
 }
 
 

@@ -28,23 +28,23 @@ protected:
 	
 	//=== Debug Draw ===//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Debug")
-	bool bDebugOn;
+	bool bDebugOn=false;
 	
 	//==== Interaction Detection =====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Detection")
-	USphereComponent* DetectionSphere;
+	USphereComponent* DetectionSphere=nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Detection")
 	float DetectionRadius=100;//default
 
 	//===== Input Handler ===//
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Input")
-	UInputActionHandler* InteractionInputHandler;
+	UInputActionHandler* InteractionInputHandler=nullptr;
 
 	
 	//===== Targets ======//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
-	AActor* CurrentInteractable;// this is currently selected interactable
+	AActor* CurrentInteractable=nullptr;// this is currently selected interactable
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
 	TArray<AActor*> InteractableCandidates;// detected interactables around the detection area
 
@@ -55,9 +55,13 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+>>>>>>> d9de3b3 (weapon bp setting updated)
 
 	//=== Debug Draw ===//
-	void DrawDebugForInteractables();
+	void DrawDebugsForInteractables();
 	
 =======
 >>>>>>> 7b9075d (bell and interaction updated)

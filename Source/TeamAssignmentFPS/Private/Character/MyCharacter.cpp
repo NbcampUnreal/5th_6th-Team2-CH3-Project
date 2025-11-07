@@ -42,6 +42,11 @@ void AMyCharacter::BeginPlay()
 	//sprint, dodge input action setting
 	SetupForDodgeAction();
 	SetupForInputTypeHelper();
+
+	if (InteractionComp)//activate interaction comp
+	{
+		InteractionComp->SetActivationForInteractionComponent(true);
+	}
 	
 }
 
@@ -55,6 +60,7 @@ void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		DodgeInputDetectionHelper->RemoveFromRoot();
 		DodgeInputDetectionHelper=nullptr;
 	}
+	
 }
 
 void AMyCharacter::SetupForDodgeAction()
