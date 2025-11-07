@@ -39,16 +39,12 @@ protected:
 	//===== Input Handler ===//
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Input")
-<<<<<<< HEAD
 	UInputActionHandler* InteractionInputHandler=nullptr;
-=======
-	UInputActionHandler* InteractionInputHandler;
->>>>>>> 749f914 (no message)
 
 	
 	//===== Targets ======//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
-	AActor* CurrentInteractable=nullptr;// this is currently selected interactable
+	AActor* CurrentInteractable= nullptr;// this is currently selected interactable
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
 	TArray<AActor*> InteractableCandidates;// detected interactables around the detection area
 
@@ -58,24 +54,11 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 66c8952 (no message)
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
->>>>>>> d9de3b3 (weapon bp setting updated)
 
 	//=== Debug Draw ===//
 	void DrawDebugsForInteractables();
 	
-=======
-<<<<<<< HEAD
->>>>>>> 7b9075d (bell and interaction updated)
-=======
->>>>>>> 749f914 (no message)
->>>>>>> 66c8952 (no message)
 public:
 	
 	//==== Activation =====//
@@ -83,7 +66,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction | Activation")
 	bool SetActivationForInteractionComponent(bool bIsActivate);// toggle by boolean
 
-<<<<<<< HEAD
 	//==== Interactable Detection ====//
 
 	UFUNCTION()
@@ -103,13 +85,6 @@ public:
 	int32 OtherBodyIndex);
 
 
-	
-=======
-<<<<<<< HEAD
->>>>>>> 7b9075d (bell and interaction updated)
-=======
->>>>>>> 749f914 (no message)
->>>>>>> 66c8952 (no message)
 	//==== Input Handler for Interaction =====//
 	bool SetupInputHandler();
 
@@ -126,18 +101,11 @@ public:
 	void TriggerInteraction_HoldStart();
 	void TriggerInteraction_HoldUpdate(float UpdateValue);
 	void TriggerInteraction_HoldRelease();
-<<<<<<< HEAD
 
 private:
 	bool IsCurrentInteractableValid();
 	void UpdateCurrentInteractable();
 	void SetupDetectionSphere();
-=======
-	
-<<<<<<< HEAD
->>>>>>> 7b9075d (bell and interaction updated)
-=======
->>>>>>> 749f914 (no message)
->>>>>>> 66c8952 (no message)
+
 };
 	

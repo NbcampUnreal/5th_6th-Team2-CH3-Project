@@ -26,7 +26,6 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-<<<<<<< HEAD
 	OwnerActor=Cast<AMyCharacter>(GetOwner());
 	if (!OwnerActor)
 	{
@@ -38,19 +37,15 @@ void UInteractionComponent::BeginPlay()
 	SetupInputHandler();
 	//Set up for a Detection sphere
 	SetupDetectionSphere();
-<<<<<<< HEAD
-=======
 	SetupInputHandler();
->>>>>>> 7b9075d (bell and interaction updated)
-=======
 
 	//set debug draw-> enable or disable tick
 	if (bDebugOn)//enable tick
 	{
 		PrimaryComponentTick.bCanEverTick = true;
 		SetComponentTickEnabled(true);
-=======
-	SetupInputHandler();
+		SetupInputHandler();
+	}
 }
 
 void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -62,9 +57,9 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		InteractionInputHandler->RemoveFromRoot();
 		InteractionInputHandler=nullptr;
->>>>>>> 749f914 (no message)
+
 	}
->>>>>>> d9de3b3 (weapon bp setting updated)
+
 }
 
 void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -77,9 +72,7 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		InteractionInputHandler->RemoveFromRoot();
 		InteractionInputHandler=nullptr;
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
 	//remove detection sphere
 	if (DetectionSphere)
 	{
@@ -87,23 +80,18 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		DetectionSphere->DestroyComponent();
 		DetectionSphere=nullptr;
 	}
->>>>>>> d9de3b3 (weapon bp setting updated)
 }
 
 void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
-<<<<<<< HEAD
-=======
->>>>>>> 7b9075d (bell and interaction updated)
-=======
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (bDebugOn)//draw if it is true
 	{
 		DrawDebugsForInteractables();
 	}
->>>>>>> d9de3b3 (weapon bp setting updated)
+
 }
 
 void UInteractionComponent::DrawDebugsForInteractables()
@@ -285,14 +273,13 @@ bool UInteractionComponent::SetupInputHandler()
 
 void UInteractionComponent::OnInputInteract_Pressed(const FInputActionValue& Value)
 {
-<<<<<<< HEAD
 	float FloatValue=Value.Get<float>();
 	if (!InteractionInputHandler) return;
 	InteractionInputHandler->OnTriggerPressed(FloatValue);
 }
 
 void UInteractionComponent::OnInputInteract_Completed(const FInputActionValue& Value)
-=======
+{
 
 }
 
@@ -317,11 +304,6 @@ void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
 }
 
 void UInteractionComponent::TriggerInteraction_HoldRelease()
-<<<<<<< HEAD
->>>>>>> 7b9075d (bell and interaction updated)
-=======
->>>>>>> 749f914 (no message)
->>>>>>> 66c8952 (no message)
 {
 	if (!InteractionInputHandler) return;
 	InteractionInputHandler->OnTriggerCompleted();

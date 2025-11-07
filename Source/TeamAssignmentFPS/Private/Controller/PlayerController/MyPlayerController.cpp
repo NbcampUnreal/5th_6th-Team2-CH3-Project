@@ -59,11 +59,6 @@ void AMyPlayerController::BeginPlay()
         ShowMainMenu(false);
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
    /* if (HUDWidgetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -78,16 +73,7 @@ void AMyPlayerController::BeginPlay()
     {
         SpartaGameState->UPdateHUD();
     }*/
-=======
->>>>>>> 8621725 (widgtet updated)
-=======
->>>>>>> e278224 (no message)
-=======
->>>>>>> 09aa14d (no message)
-=======
->>>>>>> 48b7c7b (no message)
-=======
->>>>>>> 25ecd29 (no message)
+
  	//== Activate UI Manager
  	UIManager->ActivateUIManager(this);
 }
@@ -99,13 +85,7 @@ void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
  	//Deactivate ManagerComponents
 
  	UIManager->DeactivateUIManager();
-=======
-=======
->>>>>>> e6998fe (df)
-=======
->>>>>>> 355619f (no message)
-=======
->>>>>>> 16b0514 (11/07 feat MyPlayerController)
+
    /* if (HUDWidgetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -120,15 +100,7 @@ void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
     {
         SpartaGameState->UPdateHUD();
     }*/
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 6cf3b6a (11/07 feat GameStateManager)
-=======
-=======
-=======
->>>>>>> fe777e0 (11/07 feat GameStateManager)
-=======
->>>>>>> 16b0514 (11/07 feat MyPlayerController)
+
  	//== Activate UI Manager
  	UIManager->ActivateUIManager(this);
 }
@@ -140,14 +112,7 @@ void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
  	//Deactivate ManagerComponents
 
  	UIManager->DeactivateUIManager();
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 8621725 (widgtet updated)
-<<<<<<< HEAD
->>>>>>> e6998fe (df)
-=======
-=======
-=======
+
    /* if (HUDWidgetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -162,11 +127,6 @@ void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
     {
         SpartaGameState->UPdateHUD();
     }*/
->>>>>>> 6cf3b6a (11/07 feat GameStateManager)
->>>>>>> fe777e0 (11/07 feat GameStateManager)
->>>>>>> 355619f (no message)
-=======
->>>>>>> 16b0514 (11/07 feat MyPlayerController)
 }
 
 void AMyPlayerController::SetupInputComponent()
