@@ -18,6 +18,19 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetupInputHandler();
+}
+
+void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	// remove inputhandler
+	if (InteractionInputHandler)
+	{
+		InteractionInputHandler->RemoveFromRoot();
+		InteractionInputHandler=nullptr;
+	}
 }
 
 bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivate)
@@ -46,11 +59,56 @@ bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivat
 	
 }
 
+bool UInteractionComponent::SetupInputHandler()
+{
+	//start setup
+
+	InteractionInputHandler=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
+	if (!InteractionInputHandler)
+	{
+		UE_LOG(World_Interaction_Log, Warning,
+			TEXT("UInteractionComponent::SetupInputHandler-> Invalid inputhandler"));
+		return false;
+	}
+	
+	InteractionInputHandler->AddToRoot();
+	InteractionInputHandler->SetShouldTriggerWhenCanceled(true);
+
+	InteractionInputHandler->OnTapped.BindUObject(this, &UInteractionComponent::TriggerInteraction_Tap);
+	InteractionInputHandler->OnHoldStart.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldStart);
+	InteractionInputHandler->OnHoldUpdate_Float.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldUpdate);
+	InteractionInputHandler->OnReleased.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldRelease);
+
+	return true;
+	
+}
+
 void UInteractionComponent::OnInputInteract_Pressed(const FInputActionValue& Value)
+{
+
+}
+
+void UInteractionComponent::OnInputInteract_Completed(const FInputActionValue& Value)
 {
 }
 
-void UInteractionComponent::OnInputInteract_Released(const FInputActionValue& Value)
+void UInteractionComponent::OnInputInteract_Canceled(const FInputActionValue& Value)
+{
+}
+
+void UInteractionComponent::TriggerInteraction_Tap()
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldStart()
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldRelease()
 {
 }
 
