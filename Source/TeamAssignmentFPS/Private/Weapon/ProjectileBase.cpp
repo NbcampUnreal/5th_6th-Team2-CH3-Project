@@ -166,6 +166,10 @@ void AProjectileBase::ReturnToPool()
 
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
+<<<<<<< HEAD
+=======
+	UE_LOG(LogTemp , Warning, TEXT("ProjectileBase::OnSpawnFromPool_Implementation -> aaaaaaaaa."));
+>>>>>>> 5a39e82 (Weapon)
 
 	MovementComponent->SetUpdatedComponent(this->GetRootComponent());
 	MovementComponent->Velocity = GetActorForwardVector() * MovementComponent->InitialSpeed;
