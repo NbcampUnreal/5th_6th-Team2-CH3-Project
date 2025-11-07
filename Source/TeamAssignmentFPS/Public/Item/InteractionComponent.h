@@ -28,23 +28,23 @@ protected:
 	
 	//=== Debug Draw ===//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Debug")
-	bool bDebugOn;
+	bool bDebugOn=false;
 	
 	//==== Interaction Detection =====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Detection")
-	USphereComponent* DetectionSphere;
+	USphereComponent* DetectionSphere=nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Detection")
 	float DetectionRadius=100;//default
 
 	//===== Input Handler ===//
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Input")
-	UInputActionHandler* InteractionInputHandler;
+	UInputActionHandler* InteractionInputHandler=nullptr;
 
 	
 	//===== Targets ======//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
-	AActor* CurrentInteractable;// this is currently selected interactable
+	AActor* CurrentInteractable=nullptr;// this is currently selected interactable
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
 	TArray<AActor*> InteractableCandidates;// detected interactables around the detection area
 
@@ -54,9 +54,10 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//=== Debug Draw ===//
-	void DrawDebugForInteractables();
+	void DrawDebugsForInteractables();
 	
 public:
 	

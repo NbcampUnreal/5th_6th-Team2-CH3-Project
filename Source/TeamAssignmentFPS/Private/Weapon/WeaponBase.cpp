@@ -4,13 +4,12 @@
 #include "Weapon/WeaponBase.h"
 
 #include "Weapon/ProjectileBase.h"
-#include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Sound/SoundBase.h"
 #include "Debug/UELOGCategories.h"
 #include "Pooling/PoolingSubsystem.h"
+
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -163,7 +162,7 @@ void AWeaponBase::FireWeapon()
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		// SpawnFromPoolÀÇ ¹ÝÈ¯°ªÀ» ÀÓ½Ã º¯¼ö¿¡ ÀúÀå ÈÄ Cast
+		// SpawnFromPoolï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Cast
 		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
