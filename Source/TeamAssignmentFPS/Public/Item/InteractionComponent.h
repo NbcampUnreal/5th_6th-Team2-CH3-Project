@@ -10,6 +10,7 @@
 //forward Declaration
 class USphereComponent;// detection area for player character
 struct FInputActionValue;
+class AMyCharacter;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TEAMASSIGNMENTFPS_API UInteractionComponent : public UActorComponent
@@ -20,6 +21,15 @@ public:
 	UInteractionComponent();
 	
 protected:
+
+	// Owner
+	UPROPERTY(BlueprintReadOnly, Category="Interaction | Owner")
+	AMyCharacter* OwnerActor=nullptr;
+	
+	//=== Debug Draw ===//
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Debug")
+	bool bDebugOn;
+	
 	//==== Interaction Detection =====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Detection")
 	USphereComponent* DetectionSphere;
@@ -36,7 +46,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
 	AActor* CurrentInteractable;// this is currently selected interactable
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction | Target")
-	TArray<AActor*> VailableInteractables;// detected interactables around the detection area
+	TArray<AActor*> InteractableCandidates;// detected interactables around the detection area
 
 private:
 	bool bIsActivated=false;
@@ -44,12 +54,37 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//=== Debug Draw ===//
+	void DrawDebugForInteractables();
+	
 public:
+	
 	//==== Activation =====//
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction | Activation")
 	bool SetActivationForInteractionComponent(bool bIsActivate);// toggle by boolean
 
+	//==== Interactable Detection ====//
+
+	UFUNCTION()
+	void OnDetectionSphereBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void OnDetectionSphereEndOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex);
+
+
+	
 	//==== Input Handler for Interaction =====//
 	bool SetupInputHandler();
 
@@ -69,6 +104,7 @@ public:
 
 private:
 	bool IsCurrentInteractableValid();
-	
+	void UpdateCurrentInteractable();
+	void SetupDetectionSphere();
 };
 	

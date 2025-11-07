@@ -3,6 +3,8 @@
 
 #include "Item/InteractionComponent.h"
 #include "InputAction.h"
+#include "Character/MyCharacter.h"
+#include "Components/SphereComponent.h"
 
 #include "Debug/UELOGCategories.h"
 #include "Interface/InputReactionInterface.h"
@@ -12,6 +14,10 @@ UInteractionComponent::UInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+	DetectionSphere=CreateDefaultSubobject<USphereComponent>(TEXT("Detection Sphere"));
+
+
+
 }
 
 // Called when the game starts
@@ -19,7 +25,17 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OwnerActor=Cast<AMyCharacter>(GetOwner());
+	if (!OwnerActor)
+	{
+		UE_LOG(World_Interaction_Log, Error,
+			TEXT("UInteractionComponent::BeginPlay -> Owner is not AMyCharacter"));
+		return;
+	}
+	
 	SetupInputHandler();
+	//Set up for a Detection sphere
+	SetupDetectionSphere();
 }
 
 void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -34,30 +50,86 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
+void UInteractionComponent::DrawDebugForInteractables()
+{
+}
+
 bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivate)
 {
 	if (bIsActivated==bIsActivate)// if the setting is same
 	{
 		UE_LOG(World_Interaction_Log, Warning, TEXT("Already %s")
-				,*FString((bIsActivated)?TEXT("Deactivated"):TEXT("Activated")));
+				,*FString((bIsActivated)?TEXT("Activated"):TEXT("Deactivated")));
 		return true;// should it?
 	}
 	
-	if (bIsActivate)//activate the interaction component
+	if (bIsActivate)
 	{
-		// when currently, it is not activated
-		
-		/* Do Activation Here!!!!!!*/
-		
-		return true;
+		DetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		bIsActivated = true;
+		UE_LOG(World_Interaction_Log, Log, TEXT("InteractionComponent Activated"));
+	}
+	else
+	{
+		DetectionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		InteractableCandidates.Empty();
+		CurrentInteractable = nullptr;
+		bIsActivated = false;
+		UE_LOG(World_Interaction_Log, Log, TEXT("InteractionComponent Deactivated"));
 	}
 	//deactivate component
-
-	/* Do Deactivation here!!!! */
-
-	bIsActivated=bIsActivate;
+	
 	return true;
 	
+}
+
+void UInteractionComponent::OnDetectionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor||OtherActor==GetOwner())
+	{
+		// invalid actor
+		return;
+	}
+
+	if (!OtherActor->Implements<UInputReactionInterface>())
+	{
+		// does not have interface to interact, pass
+		return;
+	}
+
+	if (InteractableCandidates.Contains(OtherActor))
+	{
+		//already has it in the other actor
+		return;
+	}
+	
+	InteractableCandidates.Add(OtherActor);
+	UpdateCurrentInteractable();
+	
+}
+
+void UInteractionComponent::OnDetectionSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+	{
+		//invalid
+		return;
+	}
+
+	if (InteractableCandidates.Contains(OtherActor))
+	{
+		InteractableCandidates.Remove(OtherActor);
+		UE_LOG(World_Interaction_Log,Log, TEXT(" UInteractionComponent::OnDetectionSphereEndOverlap-> %s left interaction range."),
+			*OtherActor->GetName());
+	}
+
+	if (CurrentInteractable==OtherActor)// it the current interactable left the range
+	{
+		CurrentInteractable=nullptr;// no more current interactable
+		UpdateCurrentInteractable();
+	}
 }
 
 bool UInteractionComponent::SetupInputHandler()
@@ -109,7 +181,7 @@ void UInteractionComponent::TriggerInteraction_Tap()
 	UE_LOG(World_Interaction_Log, Log,
 		TEXT("UInteractionComponent::TriggerInteraction_Tap-> try Interaction Tap"));
 
-	if (!IsCurrentInteractableValid) return;
+	if (!IsCurrentInteractableValid()) return;
 
 	IInputReactionInterface::Execute_OnInputTap(CurrentInteractable);
 	UE_LOG(World_Interaction_Log, Warning,
@@ -122,7 +194,7 @@ void UInteractionComponent::TriggerInteraction_HoldStart()
 	UE_LOG(World_Interaction_Log, Log,
 		TEXT("UInteractionComponent::TriggerInteraction_HoldStart-> try Interaction HoldStart"));
 
-	if (!IsCurrentInteractableValid) return;
+	if (!IsCurrentInteractableValid()) return;
 
 	IInputReactionInterface::Execute_OnInputHoldStart(CurrentInteractable);
 	UE_LOG(World_Interaction_Log, Warning,
@@ -134,7 +206,7 @@ void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
 	UE_LOG(World_Interaction_Log, Log,
 		TEXT("UInteractionComponent::TriggerInteraction_HoldUpdate-> try Interaction HoldUpdate"));
 
-	if (!IsCurrentInteractableValid) return;
+	if (!IsCurrentInteractableValid()) return;
 
 	IInputReactionInterface::Execute_OnInputHoldUpdate(CurrentInteractable,UpdateValue);
 	UE_LOG(World_Interaction_Log, Warning,
@@ -146,7 +218,7 @@ void UInteractionComponent::TriggerInteraction_HoldRelease()
 	UE_LOG(World_Interaction_Log, Log,
 		TEXT("UInteractionComponent::TriggerInteraction_HoldRelease-> try Interaction HoldRelease"));
 
-	if (!IsCurrentInteractableValid) return;
+	if (!IsCurrentInteractableValid()) return;
 
 	IInputReactionInterface::Execute_OnInputRelease(CurrentInteractable);
 	UE_LOG(World_Interaction_Log, Warning,
@@ -170,6 +242,70 @@ bool UInteractionComponent::IsCurrentInteractableValid()
 
 	// check all done
 	return true;
+}
+
+void UInteractionComponent::UpdateCurrentInteractable()
+{
+	if (InteractableCandidates.IsEmpty())// no candidates at all
+	{
+		CurrentInteractable=nullptr;
+		return;
+	}
+
+	FVector OwnerLocation=OwnerActor->GetActorLocation();
+
+	AActor* ClosestInteractable=nullptr;//start from empty
+	float ClosestDistance=FLT_MAX;// from the max of float
+
+	for (AActor* CandidateInteractable : InteractableCandidates)
+	{
+		if (!CandidateInteractable) continue;// invalid-> pass
+
+		float DistanceSquared=FVector::DistSquared(OwnerLocation, CandidateInteractable->GetActorLocation());
+		if (DistanceSquared < ClosestDistance)
+		{
+			ClosestDistance=DistanceSquared;
+			ClosestInteractable=CandidateInteractable;
+		}
+	}
+
+	CurrentInteractable=ClosestInteractable;
+
+	if (!CurrentInteractable)
+	{
+		UE_LOG(World_Interaction_Log, Log, TEXT("No valid interactable found"));
+		return;
+	}
+	
+	UE_LOG(World_Interaction_Log, Log,
+		TEXT("Closest Interactable: %s"), *CurrentInteractable->GetName());
+}
+
+void UInteractionComponent::SetupDetectionSphere()
+{
+	if (!OwnerActor)
+	{
+		UE_LOG(World_Interaction_Log, Error,
+			TEXT("UInteractionComponent::SetupDetectionSphere -> Invalid OwnerActor"));
+		return;
+	}
+
+	if (!DetectionSphere)
+	{
+		UE_LOG(World_Interaction_Log, Error,
+			TEXT("UInteractionComponent::SetupDetectionSphere -> Detection Sphere not created"));
+		return;
+	}
+
+	//bind Overlap events
+	DetectionSphere->OnComponentBeginOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereBeginOverlap );
+	DetectionSphere->OnComponentEndOverlap.AddDynamic(this,&UInteractionComponent::OnDetectionSphereEndOverlap);
+	
+	DetectionSphere->SetupAttachment(OwnerActor->GetRootComponent());
+	DetectionSphere->SetSphereRadius(DetectionRadius);
+	DetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);// no physics needed
+	DetectionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DetectionSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 
