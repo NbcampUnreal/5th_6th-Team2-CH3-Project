@@ -42,11 +42,14 @@ void AMyCharacter::BeginPlay()
 	//sprint, dodge input action setting
 	SetupForDodgeAction();
 	SetupForInputTypeHelper();
+<<<<<<< HEAD
 
 	if (InteractionComp)//activate interaction comp
 	{
 		InteractionComp->SetActivationForInteractionComponent(true);
 	}
+=======
+>>>>>>> 75fc980 (no message)
 	
 }
 
