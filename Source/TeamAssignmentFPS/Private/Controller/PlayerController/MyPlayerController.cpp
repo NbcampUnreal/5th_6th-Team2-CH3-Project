@@ -54,6 +54,18 @@ void AMyPlayerController::BeginPlay()
     {
         ShowMainMenu(false);
     }
+
+ 	//== Activate UI Manager
+ 	UIManager->ActivateUIManager(this);
+}
+
+void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+ 	//Deactivate ManagerComponents
+
+ 	UIManager->DeactivateUIManager();
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -191,14 +203,14 @@ UUserWidget* AMyPlayerController::GetHUDWidget() const
 
 void AMyPlayerController::ShowGameHUD()
 {
-    // HUD°¡ ÄÑÁ® ÀÖ´Ù¸é ´Ý±â
+    // HUDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½Ý±ï¿½
     if (HUDWidgetInstance)
     {
         HUDWidgetInstance->RemoveFromParent();
         HUDWidgetInstance = nullptr;
     }
 
-    // ÀÌ¹Ì ¸Þ´º°¡ ¶° ÀÖÀ¸¸é Á¦°Å
+    // ï¿½Ì¹ï¿½ ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (MainMenuWidgetInstance)
     {
         MainMenuWidgetInstance->RemoveFromParent();

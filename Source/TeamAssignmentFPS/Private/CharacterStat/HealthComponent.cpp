@@ -27,14 +27,14 @@ void UHealthComponent::KilledBySettingIsAlive(bool Dead)
 	bIsAlive = Dead;
 	if (!bIsAlive)
 	{
-		OnDeath.Broadcast();	
+		OnDeath.Broadcast(FDamageInfo());	//empty death info. just pure death, no knockback, no elemental damage, just death
 	}
 }
 
-void UHealthComponent::KilledByDamage()
+void UHealthComponent::KilledByDamage(FDamageInfo Damage)
 {
 	bIsAlive = false;
-	OnDeath.Broadcast();
+	OnDeath.Broadcast(Damage);
 }
 
 /*void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -49,18 +49,18 @@ void UHealthComponent::GetDamage_Implementation(FDamageInfo Damage)// for now, j
 	CurrentHealth=FMath::Clamp(CurrentHealth,0,MaxHeath);//clamp the 
 	OnHPChanged.Broadcast(CurrentHealth);
 
-	/*
+	
 	 if (OnDamage.IsBound())
 	{
 		OnDamage.Execute(Damage);//signal to the owner to react based on the damage information
 	}
-	*/
+	
 
 	OnDamage.ExecuteIfBound(Damage);// or use this!!! simple!
 	
 	if (CurrentHealth<=0 && bIsAlive)
 	{
-		KilledByDamage();
+		KilledByDamage(Damage);
 	}
 }
 

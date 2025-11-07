@@ -7,7 +7,7 @@
 #include "Interface/InterfaceHP.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)// trigger this when character dies(ex. shows the death skull head over widget, increment kill count on game state
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, FDamageInfo )// trigger this when character dies(ex. shows the death skull head over widget, increment kill count on game state
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChanged, float NewHP);// (ex. health bar)
 DECLARE_DELEGATE_OneParam(FOnAttacked, FDamageInfo);//to call damager reaction based on the FDamageInfo
 // could there be more?
@@ -38,7 +38,7 @@ public:
 	float GetCurrentHealth()const	{return CurrentHealth;}
 	
 	void KilledBySettingIsAlive(bool Dead);
-	void KilledByDamage();
+	void KilledByDamage(FDamageInfo Damage);
 	bool CheckIfIsDead()const	{return bIsAlive;};
 
 

@@ -166,6 +166,7 @@ void AProjectileBase::ReturnToPool()
 
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
+
 	MovementComponent->SetUpdatedComponent(this->GetRootComponent());
 	MovementComponent->Velocity = GetActorForwardVector() * MovementComponent->InitialSpeed;
 

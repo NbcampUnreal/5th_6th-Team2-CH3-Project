@@ -29,6 +29,11 @@ void UUIManagerComp::BeginPlay()
 	
 }
 
+void UUIManagerComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
 void UUIManagerComp::AddWidget(EUIMode Mode, FName WidgetName, TSubclassOf<UUserWidget> WidgetClass)
 {
 	//=== Valid Check ===//
@@ -58,7 +63,8 @@ void UUIManagerComp::RemoveWidget(EUIMode Mode, FName WidgetName)
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data)
 	{
-		UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::RemoveWidget->Could not find %s"), *WidgetName.ToString());
+		UE_LOG(UI_Log, Error,
+			TEXT(" UUIManagerComponent::RemoveWidget->Could not find %s"), *WidgetName.ToString());
 		return;
 	}
 
@@ -69,12 +75,14 @@ void UUIManagerComp::RemoveWidget(EUIMode Mode, FName WidgetName)
 	}
 	else
 	{
-		UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::RemoveWidget-> %s is not valid"), *WidgetName.ToString());
+		UE_LOG(UI_Log, Error,
+			TEXT(" UUIManagerComponent::RemoveWidget-> %s is not valid"), *WidgetName.ToString());
 		// but remove it from the storage anyway
 	}
 
 	Storage->StoredWidgets.Remove(WidgetName);
-	UE_LOG(UI_Log,Log, TEXT(" UUIManagerComponent::RemoveWidget-> %s removed"), *WidgetName.ToString());
+	UE_LOG(UI_Log,Log,
+		TEXT(" UUIManagerComponent::RemoveWidget-> %s removed"), *WidgetName.ToString());
 }
 
 void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
@@ -85,7 +93,8 @@ void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data)
 	{
-		UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::ShowWidget->Could not find %s"), *WidgetName.ToString());
+		UE_LOG(UI_Log, Error,
+			TEXT(" UUIManagerComponent::ShowWidget->Could not find %s"), *WidgetName.ToString());
 		return;
 	}
 
@@ -94,7 +103,8 @@ void UUIManagerComp::ShowWidget(EUIMode Mode, FName WidgetName, int32 Order)
 		Data->WidgetInstance=CreateWidget(GetWorld(), Data->WidgetClass);
 		if (!Data->WidgetInstance)
 		{
-			UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::ShowWidget->Failed to Create %s"), *WidgetName.ToString())
+			UE_LOG(UI_Log, Error,
+				TEXT(" UUIManagerComponent::ShowWidget->Failed to Create %s"), *WidgetName.ToString())
 			return;
 		}
 	}
@@ -114,7 +124,8 @@ void UUIManagerComp::HideWidget(EUIMode Mode, FName WidgetName)
 	FWidgetData* Data= Storage->StoredWidgets.Find(WidgetName);
 	if (!Data->bIsVisible)
 	{
-		UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::HideWidget-> %s is already visible"), *WidgetName.ToString())
+		UE_LOG(UI_Log, Error,
+			TEXT(" UUIManagerComponent::HideWidget-> %s is already visible"), *WidgetName.ToString())
 		return;
 	}
 	
@@ -157,7 +168,8 @@ bool UUIManagerComp::GetWidgetStorageByMode(EUIMode Mode, FWidgetDataStorage*& W
 		return true;
 	case EUIMode::None:
 	default:
-		UE_LOG(UI_Log, Error, TEXT(" UUIManagerComponent::GetwidgetStorageByMode-> Invalid Mode"));
+		UE_LOG(UI_Log, Error,
+			TEXT(" UUIManagerComponent::GetwidgetStorageByMode-> Invalid Mode"));
 		WidgetStorage=nullptr;
 		return false;
 	}

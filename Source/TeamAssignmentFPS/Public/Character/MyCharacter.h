@@ -37,9 +37,10 @@ struct FInputActionValue;
 class UCurveFloat;
 class UTimelineComponent;
 
-/*DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementStateChanged, ECharacterMovementState, NewState);*/
-// why not using dynamic for this time?
-//--> no need
+//Movement State Change Update
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMovementStateChanged,
+	ECharacterMovementState, PreviousState, ECharacterMovementState, NewState);
+
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMyCharacter : public ACharacter
@@ -63,19 +64,24 @@ protected:
 	UInteractionComponent* InteractionComp;
 
 	//Character Movement State
+	UPROPERTY( BlueprintAssignable, Category = "Movement | State")
+	FOnMovementStateChanged OnMovementStateChanged;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | State")
 	ECharacterMovementState CurrentMovementState;
 
 
 	// Rotation
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
-	float RoationInterpSpeed=5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Values")
+	float RotationInterpSpeed=5.f;
 	
 	//==Stat
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Values")
 	float MovementSpeed=600;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Values")
 	float SprintSpeedMultiplier=1.5;
 
+	bool bIsSprinting=false;
+	
 	float CurrentMaxSpeed=600.f;//default
 
 	FVector2D MovementInputValue;
@@ -126,15 +132,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
-	//Movement
-//State
-	void SetMovementState(ECharacterMovementState NewMovementState){CurrentMovementState=NewMovementState;}
 	
 	UFUNCTION()// must put ufunction for binding fuck
 	void MoveForwardAndRight(const FInputActionValue& Value);
-
 	void RotateTowardTarget(float DeltaTime);
 
 
@@ -161,8 +161,27 @@ public:
 	void OnDodgeFinished();
 
 
+	//Reactions
+	UFUNCTION()
+	void OnDagamed(FDamageInfo Damage);
+	UFUNCTION()
+	void OnDeath(FDamageInfo Damage);
+
+	void KockBackCharacter(FDamageInfo Damage);
+
 	//==== Cleanup
 	//virtual void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+private:
+
+	void HealthComponentSetup();
+	
+	UFUNCTION()
+	void HandleOnMovementStateChanged();
+
+	void DecideMovementState();
+	
+	void SetMovementState(ECharacterMovementState NewState);
 
 
 };

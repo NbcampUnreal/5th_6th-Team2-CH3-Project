@@ -38,6 +38,16 @@ protected:
 	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
 	UPROPERTY()
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Temp Storage for fixed weapons and items
+	UPROPERTY()
+	TMap<uint8, AActor*> TempWeaponQuickSlot;
+	uint8 CurrentWeaponSlotIndex;
+	UPROPERTY()
+	TMap<uint8, AActor*> TempItemQuickSlot;
+	uint8 CurrentItemSlotIndex;
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
@@ -54,7 +64,6 @@ private:
 	// if not, switch weapon
 	
 	/*//==== MouseWheel Tracking ====//
-	
 	// mouse wheele update ( to make it only work for once)
 	FTimerHandle ScrollEndTimerHandle;// for setting timer
 	
@@ -86,7 +95,7 @@ private:
 	//==== Inventory ====//
 	void CacheInventoryComponent();
 	
-	void SwtichWeapon_PC_NumbKeys(uint8 NumbKeyValue);
+	void SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue);
 	// helper function for sequential switching
 	void GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight);
 
@@ -95,15 +104,31 @@ private:
 	bool SwitchCurrentEquipmentByType(EEquipmentType Type);
 	bool AddQuickSlot(EEquipmentType Type, const FInitializeParams& Params);
 	void ActivateOrDeactivateActor(AActor* Actor, bool bActivate);
-
-
+	
 	// this will handle visibility, Attachment setting and triggering equipment interface
 	void EquipOrUnequip(AActor* EquipmentActor, bool bIsEquip);
 	
 	UEquipmentQuickSlots* GetQuickSlotByType(EEquipmentType Type) const;
-
 	
 public:
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Temp Functions
+
+
+	UFUNCTION(BlueprintCallable)
+	bool PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment);
+	
+	void ActivateOrDeactivate(bool bIsEquip, AActor* Equipment);// activate, or deactivate
+
+	void EquipCurrentEquipment(AActor* NewEquipment);
+	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
+
+	
+
+
+
+	
+	///	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp For Weapon Test
 	UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
 	void SetCurrentEquipment(AActor* Equipment) {CurrentEquipment=Equipment;}
@@ -114,29 +139,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Equipment")
 	void SetCurrentEquipmentPlacement(USceneComponent* NewPlacement);// this will attatch the current weapon or item to the placementcomponent
 	UFUNCTION()
-	void SwtichWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
+	void SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 	
 	
 	//==== Number Key Input Binding =====//
 	UFUNCTION()
-	void SwtichWeapon_PC_Numbkey1() { SwtichWeapon_PC_NumbKeys(1);}
+	void SwitchWeapon_PC_NumbKey1() { SwitchWeapon_PC_NumbKeys(1);}
 	UFUNCTION()
-	void SwtichWeapon_PC_Numbkey2() { SwtichWeapon_PC_NumbKeys(2);}
+	void SwitchWeapon_PC_NumbKey2() { SwitchWeapon_PC_NumbKeys(2);}
 	UFUNCTION()
-	void SwtichWeapon_PC_Numbkey3() { SwtichWeapon_PC_NumbKeys(3);}
+	void SwitchWeapon_PC_NumbLey3() { SwitchWeapon_PC_NumbKeys(3);}
 	UFUNCTION()
-	void SwtichWeapon_PC_Numbkey4() { SwtichWeapon_PC_NumbKeys(4);}
+	void SwitchWeapon_PC_NumbLey4() { SwitchWeapon_PC_NumbKeys(4);}
 	UFUNCTION()
-	void SwtichWeapon_PC_Numbkey5() { SwtichWeapon_PC_NumbKeys(5);}
+	void SwitchWeapon_PC_NumbLey5() { SwitchWeapon_PC_NumbKeys(5);}
 	//----- So, the weapon quick slot max count is 5
 	
 	//===== GamePad Swtich =====//
 	UFUNCTION()
+	void SwitchWeapon_GP(const FInputActionValue& Value);
+	/*UFUNCTION()
 	void SwtichWeapon_GP_Next(const FInputActionValue& Value)// gamepad right face button
 	{ GetNextEquipmentSlot(EEquipmentType::Weapon, true);}
 	UFUNCTION()
 	void SwtichWeapon_GP_Previous(const FInputActionValue& Value)// gamepad Left face button
-	{ GetNextEquipmentSlot(EEquipmentType::Weapon, false);}
+	{ GetNextEquipmentSlot(EEquipmentType::Weapon, false);}*/
 	UFUNCTION()
 	void SwtichItem_GP_Next(const FInputActionValue& Value)
 	{ GetNextEquipmentSlot(EEquipmentType::Item, true);}
@@ -177,8 +204,6 @@ public:
 	void TriggerHoldUpdate(float Value);
 	UFUNCTION()
 	void TriggerReleased();
-	
-	
 //----------------------------------------------------------------------------------------------------------------------
 
 };

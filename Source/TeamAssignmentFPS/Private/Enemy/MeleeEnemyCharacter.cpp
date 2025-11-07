@@ -57,9 +57,9 @@ void AMeleeEnemyCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 	UE_LOG(Enemy_Log, Error, TEXT("Melee Damaged"));
 }
 
-void AMeleeEnemyCharacter::EnemyDead()
+void AMeleeEnemyCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
-	Super::EnemyDead();
+	Super::EnemyDead(DamageInfo);
 
 	DisableAttackCollision();
 

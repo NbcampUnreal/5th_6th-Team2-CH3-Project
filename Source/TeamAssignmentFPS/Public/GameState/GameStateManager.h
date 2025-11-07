@@ -52,6 +52,9 @@ public:
 	void UPdateHUD();
 	void FindTrap();
 
+	UFUNCTION(BlueprintCallable, Category = "Phase")
+	void NextPhase();
+
 	UPROPERTY()
 	FPhaseOver PhaseOver;
 };
