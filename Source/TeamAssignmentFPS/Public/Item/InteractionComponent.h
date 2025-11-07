@@ -39,7 +39,11 @@ protected:
 	//===== Input Handler ===//
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction | Input")
+<<<<<<< HEAD
 	UInputActionHandler* InteractionInputHandler=nullptr;
+=======
+	UInputActionHandler* InteractionInputHandler;
+>>>>>>> 749f914 (no message)
 
 	
 	//===== Targets ======//
@@ -56,7 +60,10 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 66c8952 (no message)
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 >>>>>>> d9de3b3 (weapon bp setting updated)
 
@@ -64,7 +71,11 @@ protected:
 	void DrawDebugsForInteractables();
 	
 =======
+<<<<<<< HEAD
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+>>>>>>> 749f914 (no message)
+>>>>>>> 66c8952 (no message)
 public:
 	
 	//==== Activation =====//
@@ -94,7 +105,11 @@ public:
 
 	
 =======
+<<<<<<< HEAD
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+>>>>>>> 749f914 (no message)
+>>>>>>> 66c8952 (no message)
 	//==== Input Handler for Interaction =====//
 	bool SetupInputHandler();
 
@@ -119,6 +134,10 @@ private:
 	void SetupDetectionSphere();
 =======
 	
+<<<<<<< HEAD
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+>>>>>>> 749f914 (no message)
+>>>>>>> 66c8952 (no message)
 };
 	

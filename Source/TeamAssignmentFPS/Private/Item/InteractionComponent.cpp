@@ -49,6 +49,20 @@ void UInteractionComponent::BeginPlay()
 	{
 		PrimaryComponentTick.bCanEverTick = true;
 		SetComponentTickEnabled(true);
+=======
+	SetupInputHandler();
+}
+
+void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	// remove inputhandler
+	if (InteractionInputHandler)
+	{
+		InteractionInputHandler->RemoveFromRoot();
+		InteractionInputHandler=nullptr;
+>>>>>>> 749f914 (no message)
 	}
 >>>>>>> d9de3b3 (weapon bp setting updated)
 }
@@ -303,7 +317,11 @@ void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
 }
 
 void UInteractionComponent::TriggerInteraction_HoldRelease()
+<<<<<<< HEAD
 >>>>>>> 7b9075d (bell and interaction updated)
+=======
+>>>>>>> 749f914 (no message)
+>>>>>>> 66c8952 (no message)
 {
 	if (!InteractionInputHandler) return;
 	InteractionInputHandler->OnTriggerCompleted();
