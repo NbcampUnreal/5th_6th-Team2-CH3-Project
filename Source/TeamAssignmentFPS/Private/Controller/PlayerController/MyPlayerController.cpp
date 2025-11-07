@@ -59,6 +59,7 @@ void AMyPlayerController::BeginPlay()
         ShowMainMenu(false);
     }
 
+<<<<<<< HEAD
    /* if (HUDWidgetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -73,6 +74,8 @@ void AMyPlayerController::BeginPlay()
     {
         SpartaGameState->UPdateHUD();
     }*/
+=======
+>>>>>>> 8621725 (widgtet updated)
  	//== Activate UI Manager
  	UIManager->ActivateUIManager(this);
 }
