@@ -56,6 +56,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
 
+	UFUNCTION(BlueprintCallable, Category = "Phase")
+	void NextPhase();
+
 	UPROPERTY()
 	FPhaseOver PhaseOver;
 };

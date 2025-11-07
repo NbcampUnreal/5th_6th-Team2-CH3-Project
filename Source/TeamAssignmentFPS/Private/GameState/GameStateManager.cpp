@@ -158,6 +158,25 @@ void AGameStateManager::EndLevel()
 
 }
 
+void AGameStateManager::NextPhase()
+{
+	UE_LOG(LogTemp, Warning, TEXT("===== 다음 페이즈로 이동 ====="));
+
+	// 현재 레벨 인덱스 증가
+	CurrentLevelIndex++;
+
+	// 최대 레벨 수를 넘지 않았으면 다음 스테이지 시작
+	if (CurrentLevelIndex < MaxLevels)
+	{
+		StartLevel();
+	}
+	else
+	{
+		OnGameOver(); // 모든 페이즈 종료 시 게임 종료
+	}
+}
+
+
 void AGameStateManager::UPdateHUD()
 {
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
