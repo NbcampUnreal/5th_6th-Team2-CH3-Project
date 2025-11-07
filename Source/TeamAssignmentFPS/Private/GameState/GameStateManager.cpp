@@ -193,7 +193,7 @@ void AGameStateManager::UPdateHUD()
 	}
 }
 
-void AGameStateManager::FindTrap()
+void AGameStateManager::FindObject()
 {
 	UWorld* World = GetWorld();
 	if (!World) return;

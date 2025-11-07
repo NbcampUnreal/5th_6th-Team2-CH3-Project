@@ -29,6 +29,7 @@ class UHealthComponent;
 class UEquipmentManagerComponent;
 class UInteractionComponent;
 class UInputActionHandler;
+class UWidgetComponent;
 
 //binding function
 struct FInputActionValue;
@@ -183,5 +184,9 @@ private:
 	
 	void SetMovementState(ECharacterMovementState NewState);
 
+public:
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+		UWidgetComponent* OverheadWidget;
 
+		void UpdateOverheadHP();
 };

@@ -14,7 +14,8 @@
 #include "CharacterStat/HealthComponent.h"
 #include "Item/InteractionComponent.h"
 #include "InputHelper/InputActionHandler.h"
-
+#include "Components/WidgetComponent.h"
+#include "Components/TextBlock.h"
 
 #include "Curves/CurveFloat.h"
 #include "Debug/UELOGCategories.h"
@@ -32,6 +33,10 @@ AMyCharacter::AMyCharacter()
 	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("Interaction Component"));
 	
 	DodgeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DodgeTimeline"));
+
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
+	OverheadWidget->SetupAttachment(GetMesh());
+	OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +52,8 @@ void AMyCharacter::BeginPlay()
 	{
 		InteractionComp->SetActivationForInteractionComponent(true);
 	}
+
+	UpdateOverheadHP();
 	
 }
 
@@ -425,6 +432,19 @@ void AMyCharacter::DecideMovementState()
 void AMyCharacter::SetMovementState(ECharacterMovementState NewState)
 {
 	
+}
+
+void AMyCharacter::UpdateOverheadHP()
+{
+	if (!OverheadWidget) return;
+
+	UUserWidget* OverheadWidgetInstance = OverheadWidget->GetUserWidgetObject();
+	if (!OverheadWidgetInstance) return;
+
+	if (UTextBlock* HPText = Cast<UTextBlock>(OverheadWidgetInstance->GetWidgetFromName(TEXT("OverHeadHP"))))
+	{
+		HPText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), HealthComponent, HealthComponent)));
+	}
 }
 
 

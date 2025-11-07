@@ -65,6 +65,7 @@ void ATrapBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+// 임시 오브젝트 true 함수
 void ATrapBase::TrapOn()
 {
 	TrapMesh->SetVisibility(true);
@@ -106,6 +107,7 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 		}
 
+		// 임시 메뉴 테스트
 		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 		{
 			if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
@@ -114,6 +116,7 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			}
 		}
 
+		// 임시 스코어 테스트
 		if (UWorld* World = GetWorld())
 		{
 			if (AGameStateManager* GameState = World->GetGameState<AGameStateManager>())
@@ -123,6 +126,7 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			}
 		}
 
+		// 임시 오브젝트 꺼짐
 		TrapMesh->SetVisibility(false);
 
 		// 트랩 제거

@@ -50,7 +50,8 @@ public:
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
 	void UPdateHUD();
-	void FindTrap();
+	// 오브젝트 상호작용
+	void FindObject();
 
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();

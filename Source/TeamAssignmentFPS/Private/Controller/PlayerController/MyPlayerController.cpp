@@ -360,5 +360,6 @@ void AMyPlayerController::StartGame()
     }
 
     UGameplayStatics::OpenLevel(GetWorld(), FName("EnemyTestMap"));
+    SetPause(false);
 }
 
