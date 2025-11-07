@@ -137,6 +137,7 @@ void AWeaponBase::FireWeapon()
 	if (CurrentAmmoCount<=0)
 	{
 		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> Not enough amo to shoot."));
+		ReloadWeapon();
 		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);//same here
 		// TODO:UI-> signal ui manager to show fire failed
 		
@@ -178,13 +179,13 @@ void AWeaponBase::FireWeapon()
 	// SpawnParams.Owner=this;
 	// SpawnParams.Instigator=GetInstigator();
 	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
-	if (!SpawnedProjectile)
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
+	//AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
+	//if (!SpawnedProjectile)
+	//{
+	//	UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
 
-		return;
-	}
+	//	return;
+	//}
 
 
 	// spawning success
