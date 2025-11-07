@@ -14,6 +14,7 @@
 #include "Enemy/EnemyBaseCharacter.h"
 #include "Engine/OverlapResult.h"
 #include "Controller/PlayerController/MyPlayerController.h"
+#include "GameState/GameStateManager.h"
 #include "Interface/DamageInfo.h"
 
 /**
@@ -109,12 +110,23 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 		{
 			if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
 			{
-				MyPlayerController->ShowMainMenu(true);
+				MyPlayerController->ShowNextMenu(true);
 			}
 		}
 
+		if (UWorld* World = GetWorld())
+		{
+			if (AGameStateManager* GameState = World->GetGameState<AGameStateManager>())
+			{
+				GameState->AddScore(20);
+				//GameState->OnCoinCollected();
+			}
+		}
+
+		TrapMesh->SetVisibility(false);
+
 		// 트랩 제거
-		Destroy();
+		//Destroy();
 	}
 }
 

@@ -30,6 +30,8 @@
     HUDWidgetInstance(nullptr), 
     MainMenuWidgetClass(nullptr),
     MainMenuWidgetInstance(nullptr),
+    NextMenuWidgetClass(nullptr),
+    NextMenuWidgetInstance(nullptr),
 
 	//----Control----//
 	bIsGamepad(false),
@@ -52,6 +54,7 @@ void AMyPlayerController::BeginPlay()
     FString CurrentMapName = GetWorld()->GetMapName();
     if (CurrentMapName.Contains("MenuLevel"))
     {
+        ShowNextMenu(false);
         ShowMainMenu(false);
     }
 
@@ -217,6 +220,12 @@ void AMyPlayerController::ShowGameHUD()
         MainMenuWidgetInstance = nullptr;
     }
 
+    if (NextMenuWidgetInstance)
+    {
+        NextMenuWidgetInstance->RemoveFromParent();
+        NextMenuWidgetInstance = nullptr;
+    }
+
     if (HUDWigetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWigetClass);
@@ -251,6 +260,12 @@ void AMyPlayerController::ShowMainMenu(bool bIsRestart)
         MainMenuWidgetInstance = nullptr;
     }
 
+    if (NextMenuWidgetInstance)
+    {
+        NextMenuWidgetInstance->RemoveFromParent();
+        NextMenuWidgetInstance = nullptr;
+    }
+
     if (MainMenuWidgetClass)
     {
         MainMenuWidgetInstance = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
@@ -273,6 +288,66 @@ void AMyPlayerController::ShowMainMenu(bool bIsRestart)
                 ButteonText->SetText(FText::FromString(TEXT("Start")));
             }
         }
+
+        if (bIsRestart)
+        {
+            UFunction* PlayAnimFunc = MainMenuWidgetInstance->FindFunction(FName("PlayGameOverAnim"));
+            if (PlayAnimFunc)
+            {
+                MainMenuWidgetInstance->ProcessEvent(PlayAnimFunc, nullptr);
+            }
+
+            if (UTextBlock* TotalScoreText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName("TotalScoreText")))
+            {
+                if (UGameInstanceManager* GameInstance = Cast<UGameInstanceManager>(UGameplayStatics::GetGameInstance(this)))
+                {
+                    TotalScoreText->SetText(FText::FromString(
+                        FString::Printf(TEXT("Total Score: %d"), GameInstance->TotalScore)
+                    ));
+                }
+            }
+        }
+    }
+
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC)
+    {
+        PC->DisableInput(PC);   // ← 플레이어 입력 비활성화
+        PC->bShowMouseCursor = true;
+    }
+}
+
+void AMyPlayerController::ShowNextMenu(bool bIsRestart)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->RemoveFromParent();
+        HUDWidgetInstance = nullptr;
+    }
+
+    if (NextMenuWidgetInstance)
+    {
+        NextMenuWidgetInstance->RemoveFromParent();
+        NextMenuWidgetInstance = nullptr;
+    }
+
+    if (NextMenuWidgetClass)
+    {
+        NextMenuWidgetInstance = CreateWidget<UUserWidget>(this, NextMenuWidgetClass);
+        if (NextMenuWidgetClass)
+        {
+            NextMenuWidgetInstance->AddToViewport();
+
+            bShowMouseCursor = true;
+            SetInputMode(FInputModeUIOnly());
+        }
+    }
+
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC)
+    {
+        PC->DisableInput(PC);   // ← 플레이어 입력 비활성화
+        PC->bShowMouseCursor = true;
     }
 }
 
@@ -284,6 +359,6 @@ void AMyPlayerController::StartGame()
         GameInstance->TotalScore = 0;
     }
 
-    UGameplayStatics::OpenLevel(GetWorld(), FName("CharacterTestLevel"));
+    UGameplayStatics::OpenLevel(GetWorld(), FName("EnemyTestMap"));
 }
 
