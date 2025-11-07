@@ -164,12 +164,21 @@ void AWeaponBase::FireWeapon()
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> 111111111."));
 
 		// SpawnFromPoolÀÇ ¹ÝÈ¯°ªÀ» ÀÓ½Ã º¯¼ö¿¡ ÀúÀå ÈÄ Cast
 =======
 		// SpawnFromPoolï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Cast
 >>>>>>> d9de3b3 (weapon bp setting updated)
+=======
+		// SpawnFromPoolï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Cast
+=======
+		UE_LOG(Weapon_Log, Warning, TEXT("WeaponBase::FireWeapon -> 111111111."));
+
+		// SpawnFromPoolÀÇ ¹ÝÈ¯°ªÀ» ÀÓ½Ã º¯¼ö¿¡ ÀúÀå ÈÄ Cast
+>>>>>>> a51c7e4 (no message)
+>>>>>>> ebc6e76 (no message)
 		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
