@@ -2,9 +2,10 @@
 
 
 #include "Item/InteractionComponent.h"
-
+#include "InputAction.h"
 
 #include "Debug/UELOGCategories.h"
+#include "Interface/InputReactionInterface.h"
 
 
 UInteractionComponent::UInteractionComponent()
@@ -85,31 +86,90 @@ bool UInteractionComponent::SetupInputHandler()
 
 void UInteractionComponent::OnInputInteract_Pressed(const FInputActionValue& Value)
 {
-
+	float FloatValue=Value.Get<float>();
+	if (!InteractionInputHandler) return;
+	InteractionInputHandler->OnTriggerPressed(FloatValue);
 }
 
 void UInteractionComponent::OnInputInteract_Completed(const FInputActionValue& Value)
 {
+	if (!InteractionInputHandler) return;
+	InteractionInputHandler->OnTriggerCompleted();
 }
 
 void UInteractionComponent::OnInputInteract_Canceled(const FInputActionValue& Value)
 {
+	if (!InteractionInputHandler) return;
+	InteractionInputHandler->OnTriggerCanceled();
 }
+
 
 void UInteractionComponent::TriggerInteraction_Tap()
 {
+	UE_LOG(World_Interaction_Log, Log,
+		TEXT("UInteractionComponent::TriggerInteraction_Tap-> try Interaction Tap"));
+
+	if (!IsCurrentInteractableValid) return;
+
+	IInputReactionInterface::Execute_OnInputTap(CurrentInteractable);
+	UE_LOG(World_Interaction_Log, Warning,
+		TEXT("UInteractionComponent::TriggerInteraction_Tap-> Tap"));
+	
 }
 
 void UInteractionComponent::TriggerInteraction_HoldStart()
 {
+	UE_LOG(World_Interaction_Log, Log,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldStart-> try Interaction HoldStart"));
+
+	if (!IsCurrentInteractableValid) return;
+
+	IInputReactionInterface::Execute_OnInputHoldStart(CurrentInteractable);
+	UE_LOG(World_Interaction_Log, Warning,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldStart-> HoldStart"));
 }
 
 void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
 {
+	UE_LOG(World_Interaction_Log, Log,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldUpdate-> try Interaction HoldUpdate"));
+
+	if (!IsCurrentInteractableValid) return;
+
+	IInputReactionInterface::Execute_OnInputHoldUpdate(CurrentInteractable,UpdateValue);
+	UE_LOG(World_Interaction_Log, Warning,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldUpdate-> HoldUpdate, Value:%f"),UpdateValue);
 }
 
 void UInteractionComponent::TriggerInteraction_HoldRelease()
 {
+	UE_LOG(World_Interaction_Log, Log,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldRelease-> try Interaction HoldRelease"));
+
+	if (!IsCurrentInteractableValid) return;
+
+	IInputReactionInterface::Execute_OnInputRelease(CurrentInteractable);
+	UE_LOG(World_Interaction_Log, Warning,
+		TEXT("UInteractionComponent::TriggerInteraction_HoldRelease-> HoldRelease"));
+}
+
+bool UInteractionComponent::IsCurrentInteractableValid()
+{
+	if (!CurrentInteractable)
+	{
+		UE_LOG(World_Interaction_Log, Error,
+			TEXT("UInteractionComponent::IsCurrentInteractableValid-> Invalid Target"));
+		return false;
+	}
+	if (!CurrentInteractable->Implements<UInputReactionInterface>())
+	{
+		UE_LOG(World_Interaction_Log, Error,
+			TEXT("UInteractionComponent::IsCurrentInteractableValid-> Target doesnt have required interface"));
+		return false;
+	}
+
+	// check all done
+	return true;
 }
 
 
