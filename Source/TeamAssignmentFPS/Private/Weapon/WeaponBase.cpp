@@ -5,6 +5,7 @@
 
 #include "Weapon/ProjectileBase.h"
 #include "Animation/AnimInstance.h"
+#include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Sound/SoundBase.h"
 #include "Debug/UELOGCategories.h"
@@ -36,8 +37,19 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentAmmoCount = MaxAmmoCount;
+	//Cache Owner
+	AMyCharacter* CastedOwner=Cast<AMyCharacter>(GetOwner());
+	if (!CastedOwner)//getting owner and casting failed
+	{
+		//error
+	}
+	else// cache owner done
+	{
+		WeaponOwner=CastedOwner;
+	}
 	
+	// set amo count
+	CurrentAmmoCount = MaxAmmoCount;
 }
 
 // Called every frame
@@ -117,6 +129,16 @@ void AWeaponBase::OnInputRelease_Implementation()
 	bIsFiring=false;
 
 	GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);
+}
+
+void AWeaponBase::OnEquipped_Implementation()
+{
+	IEquipmentInterface::OnEquipped_Implementation();
+}
+
+void AWeaponBase::OnUnequipped_Implementation()
+{
+	IEquipmentInterface::OnUnequipped_Implementation();
 }
 
 void AWeaponBase::FireWeapon()
@@ -212,6 +234,9 @@ void AWeaponBase::ReloadWeapon()
 			bIsReloading = false;
 
 		}, ReloadTime, false);
+
+	// directly call the function to the character
+	//WeaponOwner->// do the thing when reloading is done
 }
 
 void AWeaponBase::PlayMuzzleEffect()
@@ -224,4 +249,26 @@ void AWeaponBase::PlayReloadEffect()
 
 void AWeaponBase::PlayFiringFailedEffect()
 {
+}
+
+void AWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+{
+	if (!bUsePool)
+	{
+		
+	}
+	else
+	{
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+		{
+			// SpawnFromPool�� ��ȯ���� �ӽ� ������ ���� �� Cast
+			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+			if (SpawnedProjectile)
+			{
+				DamageInfo.DamageAmount = Damage;
+				SpawnedProjectile->SetDamageInfo(DamageInfo);
+			}
+		}
+	}
 }
