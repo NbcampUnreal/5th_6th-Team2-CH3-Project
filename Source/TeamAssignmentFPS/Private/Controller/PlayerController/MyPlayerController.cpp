@@ -6,6 +6,7 @@
 #include "GameInstance/GameInstanceManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
+#include "Blueprint/UserWidget.h"
 
 //=== Managers ===//
 #include "Camera/CameraManager.h"
@@ -26,10 +27,12 @@
 	CameraManager(nullptr),
 	IMCManager(nullptr),
 	UIManager(nullptr),
-    HUDWigetClass(nullptr),
+    HUDWidgetClass(nullptr),
     HUDWidgetInstance(nullptr), 
     MainMenuWidgetClass(nullptr),
     MainMenuWidgetInstance(nullptr),
+    NextMenuWidgetClass(nullptr),
+    NextMenuWidgetInstance(nullptr),
 
 	//----Control----//
 	bIsGamepad(false),
@@ -52,8 +55,24 @@ void AMyPlayerController::BeginPlay()
     FString CurrentMapName = GetWorld()->GetMapName();
     if (CurrentMapName.Contains("MenuLevel"))
     {
+        ShowNextMenu(false);
         ShowMainMenu(false);
     }
+
+   /* if (HUDWidgetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+        }
+    }
+
+    AGameStateManager* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<AGameStateManager>() : nullptr;
+    if (SpartaGameState)
+    {
+        SpartaGameState->UPdateHUD();
+    }*/
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -205,9 +224,16 @@ void AMyPlayerController::ShowGameHUD()
         MainMenuWidgetInstance = nullptr;
     }
 
-    if (HUDWigetClass)
+    // 이미 메뉴가 떠 있으면 제거
+    if (NextMenuWidgetInstance)
     {
-        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWigetClass);
+        NextMenuWidgetInstance->RemoveFromParent();
+        NextMenuWidgetInstance = nullptr;
+    }
+
+    if (HUDWidgetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
         if (HUDWidgetInstance)
         {
             HUDWidgetInstance->AddToViewport();
@@ -250,17 +276,38 @@ void AMyPlayerController::ShowMainMenu(bool bIsRestart)
             SetInputMode(FInputModeUIOnly());
         }
 
-        if (UTextBlock* ButteonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("StartButtonText"))))
+        if (UTextBlock* StartButteonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("StartButtonText"))))
         {
             if (bIsRestart)
             {
-                ButteonText->SetText(FText::FromString(TEXT("ReStart")));
+                StartButteonText->SetText(FText::FromString(TEXT("ReStart")));
             }
             else
             {
-                ButteonText->SetText(FText::FromString(TEXT("Start")));
+                StartButteonText->SetText(FText::FromString(TEXT("Start")));
             }
         }
+
+        if (bIsRestart)
+        {
+
+            if (UTextBlock* TotalScoreText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName("TotalScoreText")))
+            {
+                if (UGameInstanceManager* GameInstance = Cast<UGameInstanceManager>(UGameplayStatics::GetGameInstance(this)))
+                {
+                    TotalScoreText->SetText(FText::FromString(
+                        FString::Printf(TEXT("Total Score: %d"), GameInstance->TotalScore)
+                    ));
+                }
+            }
+        }
+    }
+
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC)
+    {
+        PC->DisableInput(PC);   // ← 플레이어 입력 비활성화
+        PC->bShowMouseCursor = true;
     }
 }
 
@@ -272,6 +319,40 @@ void AMyPlayerController::StartGame()
         GameInstance->TotalScore = 0;
     }
 
-    UGameplayStatics::OpenLevel(GetWorld(), FName("CharacterTestLevel"));
+    UGameplayStatics::OpenLevel(GetWorld(), FName("EnemyTestMap"));
+}
+
+void AMyPlayerController::ShowNextMenu(bool bIsRestart)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->RemoveFromParent();
+        HUDWidgetInstance = nullptr;
+    }
+
+    if (NextMenuWidgetInstance)
+    {
+        NextMenuWidgetInstance->RemoveFromParent();
+        NextMenuWidgetInstance = nullptr;
+    }
+
+    if (NextMenuWidgetClass)
+    {
+        NextMenuWidgetInstance = CreateWidget<UUserWidget>(this, NextMenuWidgetClass);
+        if (NextMenuWidgetClass)
+        {
+            NextMenuWidgetInstance->AddToViewport();
+
+            bShowMouseCursor = true;
+            SetInputMode(FInputModeUIOnly());
+        }
+    }
+
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC)
+    {
+        PC->DisableInput(PC);   // ← 플레이어 입력 비활성화
+        PC->bShowMouseCursor = true;
+    }
 }
 

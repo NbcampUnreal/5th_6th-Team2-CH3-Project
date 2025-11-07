@@ -15,17 +15,15 @@
 AGameStateManager::AGameStateManager()
 {
 	Score = 0;
-	LevelDuration = 5.0f; // �� ������ 30��
+	LevelDuration = 5.0f;
 	CurrentLevelIndex = 0;
 	MaxLevels = 3;
-
 }
 
 void AGameStateManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ���� ���� �� ù �������� ����
 	StartLevel();
 
 	GetWorldTimerManager().SetTimer(
@@ -56,6 +54,7 @@ void AGameStateManager::AddScore(int32 Amount)
 
 void AGameStateManager::StartLevel()
 {
+
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
 		if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
@@ -87,7 +86,6 @@ void AGameStateManager::StartLevel()
 		}
 	}
 
-	// 30�� �Ŀ� OnLevelTimeUp()�� ȣ��ǵ��� Ÿ�̸� ����
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
 		this,
@@ -98,57 +96,40 @@ void AGameStateManager::StartLevel()
 }
 
 void AGameStateManager::OnLevelTimeUp()
-{
-	// �ð��� �� �Ǹ� ������ ����
-	
+{	
 	EndLevel();
-}
-
-void AGameStateManager::OnCoinCollected()
-{
-	//CollectedCoinCount++;
-
-	//UE_LOG(LogTemp, Warning, TEXT("Coin Collected: %d / %d"),
-	//	CollectedCoinCount,
-	//	SpawnedCoinCount)
-
-	//	// ���� �������� ������ ������ ���� �ֿ��ٸ� ��� ���� ����
-	//	if (SpawnedCoinCount > 0 && CollectedCoinCount >= SpawnedCoinCount)
-	//	{
-	//		EndLevel();
-	//	}
 }
 
 void AGameStateManager::EndLevel()
 {
-
-	// ���� ���� �ε�����
-	//CurrentLevelIndex++;
 
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UGameInstanceManager* SpartaGameInstance = Cast<UGameInstanceManager>(GameInstance);
 		if (SpartaGameInstance)
 		{
-			// Ÿ�̸� ����
+			CurrentLevelIndex++;
 			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
 			PhaseOver.Broadcast();
 			FindTrap();
-			//CurrentLevelIndex++;
-			//SpartaGameInstance->CurrentLevelIndex = CurrentLevelIndex;
-			//StartLevel();
 
+			AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
+
+			// HUD가 켜져 있다면 닫기
+			if (PlayerController)
+			{
+				PlayerController->HUDWidgetInstance->RemoveFromParent();
+				PlayerController->HUDWidgetInstance = nullptr;
+			}
+;
 			if (CurrentLevelIndex >= MaxLevels)
 			{
 				OnGameOver();
 				return;
 			}
-
 		}
 	}
-
-
 
 }
 
@@ -160,13 +141,13 @@ void AGameStateManager::UPdateHUD()
 		{
 			if (UUserWidget* HUDWidget = MyPlayerController->GetHUDWidget())
 			{
-				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
+				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Timer"))))
 				{
 					float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
 					TimeText->SetText(FText::FromString(FString::Printf(TEXT("Time: %.1f"), RemainingTime)));
 				}
 
-				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("SCore"))))
+				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
 				{
 					if (UGameInstance* GameInstance = GetGameInstance())
 					{
@@ -201,9 +182,50 @@ void AGameStateManager::FindTrap()
 		if (Found)
 		{
 			Found->TrapOn();
-			//UE_LOG(LogTemp, Warning, TEXT("Found Actor: %s"), *Found->GetName());
 		}
 	}
+}
+
+void AGameStateManager::NextLevel()
+{
+	AEnemySpawnerManager* SpawnerManager = Cast<AEnemySpawnerManager>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), AEnemySpawnerManager::StaticClass())
+	);
+
+	if (!SpawnerManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnerManager not found"));
+		return;
+	}
+
+	AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	// HUD가 켜져 있다면 닫기
+	if (PlayerController)
+	{
+		PlayerController->ShowGameHUD();
+	}
+
+	AEnemySpawner* EnemySpawner = SpawnerManager->LocateSpawnerAt(SpawnerManager->GetRandomSpawnLocation());
+
+	const int32 MonsterToSpawn = 10;
+
+	for (int32 i = 0; i < MonsterToSpawn; ++i)
+	{
+		AEnemyBaseCharacter* Spawned = EnemySpawner->SpawnRandomMonster(); // EnemySpawner �ʿ� ���� �ʿ�
+		if (!Spawned)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[%d] Monster spawn failed"), i);
+		}
+	}
+
+	GetWorldTimerManager().SetTimer(
+		LevelTimerHandle,
+		this,
+		&AGameStateManager::OnLevelTimeUp,
+		LevelDuration,
+		false
+	);
 }
 
 void AGameStateManager::OnGameOver()
@@ -212,6 +234,7 @@ void AGameStateManager::OnGameOver()
 	{
 		if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
 		{
+			MyPlayerController->SetPause(true);
 			MyPlayerController->ShowMainMenu(true);
 		}
 	}

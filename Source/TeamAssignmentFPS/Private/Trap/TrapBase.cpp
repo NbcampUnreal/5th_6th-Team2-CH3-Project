@@ -109,7 +109,7 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 		{
 			if (AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(PlayerController))
 			{
-				MyPlayerController->ShowMainMenu(true);
+				MyPlayerController->ShowNextMenu(true);
 			}
 		}
 

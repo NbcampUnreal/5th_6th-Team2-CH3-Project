@@ -45,12 +45,12 @@ public:
 	void StartLevel();
 	// 레벨 제한 시간이 만료되었을 때 호출
 	void OnLevelTimeUp();
-	// 코인을 주웠을 때 호출
-	void OnCoinCollected();
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
 	void UPdateHUD();
 	void FindTrap();
+	UFUNCTION(BlueprintCallable, Category = "Menu")
+	void NextLevel();
 
 	UPROPERTY()
 	FPhaseOver PhaseOver;
