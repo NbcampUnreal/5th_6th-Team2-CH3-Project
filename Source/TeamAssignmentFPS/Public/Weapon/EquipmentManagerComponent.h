@@ -38,6 +38,16 @@ protected:
 	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
 	UPROPERTY()
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Temp Storage for fixed weapons and items
+	UPROPERTY()
+	TMap<uint8, AActor*> TempWeaponQuickSlot;
+	uint8 CurrentWeaponSlotIndex;
+	UPROPERTY()
+	TMap<uint8, AActor*> TempItemQuickSlot;
+	uint8 CurrentItemSlotIndex;
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
 	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
@@ -101,6 +111,24 @@ private:
 	UEquipmentQuickSlots* GetQuickSlotByType(EEquipmentType Type) const;
 	
 public:
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Temp Functions
+
+
+	UFUNCTION(BlueprintCallable)
+	bool PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment);
+	
+	void ActivateOrDeactivate(bool bIsEquip, AActor* Equipment);// activate, or deactivate
+
+	void EquipCurrentEquipment(AActor* NewEquipment);
+	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
+
+	
+
+
+
+	
+	///	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp For Weapon Test
 	UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
 	void SetCurrentEquipment(AActor* Equipment) {CurrentEquipment=Equipment;}

@@ -337,6 +337,110 @@ UEquipmentQuickSlots* UEquipmentManagerComponent::GetQuickSlotByType(EEquipmentT
 	return QuickSlotPtr;
 }
 
+bool UEquipmentManagerComponent::PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment)
+{
+	TMap<uint8, AActor*>* EquipmentMap=nullptr;
+	switch (SlotType)
+	{
+	case EEquipmentType::Weapon:
+		EquipmentMap=&TempWeaponQuickSlot;
+		break;
+	case EEquipmentType::Item:
+		EquipmentMap=&TempItemQuickSlot;
+		break;
+	default:
+		return false;
+	}
+
+	if (!EquipmentMap)
+	{
+		//invalid
+		return false;
+	}
+
+	EquipmentMap->Add(SlotIndex,NewEquipment);
+	return true;
+}
+
+void UEquipmentManagerComponent::ActivateOrDeactivate(bool bIsEquip, AActor* Equipment)
+{
+	if (!Equipment)
+	{
+		//error, no valid equipment to equip or unequip
+		return;
+	}
+
+	Equipment->SetActorHiddenInGame(!bIsEquip);
+	Equipment->SetActorEnableCollision(bIsEquip);
+	Equipment->SetActorTickEnabled(bIsEquip);
+
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT("UEquipmentManagerComponent::EquipOrUnequip-> New Equipment %s is %s"),
+		*Equipment->GetName(),*FString((bIsEquip)?TEXT("Equipped"):TEXT("Unequipped")));
+	
+}
+
+void UEquipmentManagerComponent::EquipCurrentEquipment(AActor* NewEquipment)
+{
+	if (!NewEquipment)
+	{
+		//error, invalid new equipment. equipment failed
+		return;
+	}
+	
+	//Switch
+	//previous equipment-> unequip
+	AActor* PreviousEquipment=CurrentEquipment;
+	if (!PreviousEquipment) return;// invalid, just return
+	if (!PreviousEquipment->Implements<UEquipmentInterface>()) return;// no equipment just deactivate
+	
+	IEquipmentInterface::Execute_OnUnequipped(PreviousEquipment);
+	
+	// new current equipment-> equip
+	CurrentEquipment=NewEquipment;
+	if (!CurrentEquipment) return;
+	if (!CurrentEquipment->Implements<UEquipmentInterface>()) return;
+	
+	IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);
+}
+
+void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot,
+	uint8 CurrentSlotIndex)
+{
+	if (QuickSlot.IsEmpty())
+	{
+		return;
+	}
+
+	TArray<uint8> SlotIndices;
+	QuickSlot.GetKeys(SlotIndices);
+	SlotIndices.Sort();
+
+	uint8 NextSlotIndex=CurrentSlotIndex;
+	int32 SlotCount=SlotIndices.Num();
+	
+	for (uint8 i=0;i<SlotCount;i++)
+	{
+		if (bIsRight)
+		{
+			NextSlotIndex=(NextSlotIndex+1)%SlotCount;// so that remaining becomes the first
+		}
+		else
+		{
+			NextSlotIndex=(NextSlotIndex-1)%SlotCount;
+		}
+
+		uint8 NextSlotIndexIndex=SlotIndices[NextSlotIndex];
+		AActor* NextEquipment= QuickSlot[NextSlotIndexIndex];
+
+		if (!NextEquipment) continue;
+
+		EquipCurrentEquipment(NextEquipment);
+	}
+}
+
+
+
 bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)
 {
 	if (!InventoryComponent)
