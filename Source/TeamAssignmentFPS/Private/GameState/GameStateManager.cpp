@@ -100,9 +100,7 @@ void AGameStateManager::StartLevel()
 }
 
 void AGameStateManager::OnLevelTimeUp()
-{
-	// �ð��� �� �Ǹ� ������ ����
-	
+{	
 	EndLevel();
 }
 
