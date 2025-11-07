@@ -488,7 +488,7 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 			TEXT("EquipmentManagerCompnent::TriggerInput_Reload-> CurrentEquipment does not implement IWeaponInterface"));
 	}*/// need to check if current equipment type is weapon
 
-	if (CurrentEquipmentType!=EEquipmentType::Weapon)
+	/*if (CurrentEquipmentType!=EEquipmentType::Weapon)
 	{
 		UE_LOG(Equipment_Manager_Log,Error,
 			TEXT("UEquipmentManagerComponent::TriggerInput_Reload-> not holding weapon currently."));
@@ -497,7 +497,7 @@ void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Va
 		//TODO: decide the case. should this switch to weapon or do nothing and return
 		// swicth to weapon
 		return;
-	}
+	}*/
 	
 	if (!CurrentEquipment)
 	{

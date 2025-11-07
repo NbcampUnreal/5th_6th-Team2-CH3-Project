@@ -151,6 +151,7 @@ void AWeaponBase::FireWeapon()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 
+
 	float FinalDamage = Damage;
 
 	//AProjectileBase* SpawnedProjectile=GetWorld()->SpawnActor<AProjectileBase>(Projectile,SpawnLocation,SpawnRotation,SpawnParams );
