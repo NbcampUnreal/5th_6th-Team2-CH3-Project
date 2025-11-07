@@ -60,6 +60,7 @@ void AMyPlayerController::BeginPlay()
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
    /* if (HUDWidgetClass)
     {
         HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -76,6 +77,8 @@ void AMyPlayerController::BeginPlay()
     }*/
 =======
 >>>>>>> 8621725 (widgtet updated)
+=======
+>>>>>>> e278224 (no message)
  	//== Activate UI Manager
  	UIManager->ActivateUIManager(this);
 }
@@ -87,6 +90,22 @@ void AMyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
  	//Deactivate ManagerComponents
 
  	UIManager->DeactivateUIManager();
+=======
+   /* if (HUDWidgetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+        }
+    }
+
+    AGameStateManager* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<AGameStateManager>() : nullptr;
+    if (SpartaGameState)
+    {
+        SpartaGameState->UPdateHUD();
+    }*/
+>>>>>>> 6cf3b6a (11/07 feat GameStateManager)
 }
 
 void AMyPlayerController::SetupInputComponent()
