@@ -20,6 +20,11 @@ class TEAMASSIGNMENTFPS_API IInteractable
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	/** E 키로 상호작용할 때 호출됨 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interactable")
+	void Interact(AActor* Interactor);
+
+	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+
 };
