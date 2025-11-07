@@ -9,6 +9,7 @@
 
 //forward Declaration
 class USphereComponent;// detection area for player character
+struct FInputActionValue;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TEAMASSIGNMENTFPS_API UInteractionComponent : public UActorComponent
@@ -65,6 +66,9 @@ public:
 	void TriggerInteraction_HoldStart();
 	void TriggerInteraction_HoldUpdate(float UpdateValue);
 	void TriggerInteraction_HoldRelease();
+
+private:
+	bool IsCurrentInteractableValid();
 	
 };
 	
