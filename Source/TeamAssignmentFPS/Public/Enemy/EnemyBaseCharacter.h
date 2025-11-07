@@ -70,7 +70,9 @@ public:
 
 	bool bCanAttack = true;
 	UFUNCTION()
-	virtual void EnemyDead();
+	virtual void EnemyDead(FDamageInfo DamageInfo);
+	UFUNCTION()
+	virtual void EnemyDeadByPhaseEnd();// for death with no damage info
 	
 	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
 	void ChangeEnemyState(EEnemyState NewEnemyState);

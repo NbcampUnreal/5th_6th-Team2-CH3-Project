@@ -38,8 +38,11 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//sprint, dodge input action setting
 	SetupForDodgeAction();
 	SetupForInputTypeHelper();
+	
 }
 
 void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -112,6 +115,9 @@ void AMyCharacter::Tick(float DeltaTime)
 	//temp rotaion without state case
 	RotateTowardTarget(DeltaTime);
 	//temp with simple trigger
+
+	//evaluate what movement state character has right now
+	DecideMovementState();
 }
 
 // Called to bind functionality to input
@@ -176,7 +182,7 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 	TargetRotatioin.Pitch=GetActorRotation().Pitch;
 	TargetRotatioin.Roll=GetActorRotation().Roll;
 
-	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RoationInterpSpeed);
+	FRotator NewRotation=FMath::RInterpTo(GetActorRotation(),TargetRotatioin,Deltatime,RotationInterpSpeed);
 	SetActorRotation(NewRotation);
 }
 
@@ -228,6 +234,8 @@ void AMyCharacter::StopSprinting()
 	GetCharacterMovement()->MaxWalkSpeed=CurrentMaxSpeed;
 	LockonComp->SetCameraBlendAlpha(0.2f);//temp--> find a way to reset to its value
 
+	SetMovementState(ECharacterMovementState::Idle);
+
 }
 
 void AMyCharacter::Dodge()
@@ -273,7 +281,7 @@ void AMyCharacter::DirectionalDodge()
 	DodgeTimeline->SetPlayRate(FMath::Max(0.01f/*Min value for safety*/, DodgeSpeedPlayRate));
 	DodgeTimeline->PlayFromStart();
 
-	SetMovementState(ECharacterMovementState::Dodging);
+	SetMovementState(ECharacterMovementState::Dodging);//set movement state here
 }
 
 void AMyCharacter::BackDash()
@@ -309,6 +317,108 @@ void AMyCharacter::OnDodgeFinished()
 	bIsDodging = false;
 	GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	SetMovementState(ECharacterMovementState::Idle);
+}
+
+void AMyCharacter::OnDagamed(FDamageInfo Damage)
+{
+	KockBackCharacter(Damage);
+
+	// additional effects
+	// camera shake
+	//
+	
+}
+
+void AMyCharacter::OnDeath(FDamageInfo Damage)
+{
+	// do what death does
+
+	KockBackCharacter(Damage);
+	// add Death widget
+	// disable controll
+	//etc
+}
+
+void AMyCharacter::KockBackCharacter(FDamageInfo Damage)
+{
+	//knock back
+	if (!Damage.DamageDirection.IsNearlyZero())
+	{
+		//error, direction invalid
+		return;
+	}
+
+	FVector KnockBackDirection=Damage.DamageDirection.GetSafeNormal();
+	
+	float KnockBackAmountMultiplier=50.f;//temp
+	float MaxKnockBackForce=1000.f;//temp
+	
+	float KnockBackForce=FMath::Clamp(Damage.DamageAmount*KnockBackAmountMultiplier,0.f,MaxKnockBackForce);
+	
+
+	LaunchCharacter(KnockBackDirection*KnockBackForce, true, true);
+}
+
+void AMyCharacter::HealthComponentSetup()
+{
+	if (!HealthComponent)
+	{
+		//error, invalid hpcomp
+		return;
+	}
+	
+	HealthComponent->OnDamage.BindUObject(this, &AMyCharacter::OnDagamed);
+	HealthComponent->OnDeath.AddUObject(this, &AMyCharacter::OnDeath);
+}
+
+void AMyCharacter::HandleOnMovementStateChanged()
+{
+	
+}
+
+void AMyCharacter::DecideMovementState()
+{
+	if (bIsDodging)
+	{
+		SetMovementState(ECharacterMovementState::Dodging);
+		return;
+	}
+	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (!MovementComponent) return;// invalid movement comp
+
+	//== Mid-Air Conditions
+	if (MovementComponent->IsFalling())
+	{
+		SetMovementState(ECharacterMovementState::Falling);
+		return;
+	}
+
+	//=== Based on Speed
+
+	float Speed = MovementComponent->Velocity.Size();
+	bool bIsCrouching = MovementComponent->IsCrouching();
+	float MinSpeedForMove=5.f;
+	if (Speed<MinSpeedForMove)
+	{
+		SetMovementState(ECharacterMovementState::Idle);
+	}
+	else//not idle, moving
+	{
+		if (Speed>MovementSpeed && bIsSprinting)
+		{
+			SetMovementState(ECharacterMovementState::Sprinting);
+		}
+		else
+		{
+			SetMovementState(ECharacterMovementState::Moving);
+		}
+	}
+}
+
+void AMyCharacter::SetMovementState(ECharacterMovementState NewState)
+{
+	
 }
 
 
