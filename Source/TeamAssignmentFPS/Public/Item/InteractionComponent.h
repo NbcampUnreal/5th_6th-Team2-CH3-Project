@@ -54,10 +54,13 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+<<<<<<< HEAD
 
 	//=== Debug Draw ===//
 	void DrawDebugForInteractables();
 	
+=======
+>>>>>>> 7b9075d (bell and interaction updated)
 public:
 	
 	//==== Activation =====//
@@ -65,6 +68,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction | Activation")
 	bool SetActivationForInteractionComponent(bool bIsActivate);// toggle by boolean
 
+<<<<<<< HEAD
 	//==== Interactable Detection ====//
 
 	UFUNCTION()
@@ -85,6 +89,8 @@ public:
 
 
 	
+=======
+>>>>>>> 7b9075d (bell and interaction updated)
 	//==== Input Handler for Interaction =====//
 	bool SetupInputHandler();
 
@@ -101,10 +107,14 @@ public:
 	void TriggerInteraction_HoldStart();
 	void TriggerInteraction_HoldUpdate(float UpdateValue);
 	void TriggerInteraction_HoldRelease();
+<<<<<<< HEAD
 
 private:
 	bool IsCurrentInteractableValid();
 	void UpdateCurrentInteractable();
 	void SetupDetectionSphere();
+=======
+	
+>>>>>>> 7b9075d (bell and interaction updated)
 };
 	

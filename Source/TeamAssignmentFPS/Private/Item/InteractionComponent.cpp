@@ -25,6 +25,7 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+<<<<<<< HEAD
 	OwnerActor=Cast<AMyCharacter>(GetOwner());
 	if (!OwnerActor)
 	{
@@ -36,6 +37,9 @@ void UInteractionComponent::BeginPlay()
 	SetupInputHandler();
 	//Set up for a Detection sphere
 	SetupDetectionSphere();
+=======
+	SetupInputHandler();
+>>>>>>> 7b9075d (bell and interaction updated)
 }
 
 void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -48,10 +52,13 @@ void UInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		InteractionInputHandler->RemoveFromRoot();
 		InteractionInputHandler=nullptr;
 	}
+<<<<<<< HEAD
 }
 
 void UInteractionComponent::DrawDebugForInteractables()
 {
+=======
+>>>>>>> 7b9075d (bell and interaction updated)
 }
 
 bool UInteractionComponent::SetActivationForInteractionComponent(bool bIsActivate)
@@ -156,14 +163,65 @@ bool UInteractionComponent::SetupInputHandler()
 	
 }
 
+bool UInteractionComponent::SetupInputHandler()
+{
+	//start setup
+
+	InteractionInputHandler=NewObject<UInputActionHandler>(this, UInputActionHandler::StaticClass());
+	if (!InteractionInputHandler)
+	{
+		UE_LOG(World_Interaction_Log, Warning,
+			TEXT("UInteractionComponent::SetupInputHandler-> Invalid inputhandler"));
+		return false;
+	}
+	
+	InteractionInputHandler->AddToRoot();
+	InteractionInputHandler->SetShouldTriggerWhenCanceled(true);
+
+	InteractionInputHandler->OnTapped.BindUObject(this, &UInteractionComponent::TriggerInteraction_Tap);
+	InteractionInputHandler->OnHoldStart.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldStart);
+	InteractionInputHandler->OnHoldUpdate_Float.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldUpdate);
+	InteractionInputHandler->OnReleased.BindUObject(this, &UInteractionComponent::TriggerInteraction_HoldRelease);
+
+	return true;
+	
+}
+
 void UInteractionComponent::OnInputInteract_Pressed(const FInputActionValue& Value)
 {
+<<<<<<< HEAD
 	float FloatValue=Value.Get<float>();
 	if (!InteractionInputHandler) return;
 	InteractionInputHandler->OnTriggerPressed(FloatValue);
 }
 
 void UInteractionComponent::OnInputInteract_Completed(const FInputActionValue& Value)
+=======
+
+}
+
+void UInteractionComponent::OnInputInteract_Completed(const FInputActionValue& Value)
+{
+}
+
+void UInteractionComponent::OnInputInteract_Canceled(const FInputActionValue& Value)
+{
+}
+
+void UInteractionComponent::TriggerInteraction_Tap()
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldStart()
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldUpdate(float UpdateValue)
+{
+}
+
+void UInteractionComponent::TriggerInteraction_HoldRelease()
+>>>>>>> 7b9075d (bell and interaction updated)
 {
 	if (!InteractionInputHandler) return;
 	InteractionInputHandler->OnTriggerCompleted();
