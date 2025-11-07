@@ -53,7 +53,7 @@ void AEnemyBaseCharacter::BeginPlay()
 	if (GameStateManager)
 	{
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
-		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 	}
 }
 
@@ -114,7 +114,7 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 // 	
 // }
 
-void AEnemyBaseCharacter::EnemyDead()
+void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
 	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead"));
 
@@ -132,7 +132,19 @@ void AEnemyBaseCharacter::EnemyDead()
 	
 }
 
+void AEnemyBaseCharacter::EnemyDeadByPhaseEnd()
+{
+	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead by phase over"));
 
+	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
+
+	ChangeEnemyState(EEnemyState::EES_Dead);
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		PoolingSubsystem->ReturnToPool(this);
+	}
+}
 
 
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
