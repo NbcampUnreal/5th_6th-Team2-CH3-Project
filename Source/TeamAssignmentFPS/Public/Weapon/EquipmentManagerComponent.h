@@ -38,7 +38,8 @@ protected:
 	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
 	UPROPERTY()
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
-
+	
+	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()

@@ -47,7 +47,7 @@ protected:
 	TObjectPtr<USceneComponent> Muzzle;// location, direction of weapon to be fired
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
+	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -58,9 +58,7 @@ protected:
 	float SpawnInterval = 0.2f;// time game between bulletshoot when it is using rapid fire
 
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	float Damage;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
@@ -122,5 +120,5 @@ protected:
 
 	void SetProjectileInfo();
 
-	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
+	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 };

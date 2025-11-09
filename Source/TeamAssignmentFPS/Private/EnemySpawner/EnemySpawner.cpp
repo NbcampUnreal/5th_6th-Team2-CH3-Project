@@ -118,7 +118,7 @@ AEnemyBaseCharacter* AEnemySpawner::SpawnMonster(TSubclassOf<AActor> MonsterClas
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		AEnemyBaseCharacter* SpawnedEnemy = Cast<AEnemyBaseCharacter>(PoolingSubsystem->SpawnFromPool(MonsterClass, SpawnLocation, FRotator::ZeroRotator));
+		AEnemyBaseCharacter* SpawnedEnemy = Cast<AEnemyBaseCharacter>(PoolingSubsystem->BringFromPoolOrSpawn(MonsterClass, SpawnLocation, FRotator::ZeroRotator));
 		if (!SpawnedEnemy)
 		{
 			UE_LOG(GameState_Log, Error, TEXT("AEnemySpawner::SpawnMonster-> Casting or Bringing from Pool Failed"));
