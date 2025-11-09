@@ -47,7 +47,7 @@ void AProjectileWeaponBase::Tick(float DeltaTime)
 
 void AProjectileWeaponBase::FireWeapon()
 {
-	if (!Projectile)
+	if (!ProjectileClass)
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
 		return;
@@ -77,33 +77,17 @@ void AProjectileWeaponBase::FireWeapon()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 	
-	float FinalDamage = Damage;
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
 		{
-			DamageInfo.DamageAmount = Damage;
 			SpawnedProjectile->SetDamageInfo(DamageInfo);
 		}
 	}
 	
-	// spawning success	
-
-	// SpawnParams.Owner=this;
-	// SpawnParams.Instigator=GetInstigator();
-	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
-	//if (!SpawnedProjectile)
-	//{
-	//	UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
-
-	//	return;
-	//}
-
-
 	// spawning success
 
 	CurrentAmmoCount--;//subtract the ammo count
@@ -152,35 +136,40 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 
 void AProjectileWeaponBase::SetProjectileInfo()
 {
-	DamageInfo.DamageAmount=Damage;
-	DamageInfo.DamageCauser=GetInstigator();//
+	DamageInfo.DamageCauser=GetInstigator();
 }
 
-void AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
 {
+
+	AProjectileBase* SpawnedProjectile=nullptr;
+	
 	if (!bUsePool)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
-		AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
+		SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
+			return nullptr;
 		}
 	}
 	else
 	{
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
-			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
-			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
-			if (SpawnedProjectile)
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+			SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+			if (!SpawnedProjectile)
 			{
-				DamageInfo.DamageAmount = Damage;
-				SpawnedProjectile->SetDamageInfo(DamageInfo);
+				return nullptr;
 			}
 		}
 	}
+	// spawning new or from pool completed
+
+	return SpawnedProjectile;
 }
 

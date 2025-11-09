@@ -186,7 +186,7 @@ void AWeaponBase::FireWeapon()
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 		// SpawnFromPool�� ��ȯ���� �ӽ� ������ ���� �� Cast
-		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
 		{
@@ -262,7 +262,7 @@ void AWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
 			// SpawnFromPool�� ��ȯ���� �ӽ� ������ ���� �� Cast
-			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (SpawnedProjectile)
 			{
