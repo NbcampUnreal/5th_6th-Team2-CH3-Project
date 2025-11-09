@@ -192,6 +192,8 @@ void AWeaponBase::FireWeapon()
 		{
 			DamageInfo.DamageAmount = Damage;
 			SpawnedProjectile->SetDamageInfo(DamageInfo);
+
+			SpawnedProjectile->ActivateProjectileBase();// set activation
 		}
 	}
 	// spawning success	
@@ -219,7 +221,7 @@ void AWeaponBase::ReloadWeapon()
 
 	if (bIsReloading)
 	{
-		UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> Already fire while reloading."));
+		UE_LOG(Weapon_Log, Warning, TEXT("AWeaponBase::ReloadWeapon -> Already reloading."));
 		return;
 	}
 
