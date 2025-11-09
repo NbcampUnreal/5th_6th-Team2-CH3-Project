@@ -66,7 +66,7 @@ void AProjectileBase::BeginPlay()
 		GameStateManager->PhaseOver.AddDynamic(this, &AProjectileBase::DestroyProjectileAfterLifetime);
 	}
 	
-	MovementComponent->SetUpdatedComponent(nullptr);
+	DeactivateProjectileBase();
 }
 
 void AProjectileBase::DestroyProjectile()
@@ -136,22 +136,39 @@ void AProjectileBase::OnProjectileHit(const FHitResult& HitResult, AActor* Other
 			HealthComp->GetDamage_Implementation(TransprotedDamageInfo);
 		}
 	}
+	// put direction value to damage info
+
+	DamageInfo.DamageDirection=MovementComponent->Velocity.GetSafeNormal();// now the projectile has the direction value when hit
+
+
+
+	//---- VFX, SFX ----//
 	
 	if (!ImpactEffect)
 	{
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileBase::OnProjectileHit-> No VFX for hit."));
 		//no valid effect --> add log category for weapon
 	}
-	UGameplayStatics::SpawnEmitterAtLocation(
+	else
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
 		GetWorld(),
 		ImpactEffect,//effect to spawn
 		HitResult.ImpactPoint,//spawn tranformation: locaton
 		HitResult.ImpactNormal.Rotation());//spawn tranformation: rotation
+	}
+	
 
 	if (!ImpactSound)
 	{
 		//no sound effect
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileBase::OnProjectileHit-> No SFX for hit."));
 	}
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+	else
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+	}
+	
 
 	DestroyProjectile();
 }

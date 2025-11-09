@@ -82,17 +82,20 @@ public:
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
 
-	FORCEINLINE void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
+	void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
 
+	//Projectile Pooling
+	virtual void ActivateProjectileBase();
+	virtual void DeactivateProjectileBase();
+
+	
 protected:
 
 	FTimerHandle LifeTimeHandle;
 	void ActivateLifeTimeHandle();
 	void DeactivateLifeTimerHandle();
 	
-	//Projectile Pooling
-	virtual void ActivateProjectileBase();
-	virtual void DeactivateProjectileBase();
+
 	
 private:
 	void ReturnToPool(); 
