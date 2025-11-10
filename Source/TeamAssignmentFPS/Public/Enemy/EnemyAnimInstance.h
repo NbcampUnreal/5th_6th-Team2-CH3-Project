@@ -33,4 +33,17 @@ public:
 private:
 	UFUNCTION()
 	void AnimNotify_SpawnEnd();
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
+	UFUNCTION()
+	void AnimNotify_EndHitReact();
+	UFUNCTION()
+	void AnimNotify_EndDead();
+	UFUNCTION()
+	void AnimNotify_EnableCollision();
+	UFUNCTION()
+	void AnimNotify_DisableCollision();
+	UFUNCTION()
+	void AnimNotify_SpawnProjectile();
+	
 };

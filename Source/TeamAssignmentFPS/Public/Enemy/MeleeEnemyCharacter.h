@@ -6,9 +6,6 @@
 #include "Enemy/EnemyBaseCharacter.h"
 #include "MeleeEnemyCharacter.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class TEAMASSIGNMENTFPS_API AMeleeEnemyCharacter : public AEnemyBaseCharacter
 {
@@ -30,8 +27,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCapsuleComponent> AttackCollision;
-
-
 	UFUNCTION()
 	void OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
