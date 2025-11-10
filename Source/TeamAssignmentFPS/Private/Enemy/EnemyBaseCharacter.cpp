@@ -509,6 +509,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		bool WasDestoryed;
@@ -520,7 +521,14 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 >>>>>>> d74bc04 (fix)
+<<<<<<< HEAD
 >>>>>>> 7d3e656 (11/10 enemybasecharacter)
+=======
+=======
+	
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+>>>>>>> abfb1f3 (update)
+>>>>>>> 035f9ef (11/10)
 		{
 			bool WasDestoryed;
 			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
@@ -537,6 +545,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 		}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	}
 
 	FTimerHandle TimerHandle;
@@ -546,6 +555,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 =======
 =======
 >>>>>>> 7d3e656 (11/10 enemybasecharacter)
+=======
+>>>>>>> 035f9ef (11/10)
 
 		// if if worked
 
@@ -562,6 +573,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 >>>>>>> d74bc04 (fix)
+=======
+>>>>>>> abfb1f3 (update)
 	}
 
 	FTimerHandle TimerHandle;
