@@ -41,7 +41,6 @@ void AEnemyAIController::DefaultSettingBlackBoard()
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Player);
 		//BlackboardComp->SetValueAsEnum(TEXT("EnemyState"), static_cast<uint8>(Enemy->GetEnemyState()));
 		BlackboardComp->SetValueAsBool(TEXT("CanChasingTarget"), true);
-		BlackboardComp->SetValueAsBool(TEXT("CanAttackRotate"), false);
 		BlackboardComp->SetValueAsFloat(TEXT("EnemyAttackRange"), Enemy->GetEnemyData().Range);
 	}
 
@@ -68,19 +67,12 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 	}
 }
 
-void AEnemyAIController::SetCanAttackRotate(bool b)
-{
-	if (BlackboardComp)
-	{
-		BlackboardComp->SetValueAsBool(TEXT("CanAttackRotate"), b);
-	}
-}
-
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
 	//StartBehaviorTree();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -103,6 +95,8 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 =======
 =======
 >>>>>>> 4c49a91 (11/11)
+=======
+>>>>>>> d54ae87 (no message)
 	//DefaultSettingBlackBoard();
 =======
 	DefaultSettingBlackBoard();
@@ -113,7 +107,13 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 =======
 	//DefaultSettingBlackBoard();
 >>>>>>> 078c989 (11/10)
+<<<<<<< HEAD
 >>>>>>> 4c49a91 (11/11)
+=======
+=======
+	DefaultSettingBlackBoard();
+>>>>>>> 8c88e08 (11/10)
+>>>>>>> d54ae87 (no message)
 }
 
 void AEnemyAIController::StartBehaviorTree()
@@ -121,7 +121,7 @@ void AEnemyAIController::StartBehaviorTree()
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
-		//UE_LOG(Enemy_Log, Warning, TEXT("StartBehaviorTree"));
+
 	}
 }
 
@@ -141,6 +141,4 @@ void AEnemyAIController::StopBehaviorTree()
 		Brain->StopLogic(TEXT("Dead"));
 	}
 }
-
-
 

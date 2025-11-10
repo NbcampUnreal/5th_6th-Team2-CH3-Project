@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pooling/PoolingSubsystem.h"
-#include "Enemy/EnemyAIController.h"
 //#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
@@ -15,8 +14,11 @@ ARangeEnemyCharacter::ARangeEnemyCharacter()
 	ProjectileSpawn = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Location"));
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+>>>>>>> d54ae87 (no message)
 	ProjectileSpawn->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 }
 
@@ -91,7 +93,11 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 >>>>>>> 4c49a91 (11/11)
 =======
+=======
+	ProjectileSpawn->SetupAttachment(RootComponent);
+>>>>>>> 8c88e08 (11/10)
 	
+<<<<<<< HEAD
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
@@ -135,17 +141,20 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> 4c49a91 (11/11)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
+=======
+	EnemyData.Range = 1000.f;
+>>>>>>> parent of b8ccb7b (feat enemy anim)
 
-	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
-	{
-		AIController->SetCanAttackRotate(false);
-	}
 }
 
 void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
+	if (!Projectile || !ProjectileSpawn)
+	{
+		return;
+	}
 	
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -154,6 +163,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 83cc9c5 (delete)
 =======
@@ -162,6 +172,15 @@ void ARangeEnemyCharacter::EnemyAttack()
 =======
 <<<<<<< HEAD
 >>>>>>> 4c49a91 (11/11)
+=======
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 83cc9c5 (delete)
+>>>>>>> 8c88e08 (11/10)
+>>>>>>> d54ae87 (no message)
 	LookAtPlayer();
 	//GetWorld()->SpawnActor<AActor>(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 
@@ -170,12 +189,16 @@ void ARangeEnemyCharacter::EnemyAttack()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 4c49a91 (11/11)
+=======
+>>>>>>> d54ae87 (no message)
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
@@ -194,6 +217,15 @@ void ARangeEnemyCharacter::EnemyAttack()
 =======
 >>>>>>> 078c989 (11/10)
 >>>>>>> 4c49a91 (11/11)
+=======
+>>>>>>> 078c989 (11/10)
+=======
+=======
+		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+	}
+>>>>>>> 83cc9c5 (delete)
+>>>>>>> 8c88e08 (11/10)
+>>>>>>> d54ae87 (no message)
 	
 }
 
