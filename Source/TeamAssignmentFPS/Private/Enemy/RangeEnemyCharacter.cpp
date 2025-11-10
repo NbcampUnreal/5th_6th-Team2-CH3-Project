@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pooling/PoolingSubsystem.h"
+#include "Enemy/EnemyAIController.h"
 //#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
@@ -15,10 +16,15 @@ ARangeEnemyCharacter::ARangeEnemyCharacter()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 652a79a (Revert "delete")
 =======
 >>>>>>> d54ae87 (no message)
+=======
+=======
+>>>>>>> 4237dcd (11/10)
+>>>>>>> 2bf2f5b (no message)
 	ProjectileSpawn->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 }
 
@@ -37,8 +43,11 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 4c49a91 (11/11)
+=======
+>>>>>>> 2bf2f5b (no message)
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
@@ -96,8 +105,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 	ProjectileSpawn->SetupAttachment(RootComponent);
 >>>>>>> 8c88e08 (11/10)
+=======
+>>>>>>> 4237dcd (11/10)
 	
-<<<<<<< HEAD
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
@@ -141,21 +151,19 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> 4c49a91 (11/11)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
-=======
-	EnemyData.Range = 1000.f;
->>>>>>> parent of b8ccb7b (feat enemy anim)
 
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->SetCanAttackRotate(false);
+	}
 }
 
 void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
-	if (!Projectile || !ProjectileSpawn)
-	{
-		return;
-	}
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -173,6 +181,8 @@ void ARangeEnemyCharacter::EnemyAttack()
 <<<<<<< HEAD
 >>>>>>> 4c49a91 (11/11)
 =======
+=======
+>>>>>>> 2bf2f5b (no message)
 =======
 <<<<<<< HEAD
 =======
@@ -224,8 +234,16 @@ void ARangeEnemyCharacter::EnemyAttack()
 		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
 >>>>>>> 83cc9c5 (delete)
+<<<<<<< HEAD
 >>>>>>> 8c88e08 (11/10)
+<<<<<<< HEAD
 >>>>>>> d54ae87 (no message)
+=======
+=======
+=======
+>>>>>>> 652a79a (Revert "delete")
+>>>>>>> 4237dcd (11/10)
+>>>>>>> 2bf2f5b (no message)
 	
 }
 
