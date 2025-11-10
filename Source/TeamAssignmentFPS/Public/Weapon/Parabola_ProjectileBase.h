@@ -39,6 +39,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void UpdateParabolaMovement(float DeltaTime);
 
+	//	Getter
+	void GetStartAndEndVector(FVector& Start, FVector& End) const {Start=StartLocation; End=TargetLocation;}
+	float GetElapsedTime() const {return ElapsedTime;}
+
+	//	Setter
+	void SetStartAndEndLocation(const FVector& Start, const FVector& End) {StartLocation=Start, TargetLocation=End;}
+	void SetMaxHeightForParabola(float NewMaxHeight) {MaxHeight = NewMaxHeight;};
 	
 	virtual void ActivateProjectileBase() override;
 	virtual void DeactivateProjectileBase() override;
