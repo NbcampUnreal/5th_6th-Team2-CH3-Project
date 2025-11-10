@@ -15,5 +15,6 @@ EBTNodeResult::Type UBTTask_EnemyMoveTo::ExecuteTask(UBehaviorTreeComponent& Own
 	float EnemyRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(EnemyAttackRange.SelectedKeyName);
 
 	AcceptableRadius = EnemyRange;
+
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }

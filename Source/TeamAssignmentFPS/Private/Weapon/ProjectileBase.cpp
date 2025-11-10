@@ -132,7 +132,6 @@ void AProjectileBase::OnProjectileHit(const FHitResult& HitResult, AActor* Other
 			// Fill in the DamageInfo
 			FDamageInfo TransprotedDamageInfo = DamageInfo;
 			TransprotedDamageInfo.DamageCauser =  this;
-			TransprotedDamageInfo.DamageDirection = GetVelocity().GetSafeNormal();
 			
 			HealthComp->GetDamage_Implementation(TransprotedDamageInfo);
 		}

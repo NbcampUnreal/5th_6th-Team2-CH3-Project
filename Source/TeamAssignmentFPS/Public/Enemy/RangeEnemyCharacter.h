@@ -16,10 +16,9 @@ class TEAMASSIGNMENTFPS_API ARangeEnemyCharacter : public AEnemyBaseCharacter
 public:
 	ARangeEnemyCharacter();
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<USceneComponent> ProjectileSpawn;
-
-	void SpawnProjectile();
+	
 protected:
 	virtual void EnemyAttack() override;
 	
