@@ -9,6 +9,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 7568c9b (weapon updated)
@@ -27,12 +28,19 @@
 >>>>>>> cda4565 (11/11)
 =======
 =======
+>>>>>>> 29523ae (no message)
+=======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> ca434e8 (no message)
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -44,10 +52,13 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 
 
 =======
@@ -76,7 +87,14 @@
 #include "Debug/UELOGCategories.h"
 #include "Pooling/PoolingSubsystem.h"
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+
+
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -136,10 +154,13 @@ void AProjectileWeaponBase::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 
 	
 	//Set the value
@@ -179,7 +200,21 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 	
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+
+	// Set the owner
+	AActor* OwnerActor=GetOwner();
+	WeaponOwner=Cast<ACharacter>(OwnerActor);
+	if (!WeaponOwner)
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
+	}
+	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 }
 
 // Called every frame
@@ -339,8 +374,10 @@ void AProjectileWeaponBase::FireWeapon()
 			DamageInfo.DamageAmount = Damage;
 =======
 
-	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
+	if (SpawnedProjectile)
 	{
+<<<<<<< HEAD
 		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
@@ -377,7 +414,16 @@ void AProjectileWeaponBase::FireWeapon()
 
 	CurrentAmmoCount--;//subtract the ammo count
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+		SpawnedProjectile->SetDamageInfo(DamageInfo);
+	}
+
+	--CurrentAmmoCount;
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 	PlayMuzzleEffect();
 }
 
@@ -470,8 +516,11 @@ void AProjectileWeaponBase::SetProjectileInfo()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 
 =======
 void AProjectileWeaponBase::SetProjectileInfo()
@@ -594,6 +643,7 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 
@@ -606,4 +656,10 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 =======
 >>>>>>> ea6a2be (11/10)
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> ea6a2be (11/10)
+=======
+
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 

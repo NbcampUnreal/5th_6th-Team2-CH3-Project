@@ -14,10 +14,13 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -71,12 +74,27 @@ class AProjectileBase;
 >>>>>>> ca434e8 (no message)
 =======
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+#include "Pooling/PoolingSubsystem.h"
+#include "Weapon/ProjectileBase.h"
+#include "Debug/UELOGCategories.h"
+#include "Anim/AnimationPair.h"
+
+#include "ProjectileWeaponBase.generated.h"
+
+
+
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -101,12 +119,19 @@ class AMyCharacter;
 >>>>>>> cda4565 (11/11)
 =======
 =======
+>>>>>>> 29523ae (no message)
+=======
 class AMyCharacter;
 >>>>>>> ca434e8 (no message)
 =======
 class AMyCharacter;
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 
 
 UCLASS()
@@ -132,6 +157,7 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -148,6 +174,8 @@ protected:
 =======
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -158,7 +186,13 @@ protected:
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -273,16 +307,23 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> 29523ae (no message)
 
 	
 =======
 
 	TMap<AActor*/*Owner*/, TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/>> FireAnimMontages;// for weapon, character and many more
+<<<<<<< HEAD
 >>>>>>> a8cc1bd (rebase update)
+=======
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 	// the anim pair is for playing animation on same trigger
 	// ex. fire weapon-> animations are required for player character's fire animation, weapon's recoil animation
 	//or weapon reload -> player reload weapon, weapon being reloaded
@@ -290,6 +331,7 @@ protected:
 
 
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -302,13 +344,20 @@ protected:
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 =======
+>>>>>>> 29523ae (no message)
+=======
 >>>>>>> ca434e8 (no message)
 <<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
 =======
 =======
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -501,7 +550,65 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 =======
 	void SetProjectileInfo();
 
+<<<<<<< HEAD
 	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+	// use template for different projectile subclass
+	template<typename T_ProjectileClass=AProjectileBase>// base as default
+	T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+	{
+		if (!ProjectileClass)
+		{
+			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile-> Projectile Class is null"));
+			return nullptr;
+		}
+		
+		// use this to prevent error
+		if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
+		{
+			UE_LOG(Weapon_Log, Error,
+				TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
+				*T_ProjectileClass::StaticClass()->GetName());
+			return nullptr;
+		}
+	
+		
+		T_ProjectileClass* SpawnedProjectile=nullptr;
+	
+		if (!bUsePool)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+			SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+			if (!SpawnedProjectile)
+			{
+				// spawn failed
+				return nullptr;
+			}
+		}
+		else
+		{
+			if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+			{
+				UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+				SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
+				if (!SpawnedProjectile)
+				{
+					return nullptr;
+				}
+			
+				SpawnedProjectile-> ActivateProjectileBase();//reactivate the projectile
+			}
+		}
+		// spawning new or from pool completed
+
+		return SpawnedProjectile;
+	}
+>>>>>>> 616ab73 (11/10)
+>>>>>>> 29523ae (no message)
 };
