@@ -346,6 +346,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> d74bc04 (fix)
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+<<<<<<< HEAD
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
@@ -417,6 +418,10 @@ void AEnemyBaseCharacter::EnemyDestroy()
 	
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 >>>>>>> abfb1f3 (update)
+=======
+	
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+>>>>>>> abfb1f3 (update)
 		{
 			bool WasDestoryed;
 			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
@@ -431,6 +436,7 @@ void AEnemyBaseCharacter::EnemyDestroy()
 			UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
 			AIController->StopBehaviorTree();
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -449,6 +455,8 @@ void AEnemyBaseCharacter::EnemyDestroy()
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 >>>>>>> d74bc04 (fix)
+=======
+>>>>>>> abfb1f3 (update)
 =======
 >>>>>>> abfb1f3 (update)
 	}

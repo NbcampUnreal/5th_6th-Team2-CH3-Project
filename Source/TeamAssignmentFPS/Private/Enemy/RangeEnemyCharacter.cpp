@@ -65,6 +65,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+<<<<<<< HEAD
 >>>>>>> abfb1f3 (update)
 =======
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
@@ -98,6 +99,8 @@ void ARangeEnemyCharacter::SpawnProjectile()
 			//error
 		}
 >>>>>>> f79331c (weapon updated)
+=======
+>>>>>>> abfb1f3 (update)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 
