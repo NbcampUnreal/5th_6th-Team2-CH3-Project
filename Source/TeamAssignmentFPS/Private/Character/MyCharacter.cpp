@@ -122,7 +122,7 @@ void AMyCharacter::Tick(float DeltaTime)
 	}
 
 	//temp rotaion without state case
-	RotateTowardTarget(DeltaTime);
+	//RotateTowardTarget(DeltaTime);
 	//temp with simple trigger
 
 	//evaluate what movement state character has right now
@@ -175,6 +175,7 @@ void AMyCharacter::RotateTowardTarget(float Deltatime)
 		UE_LOG(Character_Log, Error, TEXT("AMyCharacter::RotateTowardTarget-> lock on comp invalid"));
 		return;
 	}
+	
 	
 	FVector CursorLocation;
 	if (!LockonComp->GetDeprojectedCursorLocation(CursorLocation))
