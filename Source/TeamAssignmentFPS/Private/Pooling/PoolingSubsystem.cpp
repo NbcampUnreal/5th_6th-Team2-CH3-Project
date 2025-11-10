@@ -5,25 +5,10 @@
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Pooling/PoolingInterface.h"
-#include "Debug/UELOGCategories.h"
 
-bool UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize)
+void UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize)
 {
-	if (!PoolClass)
-	{
-		// error, invalid class
-		return false;
-	}
-	
 	FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
-
-	//Check if the world is valid
-	if (!GetWorld())
-	{
-		//error, cannot get world
-		return false;
-	}
-	
 	for (int32 i = 0; i < MaxSize; i++)
 	{
 		FActorSpawnParameters SpawnParams;
@@ -39,137 +24,75 @@ bool UPoolingSubsystem::InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxS
 		if (NewActor && PoolClass.Get()->ImplementsInterface(UPoolingInterface::StaticClass()))
 		{
 			IPoolingInterface::Execute_OnReturnToPool(NewActor);
-			
-			//deactivate basics
 			NewActor->SetActorHiddenInGame(true);
 			NewActor->SetActorEnableCollision(false);
-			NewActor->SetActorTickEnabled(false);
-			
 			ObjectPool.Add(NewActor);
 		}
 	}
 	
-	return true;
 	//Pool 내부를 Maxsize만큼 반복해서 채우는 함수 
 }
 
 
 
-AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
+AActor* UPoolingSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
 {
+	return GetActorFromPool(PoolClass, Location, Rotation);
+}
 
 
-	AActor* PooledActor=GetActorFromPool(PoolClass);
-
-	if (PooledActor)// didnt found valid actor from the pool. just spawn the actor
+AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation)
+{
+	FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
+	if (!ObjectPool.IsEmpty())
 	{
-		//re activate the pooled actor
-		PooledActor->SetActorLocationAndRotation(Location, Rotation);
-		PooledActor->SetActorHiddenInGame(false);
-		PooledActor->SetActorEnableCollision(true);
-		PooledActor->SetActorTickEnabled(true);
+		AActor* Actor = ObjectPool.Pop();
+		if (Actor)
+		{
+			Actor->SetActorLocationAndRotation(Location, Rotation);
+			Actor->SetActorHiddenInGame(false);
+			Actor->SetActorEnableCollision(true);
+			
+			IPoolingInterface::Execute_OnSpawnFromPool(Actor);
+			return Actor;
+		}
+	}
 
-		IPoolingInterface::Execute_OnSpawnFromPool(PooledActor);
-		return PooledActor;
-	}
-	// if no valid actor from pool was found
-	// spawn it
-	UE_LOG(Pooling_Log, Warning, TEXT("UPoolingSubsystem::SpawnFromPool->Invalid Actor for PoolSystem, Try Spawning"));
-	
-	if (!GetWorld())
-	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::SpawnFromPool-> Failed to get World"));
-		return nullptr;
-	}
-	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AActor* NewActor = GetWorld()->SpawnActor<AActor>(PoolClass, Location, Rotation, SpawnParams);
+	if (NewActor && PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
+	{
+		IPoolingInterface::Execute_OnSpawnFromPool(NewActor);
+	}
+	return NewActor;
 
-	AActor* NewSpawnedActor = GetWorld()->SpawnActor<AActor>(PoolClass, Location, Rotation, SpawnParams);
-	if (NewSpawnedActor)
-	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::SpawnFromPool-> Failed to spawn the actor"));
-		return nullptr;
-	}
-	if (NewSpawnedActor && PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
-	{
-		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);// why?
-	}
-	return NewSpawnedActor;
+	
+	// pool이 비어있을 경우 Pool 내부의 객체를 하나 지우고 이를 화면에 띄운다.
+	// 비어있다면 객체를 새로 생성.
 }
 
 
-AActor* UPoolingSubsystem::GetActorFromPool(TSubclassOf<AActor> PoolClass)
-{
-
-	if (!PoolClass)
-	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::GetActorFromPool-> Invalid PoolClass"));
-		return nullptr;
-	}
-	if (!GetWorld())
-	{
-		//Error, cannot get world
-		return nullptr;
-	}
-	
-	FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
-	AActor* PooledActor=nullptr;//empty storage for aactor
-	
-	if (ObjectPool.IsEmpty())// if there is array for actor class
-	{
-		return nullptr;// no actor from the pool
-	}
-	
-	AActor* Actor = ObjectPool.Pop();
-	if (!Actor)
-	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::GetActorFromPool-> Actor from the Pool Array is nullptr"));
-		// when the actor from the pool is invalid-> pooling management error
-		return nullptr;
-	}
-	
-	if (!Actor->GetClass()->ImplementsInterface(UPoolingInterface::StaticClass()))// if pooled actor has no pool interface
-	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::GetActorFromPool-> Actor from the Pool Array has no pool interface"));
-		return nullptr;
-	}
-
-	IPoolingInterface::Execute_OnSpawnFromPool(Actor);
-	return Actor;
-}
-
-
-bool UPoolingSubsystem::ReturnToPoolOrDestroy(AActor* Poolable, bool & bWasDestroyed)
+void UPoolingSubsystem::ReturnToPool(AActor* Poolable)
 {
 	if (!Poolable)
 	{
-		//Error, invalid Actor
-		bWasDestroyed=false;
-		return false;
+		return;
 	}
 
 	UClass* ActorClass = Poolable->GetClass();
 
-	if (!ActorClass->ImplementsInterface(UPoolingInterface::StaticClass()))// if the actor doesnt have interface
+	if (ActorClass->ImplementsInterface(UPoolingInterface::StaticClass()))
+	{
+		IPoolingInterface::Execute_OnReturnToPool(Poolable);
+		Poolable->SetActorHiddenInGame(true);
+		Poolable->SetActorEnableCollision(false);
+		FPoolArray& ObjectPool = ObjectPools.FindOrAdd(ActorClass);
+		ObjectPool.Add(Poolable);
+	}
+	else
 	{
 		Poolable->Destroy();
-		//Warning, Actors does not have pooling interface. just delete
-		bWasDestroyed=true;
-		return false;
 	}
-
-	// if the actor has the interface
-	IPoolingInterface::Execute_OnReturnToPool(Poolable);
-		
-	Poolable->SetActorHiddenInGame(true);
-	Poolable->SetActorEnableCollision(false);
-	Poolable->SetActorTickEnabled(false);
-		
-	FPoolArray& ObjectPool = ObjectPools.FindOrAdd(ActorClass); // add to preexisting, or add new pool array/
-	ObjectPool.Add(Poolable);
-	
-	bWasDestroyed=false;
-	return true;
 	
 }

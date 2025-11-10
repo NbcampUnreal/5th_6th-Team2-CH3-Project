@@ -66,9 +66,7 @@ protected:
 	
 	UFUNCTION()
 	void DestroyProjectile();
-	UFUNCTION()
 	void DestroyProjectileAfterLifetime();
-	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -77,27 +75,17 @@ public:
 	void HandleProjectileHit(UPrimitiveComponent* HitComp,AActor* OtherActor,UPrimitiveComponent* OtherComp,FVector NormalImpulse,const FHitResult& Hit);
 	
 	virtual void OnProjectileHit(const FHitResult& HitResult, AActor* OtherActor);// when the projectile collide
-
-	// Pooling Interface Implementation
+	
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
 
-	void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
+	FORCEINLINE void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
 
-	//Projectile Pooling
-	virtual void ActivateProjectileBase();
-	virtual void DeactivateProjectileBase();
-
-	
-protected:
+private:
 
 	FTimerHandle LifeTimeHandle;
-	void ActivateLifeTimeHandle();
-	void DeactivateLifeTimerHandle();
-	
-
-	
-private:
 	void ReturnToPool(); 
-
+	
+	void ActivateLifeTimeHandle();
+	void DeactivateTimerHandle();
 };

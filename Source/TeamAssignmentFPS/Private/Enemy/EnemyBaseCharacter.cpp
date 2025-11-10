@@ -190,6 +190,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 		bool WasDestoryed;
 		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
 		{
@@ -203,6 +204,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 		FString LogText=WasDestoryed? TEXT("Destoryed"):TEXT("Returned to pool");
 		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
 =======
+=======
+>>>>>>> cccbfc2 (Revert "murge into seo")
 		AIController->StopBehaviorTree();
 >>>>>>> b8ccb7b (feat enemy anim)
 	}
@@ -222,16 +225,7 @@ void AEnemyBaseCharacter::EnemyDestroy()
 	ChangeEnemyState(EEnemyState::EES_None);
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		bool WasDestoryed;
-		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
-		{
-			//Error, Failed to Return Enemy actor or destory it.
-			return;
-		}
-
-		FString EnemyName=this->GetName();
-		FString LogText=WasDestoryed? TEXT("Destoryed"):TEXT("Returned to pool");
-		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
+		PoolingSubsystem->ReturnToPool(this);
 	}
 }
 
