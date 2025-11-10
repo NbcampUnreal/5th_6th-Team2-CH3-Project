@@ -17,286 +17,200 @@ class UEquipmentSlot;
 class UInputActionHandler;
 struct FInputActionValue;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TEAMASSIGNMENTFPS_API UEquipmentManagerComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UEquipmentManagerComponent();
-	
-protected:
-	// confirmations
-
-	EEquipmentType CurrentEquipmentType=EEquipmentType::None;// default = none
-	
-	// Inventory
-	UPROPERTY()
-	UInventoryManagerComponent* InventoryComponent;// get this from player state
-	UPROPERTY()
-	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
-	UPROPERTY()
-	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0c7c848 (no message)
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> f467944 (11/11)
-=======
->>>>>>> 842b367 (11/11)
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Temp Storage for fixed weapons and items
-	UPROPERTY()
-	TMap<uint8, AActor*> TempWeaponQuickSlot;
-	uint8 CurrentWeaponSlotIndex;
-	UPROPERTY()
-	TMap<uint8, AActor*> TempItemQuickSlot;
-	uint8 CurrentItemSlotIndex;
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-=======
-<<<<<<< HEAD
->>>>>>> cccbfc2 (Revert "murge into seo")
-=======
-	
-	
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
->>>>>>> 167a4bd (11/10)
-<<<<<<< HEAD
->>>>>>> 842b367 (11/11)
-=======
-=======
-	
-	
->>>>>>> ea6a2be (11/10)
->>>>>>> 0c7c848 (no message)
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Temp Storage for fixed weapons and items
-	UPROPERTY()
-	TMap<uint8, AActor*> TempWeaponQuickSlot;
-	uint8 CurrentWeaponSlotIndex;
-	UPROPERTY()
-	TMap<uint8, AActor*> TempItemQuickSlot;
-	uint8 CurrentItemSlotIndex;
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
-	AActor* CurrentEquipment;// the weapon or item that player character is currently holding
-
-	
-	// Placement
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Placement")
-	USceneComponent* Placement;// the Scene component of where to attach equipment
-
-private:
-	// quick slot switching
-	bool bIsHoldingMouseRightButton;
-	// this is for switching item quick slot.(hold rightmousebutton+ mouse wheel scroll=switch to next item)
-	// if not, switch weapon
-	
-	/*//==== MouseWheel Tracking ====//
-	// mouse wheele update ( to make it only work for once)
-	FTimerHandle ScrollEndTimerHandle;// for setting timer
-	
-	float ScrollEndDelay=0.2f;
-
-	float PreviousScrollSign=0.f;//+ or - or 0
-	bool bIsScrolling=false;
-	bool bDidScrollStarted=false;
-	
-	//for tracking holding to determine tap or hold
-	float CurrentHoldingTime=0.0f;
-	bool bDidHoldStarted=false;*/
-
-	UPROPERTY()
-	UInputActionHandler* EquipmentTriggerHelper;
-	
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;// for deleting the helper 
-	//void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
-
-private:
-	// control helper
-	void OnRightMouseButtonPressed() {bIsHoldingMouseRightButton=true;}
-	void OnRightMouseButtonReleased() {bIsHoldingMouseRightButton=false;}
-	// use this to choose which quick slot to swtich
-	
-	//==== Inventory ====//
-	void CacheInventoryComponent();
-	
-	void SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue);
-	// helper function for sequential switching
-	void GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight);
-
-	//helper for overall
-	bool DoesTypeOfQuickSlotExist(EEquipmentType Type) const;
-	bool SwitchCurrentEquipmentByType(EEquipmentType Type);
-	bool AddQuickSlot(EEquipmentType Type, const FInitializeParams& Params);
-	void ActivateOrDeactivateActor(AActor* Actor, bool bActivate);
-	
-	// this will handle visibility, Attachment setting and triggering equipment interface
-	void EquipOrUnequip(AActor* EquipmentActor, bool bIsEquip);
-	
-	UEquipmentQuickSlots* GetQuickSlotByType(EEquipmentType Type) const;
-	
 public:
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Temp Functions
+    // Sets default values for this component's properties
+    UEquipmentManagerComponent();
+
+protected:
+    // confirmations
+
+    EEquipmentType CurrentEquipmentType = EEquipmentType::None;// default = none
+
+    // Inventory
+    UPROPERTY()
+    UInventoryManagerComponent* InventoryComponent;// get this from player state
+    UPROPERTY()
+    TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
+    UPROPERTY()
+    TObjectPtr<UItemQuickSlots> ItemQuickSlot;
 
 
-	UFUNCTION(BlueprintCallable)
-	bool PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment);
-	
-	void ActivateOrDeactivate(bool bIsEquip, AActor* Equipment);// activate, or deactivate
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Temp Storage for fixed weapons and items
+    UPROPERTY()
+    TMap<uint8, AActor*> TempWeaponQuickSlot;
+    uint8 CurrentWeaponSlotIndex;
+    UPROPERTY()
+    TMap<uint8, AActor*> TempItemQuickSlot;
+    uint8 CurrentItemSlotIndex;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void EquipCurrentEquipment(AActor* NewEquipment);
-	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
-=======
->>>>>>> 6bfcd5b (update)
-=======
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
->>>>>>> 2966a65 (equipment updated)
-=======
->>>>>>> cccbfc2 (Revert "murge into seo")
-=======
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-=======
->>>>>>> 8442e60 (11/11)
-=======
->>>>>>> 842b367 (11/11)
-=======
->>>>>>> 0c7c848 (no message)
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
-=======
->>>>>>> fdbc962 (no message)
-<<<<<<< HEAD
->>>>>>> f467944 (11/11)
-=======
-=======
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
->>>>>>> a09f308 (no message)
-<<<<<<< HEAD
->>>>>>> 8442e60 (11/11)
-=======
-=======
->>>>>>> 167a4bd (11/10)
-<<<<<<< HEAD
->>>>>>> 842b367 (11/11)
-=======
-=======
-	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
-
->>>>>>> ea6a2be (11/10)
->>>>>>> 0c7c848 (no message)
-	
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+    AActor* CurrentEquipment;// the weapon or item that player character is currently holding
 
 
+    // Placement
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Placement")
+    USceneComponent* Placement;// the Scene component of where to attach equipment
 
-	
-	///	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Temp For Weapon Test
-	UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
-	void SetCurrentEquipment(AActor* Equipment) {CurrentEquipment=Equipment;}
+private:
+    // quick slot switching
+    bool bIsHoldingMouseRightButton;
+    // this is for switching item quick slot.(hold rightmousebutton+ mouse wheel scroll=switch to next item)
+    // if not, switch weapon
 
-	UFUNCTION(BlueprintCallable, Category="Equipment")// this is to populate the quickslots from the inventory
-	bool AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type);
-	
-	UFUNCTION(BlueprintCallable, Category="Equipment")
-	void SetCurrentEquipmentPlacement(USceneComponent* NewPlacement);// this will attatch the current weapon or item to the placementcomponent
-	UFUNCTION()
-	void SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
-	
-	
-	//==== Number Key Input Binding =====//
-	UFUNCTION()
-	void SwitchWeapon_PC_NumbKey1() { SwitchWeapon_PC_NumbKeys(1);}
-	UFUNCTION()
-	void SwitchWeapon_PC_NumbKey2() { SwitchWeapon_PC_NumbKeys(2);}
-	UFUNCTION()
-	void SwitchWeapon_PC_NumbLey3() { SwitchWeapon_PC_NumbKeys(3);}
-	UFUNCTION()
-	void SwitchWeapon_PC_NumbLey4() { SwitchWeapon_PC_NumbKeys(4);}
-	UFUNCTION()
-	void SwitchWeapon_PC_NumbLey5() { SwitchWeapon_PC_NumbKeys(5);}
-	//----- So, the weapon quick slot max count is 5
-	
-	//===== GamePad Swtich =====//
-	UFUNCTION()
-	void SwitchWeapon_GP(const FInputActionValue& Value);
-	/*UFUNCTION()
-	void SwtichWeapon_GP_Next(const FInputActionValue& Value)// gamepad right face button
-	{ GetNextEquipmentSlot(EEquipmentType::Weapon, true);}
-	UFUNCTION()
-	void SwtichWeapon_GP_Previous(const FInputActionValue& Value)// gamepad Left face button
-	{ GetNextEquipmentSlot(EEquipmentType::Weapon, false);}*/
-	UFUNCTION()
-	void SwtichItem_GP_Next(const FInputActionValue& Value)
-	{ GetNextEquipmentSlot(EEquipmentType::Item, true);}
-	UFUNCTION()
-	void SwtichItem_GP_Previous(const FInputActionValue& Value)
-	{ GetNextEquipmentSlot(EEquipmentType::Item, false);}
-	
-	//---- Weapn and Item Interaction ----//----------------------------------------------------------------------------
+    /*//==== MouseWheel Tracking ====//
+    // mouse wheele update ( to make it only work for once)
+    FTimerHandle ScrollEndTimerHandle;// for setting timer
 
-	//Actually binded functions
+    float ScrollEndDelay=0.2f;
 
-	//-- basic input reactions
-	UFUNCTION()
-	void TriggerInput_Reload(const FInputActionValue& Value);
+    float PreviousScrollSign=0.f;//+ or - or 0
+    bool bIsScrolling=false;
+    bool bDidScrollStarted=false;
+
+    //for tracking holding to determine tap or hold
+    float CurrentHoldingTime=0.0f;
+    bool bDidHoldStarted=false;*/
+
+    UPROPERTY()
+    UInputActionHandler* EquipmentTriggerHelper;
+
+protected:
+    // Called when the game starts
+    virtual void BeginPlay() override;
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;// for deleting the helper 
+    //void SetPlacementComponent(USceneComponent* NewPlacement);// temporally put on public for testing
+
+private:
+    // control helper
+    void OnRightMouseButtonPressed() { bIsHoldingMouseRightButton = true; }
+    void OnRightMouseButtonReleased() { bIsHoldingMouseRightButton = false; }
+    // use this to choose which quick slot to swtich
+
+    //==== Inventory ====//
+    void CacheInventoryComponent();
+
+    void SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue);
+    // helper function for sequential switching
+    void GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight);
+
+    //helper for overall
+    bool DoesTypeOfQuickSlotExist(EEquipmentType Type) const;
+    bool SwitchCurrentEquipmentByType(EEquipmentType Type);
+    bool AddQuickSlot(EEquipmentType Type, const FInitializeParams& Params);
+    void ActivateOrDeactivateActor(AActor* Actor, bool bActivate);
+
+    // this will handle visibility, Attachment setting and triggering equipment interface
+    void EquipOrUnequip(AActor* EquipmentActor, bool bIsEquip);
+
+    UEquipmentQuickSlots* GetQuickSlotByType(EEquipmentType Type) const;
+
+public:
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Temp Functions
 
 
-	//==== Trigger Input Helper
-	UFUNCTION()
-	void SetupTriggerHelper();
-	
-	UFUNCTION()
-	void TriggerInput_Start(const FInputActionValue& Value);
-	UFUNCTION()
-	void TriggerInput_Trigger(const FInputActionValue& Value);
-	UFUNCTION()
-	void TriggerInput_Complete(const FInputActionValue& Value);
-	/*UFUNCTION()
-	void TriggerInput_Ongoing(const FInputActionValue& Value);*/
-	UFUNCTION()
-	void TriggerInput_Canceled(const FInputActionValue& Value);
+    UFUNCTION(BlueprintCallable)
+    bool PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment);
 
-	// Executing Interface here
-	UFUNCTION()
-	void TriggerTap();
-	UFUNCTION()
-	void TriggerHoldStart();
-	UFUNCTION()
-	void TriggerHoldUpdate(float Value);
-	UFUNCTION()
-	void TriggerReleased();
-//----------------------------------------------------------------------------------------------------------------------
+    void ActivateOrDeactivate(bool bIsEquip, AActor* Equipment);// activate, or deactivate
+
+    void EquipCurrentEquipment(AActor* NewEquipment);
+    void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
+
+    void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
+
+
+
+
+
+
+    ///    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Temp For Weapon Test
+    UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
+        void SetCurrentEquipment(AActor* Equipment) { CurrentEquipment = Equipment; }
+
+    UFUNCTION(BlueprintCallable, Category = "Equipment")// this is to populate the quickslots from the inventory
+        bool AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type);
+
+    UFUNCTION(BlueprintCallable, Category = "Equipment")
+    void SetCurrentEquipmentPlacement(USceneComponent* NewPlacement);// this will attatch the current weapon or item to the placementcomponent
+    UFUNCTION()
+    void SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
+
+
+    //==== Number Key Input Binding =====//
+    UFUNCTION()
+    void SwitchWeapon_PC_NumbKey1() { SwitchWeapon_PC_NumbKeys(1); }
+    UFUNCTION()
+    void SwitchWeapon_PC_NumbKey2() { SwitchWeapon_PC_NumbKeys(2); }
+    UFUNCTION()
+    void SwitchWeapon_PC_NumbLey3() { SwitchWeapon_PC_NumbKeys(3); }
+    UFUNCTION()
+    void SwitchWeapon_PC_NumbLey4() { SwitchWeapon_PC_NumbKeys(4); }
+    UFUNCTION()
+    void SwitchWeapon_PC_NumbLey5() { SwitchWeapon_PC_NumbKeys(5); }
+    //----- So, the weapon quick slot max count is 5
+
+    //===== GamePad Swtich =====//
+    UFUNCTION()
+    void SwitchWeapon_GP(const FInputActionValue& Value);
+    /*UFUNCTION()
+    void SwtichWeapon_GP_Next(const FInputActionValue& Value)// gamepad right face button
+    { GetNextEquipmentSlot(EEquipmentType::Weapon, true);}
+    UFUNCTION()
+    void SwtichWeapon_GP_Previous(const FInputActionValue& Value)// gamepad Left face button
+    { GetNextEquipmentSlot(EEquipmentType::Weapon, false);}*/
+    UFUNCTION()
+    void SwtichItem_GP_Next(const FInputActionValue& Value)
+    {
+        GetNextEquipmentSlot(EEquipmentType::Item, true);
+    }
+    UFUNCTION()
+    void SwtichItem_GP_Previous(const FInputActionValue& Value)
+    {
+        GetNextEquipmentSlot(EEquipmentType::Item, false);
+    }
+
+    //---- Weapn and Item Interaction ----//----------------------------------------------------------------------------
+
+    //Actually binded functions
+
+    //-- basic input reactions
+    UFUNCTION()
+    void TriggerInput_Reload(const FInputActionValue& Value);
+
+
+    //==== Trigger Input Helper
+    UFUNCTION()
+    void SetupTriggerHelper();
+
+    UFUNCTION()
+    void TriggerInput_Start(const FInputActionValue& Value);
+    UFUNCTION()
+    void TriggerInput_Trigger(const FInputActionValue& Value);
+    UFUNCTION()
+    void TriggerInput_Complete(const FInputActionValue& Value);
+    /*UFUNCTION()
+    void TriggerInput_Ongoing(const FInputActionValue& Value);*/
+    UFUNCTION()
+    void TriggerInput_Canceled(const FInputActionValue& Value);
+
+    // Executing Interface here
+    UFUNCTION()
+    void TriggerTap();
+    UFUNCTION()
+    void TriggerHoldStart();
+    UFUNCTION()
+    void TriggerHoldUpdate(float Value);
+    UFUNCTION()
+    void TriggerReleased();
+    //----------------------------------------------------------------------------------------------------------------------
 
 };

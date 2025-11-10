@@ -51,6 +51,7 @@ public:
     void EndLevel();
     void UPdateHUD();
     void FindObject();
+    void NextLevel();
 
     UFUNCTION(BlueprintCallable, Category = "Phase")
     void NextPhase();

@@ -231,7 +231,7 @@ void AGameStateManager::FindObject()
 	}
 }
 
-void AGameStateManager::NextPhase()
+void AGameStateManager::NextLevel()
 {
 	AEnemySpawnerManager* SpawnerManager = Cast<AEnemySpawnerManager>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), AEnemySpawnerManager::StaticClass())
