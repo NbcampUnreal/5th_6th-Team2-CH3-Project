@@ -3,19 +3,14 @@
 
 #include "Enemy/MeleeEnemyCharacter.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/BoxComponent.h"
 #include "CharacterStat/HealthComponent.h"
-#include "Enemy/EnemyAIController.h"
-
 
 AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 {
 	EnemyType = EEnemyType::EET_Melee;
 
 	AttackCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Attack Collision"));
-	AttackCollision->SetupAttachment(GetMesh(), TEXT("AttackSocket"));
-	AttackCollision->InitCapsuleSize(8.f, 8.f);
-	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttackCollision->SetupAttachment(RootComponent);
 }
 
 void AMeleeEnemyCharacter::EnableAttackCollision() 
@@ -26,11 +21,6 @@ void AMeleeEnemyCharacter::EnableAttackCollision()
 	}
 
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-
-	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
-	{
-		AIController->SetCanAttackRotate(false);
-	}
 }
 
 void AMeleeEnemyCharacter::DisableAttackCollision() 
@@ -56,7 +46,7 @@ void AMeleeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
-	
+	UE_LOG(Enemy_Log, Error, TEXT("Melee Attack"));
 }
 
 void AMeleeEnemyCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)

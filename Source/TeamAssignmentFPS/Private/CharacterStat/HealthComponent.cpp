@@ -54,7 +54,7 @@ void UHealthComponent::GetDamage_Implementation(FDamageInfo Damage)// for now, j
 	{
 		OnDamage.Execute(Damage);//signal to the owner to react based on the damage information
 	}
-
+	
 
 	OnDamage.ExecuteIfBound(Damage);// or use this!!! simple!
 	
