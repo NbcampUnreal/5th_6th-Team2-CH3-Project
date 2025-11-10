@@ -54,6 +54,7 @@ public:
 	void FindObject();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
@@ -69,6 +70,8 @@ public:
 >>>>>>> 96bdeb1 (11/07 feat GameStateManager)
 =======
 >>>>>>> 6d37467 (11/10)
+=======
+>>>>>>> 0f81f5b (no message)
 
 <<<<<<< HEAD
 	UFUNCTION(BlueprintCallable, Category = "Phase")
@@ -76,7 +79,12 @@ public:
 =======
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
+<<<<<<< HEAD
 >>>>>>> 96bdeb1 (11/07 feat GameStateManager)
+=======
+=======
+>>>>>>> 891ff6b (11/10 feat GameStageManager)
+>>>>>>> cfaa2a7 (no message)
 
 <<<<<<< HEAD
 	UFUNCTION(BlueprintCallable, Category = "Phase")
