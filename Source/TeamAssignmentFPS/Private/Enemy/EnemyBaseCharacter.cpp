@@ -205,6 +205,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		bool WasDestoryed;
@@ -213,6 +214,10 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 >>>>>>> d74bc04 (fix)
+=======
+	
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+>>>>>>> abfb1f3 (update)
 		{
 			bool WasDestoryed;
 			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
@@ -227,6 +232,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 			UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
 			AIController->StopBehaviorTree();
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 		// if if worked
@@ -244,6 +250,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 >>>>>>> d74bc04 (fix)
+=======
+>>>>>>> abfb1f3 (update)
 	}
 
 	FTimerHandle TimerHandle;

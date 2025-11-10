@@ -32,6 +32,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
+<<<<<<< HEAD
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 		AProjectileBase* ProjectileBase =
 			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
@@ -40,6 +41,10 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		{
 			//error
 		}
+=======
+		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+>>>>>>> abfb1f3 (update)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 
