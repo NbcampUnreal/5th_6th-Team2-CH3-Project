@@ -38,7 +38,8 @@ protected:
 	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
 	UPROPERTY()
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
-
+	
+	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()
@@ -122,6 +123,8 @@ public:
 
 	void EquipCurrentEquipment(AActor* NewEquipment);
 	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
+
+	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 	
 
