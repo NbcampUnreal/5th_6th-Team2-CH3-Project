@@ -25,15 +25,12 @@ void ARangeEnemyCharacter::SpawnProjectile()
 
 	FDamageInfo DamageInfo;
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
-	DamageInfo.DamageCauser=this;// damage causer
-
-	// Projectile path direction
-	FVector ProjectileDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+<<<<<<< HEAD
 		AProjectileBase* ProjectileBase =
 			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
 
@@ -45,6 +42,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> abfb1f3 (update)
+=======
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

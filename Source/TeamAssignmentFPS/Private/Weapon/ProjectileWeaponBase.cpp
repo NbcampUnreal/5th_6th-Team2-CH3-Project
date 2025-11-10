@@ -3,13 +3,14 @@
 
 #include "Weapon/ProjectileWeaponBase.h"
 
+#include "Weapon/ProjectileBase.h"
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Sound/SoundBase.h"
-
-
+#include "Debug/UELOGCategories.h"
+#include "Pooling/PoolingSubsystem.h"
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -35,15 +36,7 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 void AProjectileWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Set the owner
-	AActor* OwnerActor=GetOwner();
-	WeaponOwner=Cast<ACharacter>(OwnerActor);
-	if (!WeaponOwner)
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
-	}
-	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+	
 }
 
 // Called every frame
@@ -85,13 +78,19 @@ void AProjectileWeaponBase::FireWeapon()
 	SpawnParams.Instigator = GetInstigator();
 	
 
-	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
-	if (SpawnedProjectile)
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		SpawnedProjectile->SetDamageInfo(DamageInfo);
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+			SpawnedProjectile->SetDamageInfo(DamageInfo);
+		}
 	}
+	
+	// spawning success
 
-	--CurrentAmmoCount;
+	CurrentAmmoCount--;//subtract the ammo count
 	PlayMuzzleEffect();
 }
 
@@ -140,5 +139,37 @@ void AProjectileWeaponBase::SetProjectileInfo()
 	DamageInfo.DamageCauser=GetInstigator();
 }
 
+AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
+{
 
+	AProjectileBase* SpawnedProjectile=nullptr;
+	
+	if (!bUsePool)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (!SpawnedProjectile)
+		{
+			// spawn failed
+			return nullptr;
+		}
+	}
+	else
+	{
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+		{
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+			SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+			if (!SpawnedProjectile)
+			{
+				return nullptr;
+			}
+		}
+	}
+	// spawning new or from pool completed
+
+	return SpawnedProjectile;
+}
 
