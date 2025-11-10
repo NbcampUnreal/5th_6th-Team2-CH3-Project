@@ -130,6 +130,12 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 {
 }
 
+void AProjectileWeaponBase::OnReloadInputPressed_Implementation()
+{
+	IWeaponInterface::OnReloadInputPressed_Implementation();
+	ReloadWeapon();
+}
+
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();

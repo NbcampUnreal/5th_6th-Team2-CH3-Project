@@ -118,10 +118,6 @@ void AParabolaWeapon::FireParabolaProjectile()
 		
 		return;
 	}
-
-
-
-
 	
 	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 

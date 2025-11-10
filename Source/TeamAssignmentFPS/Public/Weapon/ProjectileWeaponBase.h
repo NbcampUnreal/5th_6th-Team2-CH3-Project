@@ -106,8 +106,6 @@ protected:
 	//or weapon reload -> player reload weapon, weapon being reloaded
 	// so, the taaray
 
-
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -130,6 +128,9 @@ protected:
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
+	//reload weapon
+	virtual void OnReloadInputPressed_Implementation() override;
+	
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;
