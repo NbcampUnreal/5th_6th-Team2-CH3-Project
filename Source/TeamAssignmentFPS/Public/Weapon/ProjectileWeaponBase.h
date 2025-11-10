@@ -11,7 +11,6 @@
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
-#include "Anim/AnimationPair.h"
 
 #include "ProjectileWeaponBase.generated.h"
 
@@ -101,7 +100,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> FireAnimMontage;
 
-	TMap<AActor*/*Owner*/, TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/>> FireAnimMontages;// for weapon, character and many more
+	
 	// the anim pair is for playing animation on same trigger
 	// ex. fire weapon-> animations are required for player character's fire animation, weapon's recoil animation
 	//or weapon reload -> player reload weapon, weapon being reloaded
