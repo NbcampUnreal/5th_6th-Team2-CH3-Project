@@ -28,15 +28,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Charging")
 	float MaxChargeTime = 2.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Charging")
-	float MinChargeTime = 0.2f;
-
 	/** Parabola settings */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
 	float MinThrowDistance = 500.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
-	float MaxThrowDistance = 2000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
 	float MinParabolaHeight = 100.f;
@@ -53,15 +47,19 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
+	
+	
 	/** InputReactionInterface */
 	virtual void OnInputTap_Implementation() override;
 	virtual void OnInputHoldStart_Implementation() override;
 	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
 	virtual void OnInputRelease_Implementation() override;
 
+	void FireParabolaProjectile();
 	/** Fire the parabola projectile */
 	void LaunchParabolaProjectile();
+
+	void TossParabolaProjectile();
 
 	/** Draw debug path */
 	void DrawParabolaPath(float ChargeRatio);

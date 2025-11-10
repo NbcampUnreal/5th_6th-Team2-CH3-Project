@@ -4,6 +4,7 @@
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
 #include "Character/MyCharacter.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "LockonTarget/LockonComponent.h"
 
 
@@ -33,8 +34,8 @@ void AParabolaWeapon::Tick(float DeltaTime)
 
 	if (bIsCharging)
 	{
-		CurrentChargeTime += DeltaTime;
-		float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
+		CurrentChargeTime = FMath::Min(CurrentChargeTime + DeltaTime, MaxChargeTime);
+		float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 		DrawParabolaPath(ChargeRatio);
 	}
 }
@@ -44,8 +45,7 @@ void AParabolaWeapon::OnInputTap_Implementation()
 {
 	// Quick tap -> fire fast projectile
 	bIsCharging = false;
-	CurrentChargeTime = MinChargeTime;
-	LaunchParabolaProjectile();
+	TossParabolaProjectile();
 }
 
 void AParabolaWeapon::OnInputHoldStart_Implementation()
@@ -63,71 +63,101 @@ void AParabolaWeapon::OnInputHoldUpdate_Implementation(float InputValue)
 void AParabolaWeapon::OnInputRelease_Implementation()
 {
 	// Release -> fire with Stacked charge value
-	if (bIsCharging)
+	bIsCharging = false;
+	LaunchParabolaProjectile();
+	CurrentChargeTime = 0.f;//reset
+}
+
+void AParabolaWeapon::FireParabolaProjectile()
+{
+	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
+
+	// If released early → toss
+	if (ChargeRatio < 1.f)
 	{
-		bIsCharging = false;
+		TossParabolaProjectile();
+	}
+	else
+	{
 		LaunchParabolaProjectile();
-		CurrentChargeTime = 0.f;
 	}
 }
 
 void AParabolaWeapon::LaunchParabolaProjectile()
 {
-	if (!ProjectileClass || !Muzzle)
+	if (!ProjectileClass || !LockonComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LaunchParabolaProjectile -> Missing LockonComponent or ProjectileClass"));
 		return;
-	
+	}
+
+	FVector SpawnLocation = Muzzle->GetComponentLocation();
+	FVector TargetLocation;
+	if (!LockonComponent->GetDeprojectedCursorLocation(TargetLocation))
+	{
+		UE_LOG(Weapon_Log, Error, TEXT(" AParabolaWeapon::DrawParabolaPath-> Deprojection failed. cannot draw path"));
+		return;
+	}
+
+	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, FRotator::ZeroRotator);
+	if (!Projectile) return;
+
+	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
+	float Height = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+	float TravelTime = FMath::Lerp(0.8f, 1.6f, ChargeRatio);
+
+	Projectile->SetStartAndEndLocation(SpawnLocation, TargetLocation);
+	Projectile->SetMaxHeightForParabola(Height);
+	Projectile->SetTravelTime(TravelTime);
+	Projectile->SetActorLocation(SpawnLocation);
+
+	UE_LOG(LogTemp, Log, TEXT("LaunchParabolaProjectile -> Arc launched toward cursor (%.1fs travel)"), TravelTime);
+}
+
+void AParabolaWeapon::TossParabolaProjectile()
+{
+	if (!ProjectileClass) return;
+
 	FVector SpawnLocation = Muzzle->GetComponentLocation();
 	FRotator SpawnRotation = Muzzle->GetComponentRotation();
-	
-	FVector TargetLocation;
-	if (LockonComponent && LockonComponent->GetLockonTarget())
-	{
-		TargetLocation = LockonComponent->GetLockonTarget()->GetActorLocation();
-	}
-	else if (LockonComponent)// if lock on is valid
-	{
-		FVector CursorWorldLocation;
-		if (LockonComponent->GetDeprojectedCursorLocation(CursorWorldLocation))// get cursor world location
-		{
-			TargetLocation = CursorWorldLocation;
-		}
-		else// couldnt find the location
-		{
-			TargetLocation = SpawnLocation + SpawnRotation.Vector() * MaxThrowDistance;
-		}
-	}
-	else// lockon comp invalid
-	{
-		TargetLocation = SpawnLocation + SpawnRotation.Vector() * MaxThrowDistance;
-	}
-	
-	float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
-	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
-	
-	// Spawn the projectile from pool
-	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, SpawnRotation);// use template to spawn different one
-	if (Projectile)
-	{
-		Projectile->SetStartAndEndLocation(SpawnLocation,TargetLocation);
-		Projectile->SetMaxHeightForParabola(ApexHeight);
 
-		Projectile->SetDamageInfo(DamageInfo);
+	AProjectileBase* Projectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
+	if (!Projectile) return;
+
+	if (UProjectileMovementComponent* MoveComp = Projectile->FindComponentByClass<UProjectileMovementComponent>())
+	{
+		MoveComp->ProjectileGravityScale = 1.f;
+		MoveComp->bShouldBounce = true;
+		MoveComp->Velocity = SpawnRotation.Vector() * 1500.f;
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("TossParabolaProjectile -> Toss launched"));
 }
 
 void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 {
-	if (!Muzzle || !LockonComponent) return;
+	if (!LockonComponent) return;
 
 	FVector StartLocation = Muzzle->GetComponentLocation();
-	FVector TargetLocation;
-
-	if (!LockonComponent->GetDeprojectedCursorLocation(TargetLocation))// if the lock on is invalid
+	FVector EndLocation;
+	if (!LockonComponent->GetDeprojectedCursorLocation(EndLocation))
 	{
-		TargetLocation = StartLocation + Muzzle->GetComponentRotation().Vector() * MaxThrowDistance;// just draw the path with max distance
+		UE_LOG(Weapon_Log, Error, TEXT(" AParabolaWeapon::DrawParabolaPath-> Deprojection failed. cannot draw path"));
+		return;
 	}
+	// end location set
+	
+	float Height = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
 
-	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
-
-	UProjectilePathDrawer::DrawLerpedArc(GetWorld(), StartLocation, TargetLocation, 1.f, StartLocation.Z, StartLocation.Z + ApexHeight, PathSegments, PathColor, 0.f);
+	UProjectilePathDrawer::DrawLerpedArc(
+		GetWorld(),
+		StartLocation,
+		EndLocation,
+		1.f,
+		StartLocation.Z,
+		StartLocation.Z + Height,
+		PathSegments,
+		PathColor,
+		0.f
+	);
 }
