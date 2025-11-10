@@ -437,7 +437,6 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 002d088 (11/10 EnemybaseCharacter)
 =======
 
-
 void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
 >>>>>>> 078c989 (11/10)
@@ -471,6 +470,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	PlayMontage(DeadMontage);
 	ChangeEnemyState(EEnemyState::EES_Dead);
 <<<<<<< HEAD
+<<<<<<< HEAD
     
 <<<<<<< HEAD
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
@@ -491,8 +491,12 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 =======
 	
+=======
+    
+>>>>>>> 7d3e656 (11/10 enemybasecharacter)
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -500,7 +504,14 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		bool WasDestoryed;
 		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+<<<<<<< HEAD
 >>>>>>> 078c989 (11/10)
+=======
+=======
+    
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+>>>>>>> d74bc04 (fix)
+>>>>>>> 7d3e656 (11/10 enemybasecharacter)
 		{
 			bool WasDestoryed;
 			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
@@ -516,6 +527,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 			AIController->StopBehaviorTree();
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	}
 
 	FTimerHandle TimerHandle;
@@ -523,6 +535,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
     
 }
 =======
+=======
+>>>>>>> 7d3e656 (11/10 enemybasecharacter)
 
 		// if if worked
 
@@ -537,16 +551,21 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		AIController->StopBehaviorTree();
 >>>>>>> b8ccb7b (feat enemy anim)
+=======
+>>>>>>> d74bc04 (fix)
 	}
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
-	
+    
 }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 078c989 (11/10)
+=======
+>>>>>>> 7d3e656 (11/10 enemybasecharacter)
 void AEnemyBaseCharacter::EndEnemyDead()
 =======
 void AEnemyBaseCharacter::EnemyDeadByPhaseEnd()
