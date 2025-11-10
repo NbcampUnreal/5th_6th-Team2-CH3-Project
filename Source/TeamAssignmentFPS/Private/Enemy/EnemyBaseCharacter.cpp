@@ -180,19 +180,22 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
-		bool WasDestoryed;
-		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+	
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
-			//Error, Failed to Return Enemy actor or destory it.
-			return;
+			bool WasDestoryed;
+			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+			{
+				//Error, Failed to Return Enemy actor or destroy it.
+				return;
+			}
+			// if if worked
+
+			FString EnemyName=this->GetName();
+			FString LogText=WasDestoryed? TEXT("Destroyed"):TEXT("Returned to pool");
+			UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
+			AIController->StopBehaviorTree();
 		}
-
-		// if if worked
-
-		FString EnemyName=this->GetName();
-		FString LogText=WasDestoryed? TEXT("Destoryed"):TEXT("Returned to pool");
-		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
-		AIController->StopBehaviorTree();
 	}
 
 	FTimerHandle TimerHandle;
