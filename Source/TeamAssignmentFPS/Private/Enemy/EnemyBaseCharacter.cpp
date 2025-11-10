@@ -59,6 +59,10 @@ void AEnemyBaseCharacter::BeginPlay()
 	{
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 	}
+	
+	AActor* Player=GetWorld()->GetFirstPlayerController()->GetPawn();
+
+	SetTargetActor(Player);
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -179,7 +183,6 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
     
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
-    
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
 			bool WasDestoryed;
@@ -204,6 +207,24 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 void AEnemyBaseCharacter::EndEnemyDead()
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+}
+
+void AEnemyBaseCharacter::SetTargetActor(AActor* NewTargetActor)
+{
+	if (!NewTargetActor)
+	{
+		UE_LOG(Enemy_Log, Error, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Invalid Target"));
+		return;
+	}
+
+	if (NewTargetActor==TargetActor)
+	{
+		UE_LOG(Enemy_Log, Warning, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Already Setted to same target"));
+		return;
+	}
+
+	TargetActor=NewTargetActor;
+	UE_LOG(Enemy_Log, Log, TEXT("AEnemyBaseCharacter::SetTargetActor-> Target Set to %s"), *TargetActor->GetName())
 }
 
 void AEnemyBaseCharacter::EnemyDestroy()
@@ -336,14 +357,14 @@ void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
 
 FRotator AEnemyBaseCharacter::LookAtPlayer()
 {
-	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	//APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
-	if (!Player)
+	if (!TargetActor)
 	{
 		return FRotator::ZeroRotator;
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
