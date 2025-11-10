@@ -6,8 +6,11 @@
 #include "Parabola_ProjectileBase.h"
 #include "ParabolaWeapon.generated.h"
 
+<<<<<<< HEAD
 class ULockonComponent;
 
+=======
+>>>>>>> 9dec185 (parabola weapon update)
 UCLASS()
 class TEAMASSIGNMENTFPS_API AParabolaWeapon : public AProjectileWeaponBase
 {
@@ -17,10 +20,13 @@ public:
 	AParabolaWeapon();
 
 protected:
+<<<<<<< HEAD
 
 	UPROPERTY()
 	ULockonComponent* LockonComponent=nullptr;// to get the landing location
 	
+=======
+>>>>>>> 9dec185 (parabola weapon update)
 	/** Charging and input */
 	bool bIsCharging = false;
 	float CurrentChargeTime = 0.f;
@@ -51,7 +57,10 @@ protected:
 	FColor PathColor = FColor::Green;
 
 protected:
+<<<<<<< HEAD
 	virtual void BeginPlay() override;
+=======
+>>>>>>> 9dec185 (parabola weapon update)
 	virtual void Tick(float DeltaTime) override;
 
 	/** InputReactionInterface */

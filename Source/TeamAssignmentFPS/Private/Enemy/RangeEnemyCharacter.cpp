@@ -33,6 +33,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
@@ -48,6 +49,10 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> f79331c (weapon updated)
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+
+	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
+>>>>>>> 9dec185 (parabola weapon update)
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
@@ -56,6 +61,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -108,6 +114,10 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
+		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
+>>>>>>> 9dec185 (parabola weapon update)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

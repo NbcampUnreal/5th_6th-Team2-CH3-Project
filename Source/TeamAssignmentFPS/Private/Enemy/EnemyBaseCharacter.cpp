@@ -95,6 +95,9 @@ void AEnemyBaseCharacter::BeginPlay()
 	}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9dec185 (parabola weapon update)
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -107,6 +110,7 @@ void AEnemyBaseCharacter::BeginPlay()
 		SetTargetActor(NewTargetActor);
 	}
 	
+<<<<<<< HEAD
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -145,6 +149,8 @@ void AEnemyBaseCharacter::EndChase()
 >>>>>>> f79331c (weapon updated)
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+>>>>>>> 9dec185 (parabola weapon update)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -640,6 +646,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> b8ccb7b (feat enemy anim)
 
@@ -662,6 +669,9 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 
 	if (!Player)
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+	if (!TargetActor)
+>>>>>>> 9dec185 (parabola weapon update)
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -723,7 +733,7 @@ FRotator AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 652a79a (Revert "delete")
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
