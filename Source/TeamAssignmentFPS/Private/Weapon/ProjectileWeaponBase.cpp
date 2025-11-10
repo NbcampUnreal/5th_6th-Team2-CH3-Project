@@ -8,6 +8,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 7568c9b (weapon updated)
@@ -24,6 +25,14 @@
 #include "Weapon/ProjectileBase.h"
 >>>>>>> ca434e8 (no message)
 >>>>>>> cda4565 (11/11)
+=======
+=======
+#include "Weapon/ProjectileBase.h"
+>>>>>>> ca434e8 (no message)
+=======
+#include "Weapon/ProjectileBase.h"
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -34,8 +43,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 
 
 =======
@@ -57,7 +69,14 @@
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> ca434e8 (no message)
+<<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
+=======
+=======
+#include "Debug/UELOGCategories.h"
+#include "Pooling/PoolingSubsystem.h"
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -79,6 +98,7 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
@@ -90,11 +110,19 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 	
 >>>>>>> b028351 (parabola weapon updated)
 =======
+=======
+>>>>>>> 0c7c848 (no message)
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 >>>>>>> ca434e8 (no message)
+<<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
+=======
+=======
+	CurrentAmmoCount=MaxAmmoCount;// set the count
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 
 }
 
@@ -107,8 +135,11 @@ void AProjectileWeaponBase::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 
 	
 	//Set the value
@@ -142,7 +173,13 @@ void AProjectileWeaponBase::BeginPlay()
 >>>>>>> b028351 (parabola weapon updated)
 =======
 >>>>>>> ca434e8 (no message)
+<<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
+=======
+=======
+	
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 }
 
 // Called every frame
@@ -156,6 +193,7 @@ void AProjectileWeaponBase::FireWeapon()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (!ProjectileClass)
 =======
 	if (!Projectile)
@@ -164,11 +202,19 @@ void AProjectileWeaponBase::FireWeapon()
 	if (!ProjectileClass)
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
+=======
+>>>>>>> 0c7c848 (no message)
 	if (!ProjectileClass)
 =======
 	if (!Projectile)
 >>>>>>> ca434e8 (no message)
+<<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
+=======
+=======
+	if (!ProjectileClass)
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
 		return;
@@ -201,6 +247,7 @@ void AProjectileWeaponBase::FireWeapon()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
@@ -229,6 +276,8 @@ void AProjectileWeaponBase::FireWeapon()
 =======
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 
 	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
 	if (SpawnedProjectile)
@@ -288,10 +337,20 @@ void AProjectileWeaponBase::FireWeapon()
 		if (SpawnedProjectile)
 		{
 			DamageInfo.DamageAmount = Damage;
+=======
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+>>>>>>> ea6a2be (11/10)
 			SpawnedProjectile->SetDamageInfo(DamageInfo);
 		}
 	}
 	
+<<<<<<< HEAD
 	// spawning success	
 
 	// SpawnParams.Owner=this;
@@ -310,7 +369,15 @@ void AProjectileWeaponBase::FireWeapon()
 
 	CurrentAmmoCount--;//subtract the ammo count
 >>>>>>> ca434e8 (no message)
+<<<<<<< HEAD
 >>>>>>> cda4565 (11/11)
+=======
+=======
+	// spawning success
+
+	CurrentAmmoCount--;//subtract the ammo count
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 	PlayMuzzleEffect();
 }
 
@@ -358,10 +425,13 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b028351 (parabola weapon updated)
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();
@@ -382,10 +452,15 @@ void AProjectileWeaponBase::OnUnequipped_Implementation()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> b028351 (parabola weapon updated)
+=======
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 void AProjectileWeaponBase::SetProjectileInfo()
 {
 	DamageInfo.DamageCauser=GetInstigator();
@@ -394,6 +469,9 @@ void AProjectileWeaponBase::SetProjectileInfo()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0c7c848 (no message)
 
 =======
 void AProjectileWeaponBase::SetProjectileInfo()
@@ -405,12 +483,16 @@ void AProjectileWeaponBase::SetProjectileInfo()
 void AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0c7c848 (no message)
 =======
 AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
 {
 
 	AProjectileBase* SpawnedProjectile=nullptr;
 	
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
@@ -421,6 +503,9 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 	if (!bUsePool)
 	{
 		FActorSpawnParameters SpawnParams;
@@ -429,27 +514,38 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 		AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+=======
+>>>>>>> 0c7c848 (no message)
 		SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
 			return nullptr;
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 		}
 	}
 	else
@@ -459,8 +555,11 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (SpawnedProjectile)
@@ -472,10 +571,15 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 	}
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 7568c9b (weapon updated)
 =======
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+>>>>>>> ca434e8 (no message)
+=======
+>>>>>>> 0c7c848 (no message)
 			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
 			SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (!SpawnedProjectile)
@@ -489,6 +593,7 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 	return SpawnedProjectile;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 
@@ -498,4 +603,7 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 =======
 >>>>>>> ca434e8 (no message)
 >>>>>>> cda4565 (11/11)
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 

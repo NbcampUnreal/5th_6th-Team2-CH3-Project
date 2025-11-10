@@ -27,9 +27,22 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category= "Pooling")
 	TSubclassOf<AActor> PlayerProjectileClass;
-
+	
 	UPROPERTY(EditAnywhere, Category= "Pooling")
 	TSubclassOf<AActor> EnemyProjectileClass;
+
+	
+	// Special Projectiles
+	UPROPERTY(EditAnywhere, Category= "Pooling | Projectile")
+	TSubclassOf<AActor> ProjectileA_Class;
+	UPROPERTY(EditAnywhere, Category= "Pooling | Projectile")
+	TSubclassOf<AActor> ProjectileB_Class;
+	UPROPERTY(EditAnywhere, Category= "Pooling | Projectile")
+	TSubclassOf<AActor> ProjectileC_Class;
+	UPROPERTY(EditAnywhere, Category= "Pooling | Projectile")
+	TSubclassOf<AActor> ProjectileD_Class;
+
+	
 
 	void InitializePooling() const;
 	

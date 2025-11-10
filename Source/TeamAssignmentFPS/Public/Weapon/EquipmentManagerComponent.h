@@ -40,6 +40,9 @@ protected:
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0c7c848 (no message)
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -68,7 +71,14 @@ protected:
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> 167a4bd (11/10)
+<<<<<<< HEAD
 >>>>>>> 842b367 (11/11)
+=======
+=======
+	
+	
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()
@@ -160,6 +170,7 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
@@ -179,6 +190,8 @@ public:
 >>>>>>> 8442e60 (11/11)
 =======
 >>>>>>> 842b367 (11/11)
+=======
+>>>>>>> 0c7c848 (no message)
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
@@ -195,7 +208,14 @@ public:
 =======
 =======
 >>>>>>> 167a4bd (11/10)
+<<<<<<< HEAD
 >>>>>>> 842b367 (11/11)
+=======
+=======
+	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
+
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 	
 
 

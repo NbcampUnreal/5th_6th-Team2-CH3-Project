@@ -446,6 +446,7 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 2966a65 (equipment updated)
 =======
@@ -458,6 +459,12 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 =======
 >>>>>>> a09f308 (no message)
 >>>>>>> 8442e60 (11/11)
+=======
+=======
+>>>>>>> a09f308 (no message)
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 {
 	AActor* CurrentWeapon= TempWeaponQuickSlot[CurrentWeaponSlotIndex];// bring the current weapon from current index
@@ -465,6 +472,7 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 	EquipCurrentEquipment(CurrentWeapon);
 	//
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -483,6 +491,8 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 >>>>>>> f467944 (11/11)
 =======
 =======
+>>>>>>> 0c7c848 (no message)
+=======
 >>>>>>> fdbc962 (no message)
 =======
 >>>>>>> a09f308 (no message)
@@ -491,7 +501,12 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 =======
 =======
 >>>>>>> 167a4bd (11/10)
+<<<<<<< HEAD
 >>>>>>> 842b367 (11/11)
+=======
+=======
+>>>>>>> ea6a2be (11/10)
+>>>>>>> 0c7c848 (no message)
 
 
 bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)

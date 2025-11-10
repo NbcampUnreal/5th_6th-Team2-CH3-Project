@@ -66,7 +66,8 @@ public:
 	void ShowWidget(FName StorageName,  FName WidgetName, int32 Order=0);
 	void HideWidget(FName StorageName,  FName WidgetName);
 	void RemoveWidget(FName StorageName,  FName WidgetName);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "UI | Widget")
 	void SetAnchorForWidgets(FName StorageName, USceneComponent* NewAnchor);// widgets shares the same anchor if they are in same storage
 
 	void UpdateWidgetCoord(FName StorageName);

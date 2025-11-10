@@ -95,6 +95,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cccbfc2 (Revert "murge into seo")
 =======
@@ -126,6 +127,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
 >>>>>>> 9dec185 (parabola weapon update)
 =======
+=======
+		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+>>>>>>> 0c7c848 (no message)
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> 078c989 (11/10)
 >>>>>>> 4c49a91 (11/11)
