@@ -100,10 +100,15 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool GetDeprojectedCursorLocation(FVector& CursorWorldLocation);
+
+	FVector GetCursorWorldLocation() const {return CursorWorldLocation;}
+	
 	
 protected:
-	void UpdateCameraBoomLocation();// middle location by BaseRootToTargetAlpha
 	void UpdateCursor();//update cursor Location and projection coord
+	
+	void UpdateCameraBoomLocation();// middle location by BaseRootToTargetAlpha
+	
 	void DetectTarget();
 
 	void LockonClosestTargetByCoord();// find nearest Actor to target based on projected 2d screen

@@ -183,6 +183,9 @@ public:
 	//==== Cleanup
 	//virtual void AMyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	// == Getter
+
+	ULockonComponent* GetLockonComp() const {return LockonComp;};
 private:
 
 	void HealthComponentSetup();

@@ -194,12 +194,13 @@ void AProjectileBase::ReturnToPool()
 
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
-	ActivateLifeTimeHandle();
+	UE_LOG(Weapon_Log,Log, TEXT("AProjectileBase::OnSpawnFromPool_Implementation-> OnSpawnFromPool_Implementation called"));
 	ActivateProjectileBase();
 }
 
 void AProjectileBase::OnReturnToPool_Implementation()
 {
+	UE_LOG(Weapon_Log,Log, TEXT("AProjectileBase::OnReturnToPool_Implementation-> OnReturnToPool_Implementation called"));
 	DeactivateProjectileBase();
 }
 
@@ -234,6 +235,7 @@ void AProjectileBase::DeactivateLifeTimerHandle()
 
 void AProjectileBase::ActivateProjectileBase()
 {
+	UE_LOG(Weapon_Log, Log,TEXT("AProjectileBase::ActivateProjectileBase-> Projectile Activated") );
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
@@ -258,6 +260,7 @@ void AProjectileBase::ActivateProjectileBase()
 
 void AProjectileBase::DeactivateProjectileBase()
 {
+	UE_LOG(Weapon_Log, Log,TEXT("AProjectileBase::DeactivateProjectileBase-> Projectile Deactivated") );
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);

@@ -83,12 +83,19 @@ public:
 	virtual void EndHitReact();
 	virtual void EnemyDead(FDamageInfo DamageInfo);
 	void EndEnemyDead();
+
+	// target actor
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
+	AActor* TargetActor=nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick( float DeltaSeconds) override;
 	/*UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;*/
+
+	AActor* GetTargetActor()const{return TargetActor;}
+	void SetTargetActor(AActor* NewTargetActor) {TargetActor=NewTargetActor;}
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyType EnemyType;
