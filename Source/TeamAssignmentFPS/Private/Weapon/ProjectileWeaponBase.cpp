@@ -136,6 +136,7 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
@@ -149,6 +150,8 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 =======
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+>>>>>>> b0993a4 (no message)
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
@@ -159,7 +162,13 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 >>>>>>> ea6a2be (11/10)
+<<<<<<< HEAD
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+	
+>>>>>>> 5b3a91a (11/10)
+>>>>>>> b0993a4 (no message)
 
 }
 
@@ -227,6 +236,7 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 =======
 
+<<<<<<< HEAD
 	// Set the owner
 	AActor* OwnerActor=GetOwner();
 	WeaponOwner=Cast<ACharacter>(OwnerActor);
@@ -242,7 +252,15 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 	
 >>>>>>> f59b66a (11/10)
+<<<<<<< HEAD
 >>>>>>> 6a4e438 (no message)
+=======
+=======
+	
+	//Set the value
+	CurrentAmmoCount=MaxAmmoCount;// set the count
+>>>>>>> 5b3a91a (11/10)
+>>>>>>> b0993a4 (no message)
 }
 
 // Called every frame
@@ -516,12 +534,17 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b028351 (parabola weapon updated)
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> 5b3a91a (11/10)
+>>>>>>> b0993a4 (no message)
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();
@@ -543,6 +566,7 @@ void AProjectileWeaponBase::OnUnequipped_Implementation()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
@@ -551,6 +575,12 @@ void AProjectileWeaponBase::OnUnequipped_Implementation()
 =======
 >>>>>>> ea6a2be (11/10)
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> ea6a2be (11/10)
+=======
+>>>>>>> 5b3a91a (11/10)
+>>>>>>> b0993a4 (no message)
 void AProjectileWeaponBase::SetProjectileInfo()
 {
 	DamageInfo.DamageCauser=GetInstigator();

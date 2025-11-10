@@ -423,12 +423,17 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b028351 (parabola weapon updated)
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
+=======
+=======
+>>>>>>> 5b3a91a (11/10)
+>>>>>>> b0993a4 (no message)
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;
