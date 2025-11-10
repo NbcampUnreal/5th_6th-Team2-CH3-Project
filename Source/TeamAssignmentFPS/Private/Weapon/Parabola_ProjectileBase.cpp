@@ -45,8 +45,7 @@ void AParabola_ProjectileBase::UpdateParabolaMovement(float DeltaTime)
 
 	SetActorLocation(NewLocation);
 
-	// Optional debug path
-	if (GEngine && PathSegments > 0)
+	if (bIsDebugDrawOn && PathSegments > 0 && GEngine)
 	{
 		UProjectilePathDrawer::DrawLerpedArc(
 			GetWorld(),

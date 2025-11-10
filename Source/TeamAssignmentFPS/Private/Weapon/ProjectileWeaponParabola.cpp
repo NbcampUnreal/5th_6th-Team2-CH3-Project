@@ -3,6 +3,7 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
+#include "LockonTarget/LockonComponent.h"
 
 AParabolaWeapon::AParabolaWeapon()
 {
@@ -58,16 +59,35 @@ void AParabolaWeapon::LaunchParabolaProjectile()
 {
 	if (!ProjectileClass || !Muzzle)
 		return;
-
-	// Compute throw distance based on charge
-	float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
-	float ThrowDistance = FMath::Lerp(MinThrowDistance, MaxThrowDistance, ChargeRatio);
-	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
-
+	
 	FVector SpawnLocation = Muzzle->GetComponentLocation();
 	FRotator SpawnRotation = Muzzle->GetComponentRotation();
-	FVector TargetLocation = SpawnLocation + SpawnRotation.Vector() * ThrowDistance;
-
+	
+	FVector TargetLocation;
+	if (LockonComponent && LockonComponent->GetLockonTarget())
+	{
+		TargetLocation = LockonComponent->GetLockonTarget()->GetActorLocation();
+	}
+	else if (LockonComponent)// if lock on is valid
+	{
+		FVector CursorWorldLocation;
+		if (LockonComponent->GetDeprojectedCursorLocation(CursorWorldLocation))// get cursor world location
+		{
+			TargetLocation = CursorWorldLocation;
+		}
+		else// couldnt find the location
+		{
+			TargetLocation = SpawnLocation + SpawnRotation.Vector() * MaxThrowDistance;
+		}
+	}
+	else// lockon comp invalid
+	{
+		TargetLocation = SpawnLocation + SpawnRotation.Vector() * MaxThrowDistance;
+	}
+	
+	float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
+	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+	
 	// Spawn the projectile from pool
 	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, SpawnRotation);// use template to spawn different one
 	if (Projectile)
@@ -79,16 +99,19 @@ void AParabolaWeapon::LaunchParabolaProjectile()
 	}
 }
 
-void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)//temp, debug
+void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 {
-	if (!Muzzle)
-		return;
-
-	float ThrowDistance = FMath::Lerp(MinThrowDistance, MaxThrowDistance, ChargeRatio);
-	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+	if (!Muzzle || !LockonComponent) return;
 
 	FVector StartLocation = Muzzle->GetComponentLocation();
-	FVector EndLocation = StartLocation + Muzzle->GetComponentRotation().Vector() * ThrowDistance;
+	FVector TargetLocation;
 
-	UProjectilePathDrawer::DrawLerpedArc(GetWorld(), StartLocation, EndLocation, 1.f, StartLocation.Z, StartLocation.Z + ApexHeight, PathSegments, PathColor, 0.f);
+	if (!LockonComponent->GetDeprojectedCursorLocation(TargetLocation))// if the lock on is invalid
+	{
+		TargetLocation = StartLocation + Muzzle->GetComponentRotation().Vector() * MaxThrowDistance;// just draw the path with max distance
+	}
+
+	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+
+	UProjectilePathDrawer::DrawLerpedArc(GetWorld(), StartLocation, TargetLocation, 1.f, StartLocation.Z, StartLocation.Z + ApexHeight, PathSegments, PathColor, 0.f);
 }

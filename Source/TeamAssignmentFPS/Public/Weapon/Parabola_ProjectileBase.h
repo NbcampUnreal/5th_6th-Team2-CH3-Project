@@ -16,6 +16,10 @@ public:
 	AParabola_ProjectileBase();
 	
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola")
+	bool bIsDebugDrawOn=false;
+	
 	// Parabola movement variables
 	FVector StartLocation;
 	FVector TargetLocation;
