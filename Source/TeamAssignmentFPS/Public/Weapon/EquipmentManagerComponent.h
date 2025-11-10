@@ -42,9 +42,12 @@ protected:
 <<<<<<< HEAD
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> f467944 (11/11)
+=======
+>>>>>>> 842b367 (11/11)
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()
@@ -57,11 +60,15 @@ protected:
 	
 	
 =======
+<<<<<<< HEAD
 >>>>>>> cccbfc2 (Revert "murge into seo")
 =======
 	
 	
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> 167a4bd (11/10)
+>>>>>>> 842b367 (11/11)
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()
@@ -152,6 +159,7 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
@@ -169,6 +177,8 @@ public:
 =======
 =======
 >>>>>>> 8442e60 (11/11)
+=======
+>>>>>>> 842b367 (11/11)
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
@@ -180,7 +190,12 @@ public:
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 >>>>>>> a09f308 (no message)
+<<<<<<< HEAD
 >>>>>>> 8442e60 (11/11)
+=======
+=======
+>>>>>>> 167a4bd (11/10)
+>>>>>>> 842b367 (11/11)
 	
 
 

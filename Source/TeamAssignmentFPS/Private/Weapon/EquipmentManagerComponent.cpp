@@ -445,6 +445,7 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 2966a65 (equipment updated)
 =======
@@ -452,6 +453,8 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 =======
 >>>>>>> f467944 (11/11)
 =======
+=======
+>>>>>>> 842b367 (11/11)
 =======
 >>>>>>> a09f308 (no message)
 >>>>>>> 8442e60 (11/11)
@@ -483,7 +486,12 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 >>>>>>> fdbc962 (no message)
 =======
 >>>>>>> a09f308 (no message)
+<<<<<<< HEAD
 >>>>>>> 8442e60 (11/11)
+=======
+=======
+>>>>>>> 167a4bd (11/10)
+>>>>>>> 842b367 (11/11)
 
 
 bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)
