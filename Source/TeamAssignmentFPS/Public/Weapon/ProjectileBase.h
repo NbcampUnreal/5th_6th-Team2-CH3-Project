@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile")
 	TObjectPtr<UProjectileMovementComponent> MovementComponent;// this is how projectile move;
 	// apply the data from the weapon that spawned this
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Projectile | Movement")
+	bool bUseProjectileMovement = true;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Projectile")
 	TObjectPtr<USphereComponent> CollisionComponent;
@@ -77,7 +80,8 @@ public:
 	void HandleProjectileHit(UPrimitiveComponent* HitComp,AActor* OtherActor,UPrimitiveComponent* OtherComp,FVector NormalImpulse,const FHitResult& Hit);
 	
 	virtual void OnProjectileHit(const FHitResult& HitResult, AActor* OtherActor);// when the projectile collide
-	
+
+	void ToggleProjectileMovement(bool bUseProjectileMoveComp) {bUseProjectileMovement=bUseProjectileMoveComp;}
 
 	// Pooling Interface Implementation
 	virtual void OnSpawnFromPool_Implementation() override;

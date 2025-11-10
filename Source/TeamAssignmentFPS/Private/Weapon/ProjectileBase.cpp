@@ -240,19 +240,30 @@ void AProjectileBase::ActivateProjectileBase()
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
 
-	if (MovementComponent)
+	if (bUseProjectileMovement)// if using movement comp
 	{
-		MovementComponent->StopMovementImmediately();
-		MovementComponent->ResetInterpolation();
-		
-		MovementComponent->SetUpdatedComponent(this->GetRootComponent());
-		MovementComponent->Velocity=GetActorForwardVector() * MovementComponent->InitialSpeed;
-		MovementComponent->Activate(true);
+		if (MovementComponent)// if it is valid
+		{
+			MovementComponent->StopMovementImmediately();
+			MovementComponent->ResetInterpolation();
+			MovementComponent->SetUpdatedComponent(this->GetRootComponent());
+			MovementComponent->Velocity = GetActorForwardVector() * MovementComponent->InitialSpeed;
+			MovementComponent->Activate(true);
+		}
+	}
+	else// use something else
+	{
+		if (MovementComponent)// if there is movement comp, but dont use it --> diable them
+		{
+			MovementComponent->StopMovementImmediately();
+			MovementComponent->Deactivate();
+			MovementComponent->SetUpdatedComponent(nullptr);
+		}
 	}
 
-	ActivateLifeTimeHandle();//restart the life timer
+	ActivateLifeTimeHandle();
 
-	if (TrailComponent)// trail comp
+	if (TrailComponent)
 	{
 		TrailComponent->Activate(true);
 	}

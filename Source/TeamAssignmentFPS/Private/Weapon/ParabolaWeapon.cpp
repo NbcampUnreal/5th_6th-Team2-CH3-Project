@@ -22,18 +22,7 @@ void AParabolaWeapon::BeginPlay()
 void AParabolaWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
-	//Temp checking
 	
-	/*if (LockonComponent && WeaponOwner)
-	{
-		UE_LOG(Weapon_Log, Warning, TEXT("lock on comp and weapon owner is valid"));
-	}
-	else
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("lock on comp or weapon owner is invalid"));
-	}*/
 }
 
 
@@ -41,7 +30,8 @@ void AParabolaWeapon::OnInputTap_Implementation()
 {
 	// Quick tap -> fire fast projectile
 	bIsCharging = false;
-	TossParabolaProjectile();
+	CurrentChargeTime = 0.f;// reset the time as well
+	FireParabolaProjectile();// this handels the outcome. alo decrement the ammo
 }
 
 void AParabolaWeapon::OnInputHoldStart_Implementation()
@@ -119,10 +109,6 @@ void AParabolaWeapon::FireParabolaProjectile()
 		return;
 	}
 
-
-
-
-	
 	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 
 	// If released early → toss
@@ -134,6 +120,10 @@ void AParabolaWeapon::FireParabolaProjectile()
 	{
 		LaunchParabolaProjectile();
 	}
+
+	//Decrement the ammo count
+	--CurrentAmmoCount;
+	PlayMuzzleEffect();
 }
 
 void AParabolaWeapon::LaunchParabolaProjectile()
@@ -159,6 +149,10 @@ void AParabolaWeapon::LaunchParabolaProjectile()
 	Projectile->SetTravelTime(TravelTime);
 	Projectile->SetActorLocation(SpawnLocation);
 
+
+	Projectile->ToggleProjectileMovement(false);
+	Projectile->ActivateProjectileBase();
+	
 	UE_LOG(LogTemp, Log, TEXT("LaunchParabolaProjectile -> Arc launched toward cursor (%.1fs travel)"), TravelTime);
 }
 
@@ -171,6 +165,9 @@ void AParabolaWeapon::TossParabolaProjectile()
 
 	AProjectileBase* Projectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
 	if (!Projectile) return;
+
+	// Set to use physics movement for toss
+	Projectile->ToggleProjectileMovement(true);// use projectile movecomp, not custom path
 
 	if (UProjectileMovementComponent* MoveComp = Projectile->FindComponentByClass<UProjectileMovementComponent>())
 	{

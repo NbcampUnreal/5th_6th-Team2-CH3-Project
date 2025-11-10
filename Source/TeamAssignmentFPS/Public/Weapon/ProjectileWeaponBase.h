@@ -130,6 +130,9 @@ protected:
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
+	//Weapon Reload Interface
+	virtual void OnReloadInputPressed_Implementation() override;
+
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;

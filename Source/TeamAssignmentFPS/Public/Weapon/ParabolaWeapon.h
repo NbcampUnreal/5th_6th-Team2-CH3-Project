@@ -21,6 +21,9 @@ protected:
 	UPROPERTY()
 	ULockonComponent* LockonComponent=nullptr;// to get the landing location
 	
+	UPROPERTY()
+	bool bUseProjectileMovement = false;// for tossing and launching with parabola
+	
 	/** Charging and input */
 	bool bIsCharging = false;
 	bool bIsCharged = false;
@@ -77,8 +80,8 @@ protected:
 
 	/** Draw debug path */
 	void DrawParabolaPath(float ChargeRatio);
-
 	void DrawParabolaTimerTick();
+	
 
 	//equpiment
 	virtual void OnEquipped_Implementation() override;
