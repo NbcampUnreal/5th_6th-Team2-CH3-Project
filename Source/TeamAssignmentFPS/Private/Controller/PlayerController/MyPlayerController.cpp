@@ -361,8 +361,12 @@ void AMyPlayerController::StartGame()
 
     UGameplayStatics::OpenLevel(GetWorld(), FName("EnemyTestMap"));
 <<<<<<< HEAD
+<<<<<<< HEAD
     SetPause(false);
 =======
 >>>>>>> faff7e0 (11/10 feat conroller)
+=======
+    SetPause(false);
+>>>>>>> 891ff6b (11/10 feat GameStageManager)
 }
 

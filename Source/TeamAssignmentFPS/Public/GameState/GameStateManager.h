@@ -52,9 +52,12 @@ public:
 	void UPdateHUD();
 	// 오브젝트 상호작용
 	void FindObject();
+<<<<<<< HEAD
 
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
+=======
+>>>>>>> 891ff6b (11/10 feat GameStageManager)
 
 <<<<<<< HEAD
 	UFUNCTION(BlueprintCallable, Category = "Phase")
