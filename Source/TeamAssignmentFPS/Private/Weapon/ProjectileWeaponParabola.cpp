@@ -3,12 +3,28 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
+#include "Character/MyCharacter.h"
 #include "LockonTarget/LockonComponent.h"
+
 
 AParabolaWeapon::AParabolaWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
+}
+
+void AParabolaWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (AMyCharacter* CharOwner = Cast<AMyCharacter>(GetOwner()))
+	{
+		LockonComponent = CharOwner->GetLoconComp();
+		if (!LockonComponent)
+		{
+			UE_LOG(Weapon_Log, Warning, TEXT("ParabolaWeapon: No LockonComponent found on owner!"));
+		}
+	}
 }
 
 void AParabolaWeapon::Tick(float DeltaTime)
