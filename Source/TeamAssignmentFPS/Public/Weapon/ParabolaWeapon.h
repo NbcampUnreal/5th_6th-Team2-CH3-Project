@@ -69,9 +69,13 @@ protected:
 
 protected:
 <<<<<<< HEAD
+<<<<<<< HEAD
 	virtual void BeginPlay() override;
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+	virtual void BeginPlay() override;
+>>>>>>> d159577 (weapon update)
 	virtual void Tick(float DeltaTime) override;
 
 	/** InputReactionInterface */

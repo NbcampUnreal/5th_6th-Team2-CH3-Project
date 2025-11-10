@@ -5,6 +5,7 @@
 #include "TimerManager.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Character/MyCharacter.h"
 #include "LockonTarget/LockonComponent.h"
 
@@ -13,6 +14,11 @@
 =======
 #include "LockonTarget/LockonComponent.h"
 >>>>>>> e7a41e7 (update)
+=======
+#include "Character/MyCharacter.h"
+#include "LockonTarget/LockonComponent.h"
+
+>>>>>>> d159577 (weapon update)
 
 AParabolaWeapon::AParabolaWeapon()
 {
@@ -21,6 +27,9 @@ AParabolaWeapon::AParabolaWeapon()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d159577 (weapon update)
 void AParabolaWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -35,8 +44,11 @@ void AParabolaWeapon::BeginPlay()
 	}
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> d159577 (weapon update)
 void AParabolaWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
