@@ -5,12 +5,15 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 7568c9b (weapon updated)
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> a8cc1bd (rebase update)
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -18,6 +21,7 @@
 #include "Sound/SoundBase.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 =======
@@ -28,6 +32,10 @@
 #include "Debug/UELOGCategories.h"
 #include "Pooling/PoolingSubsystem.h"
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+
+
+>>>>>>> a8cc1bd (rebase update)
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -63,6 +71,7 @@ void AProjectileWeaponBase::BeginPlay()
 	Super::BeginPlay();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
 	//Set the value
@@ -73,6 +82,17 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 	
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+
+	// Set the owner
+	AActor* OwnerActor=GetOwner();
+	WeaponOwner=Cast<ACharacter>(OwnerActor);
+	if (!WeaponOwner)
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
+	}
+	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+>>>>>>> a8cc1bd (rebase update)
 }
 
 // Called every frame
@@ -143,8 +163,10 @@ void AProjectileWeaponBase::FireWeapon()
 			DamageInfo.DamageAmount = Damage;
 =======
 
-	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
+	if (SpawnedProjectile)
 	{
+<<<<<<< HEAD
 		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
 		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 		if (SpawnedProjectile)
@@ -178,6 +200,12 @@ void AProjectileWeaponBase::FireWeapon()
 
 	CurrentAmmoCount--;//subtract the ammo count
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+		SpawnedProjectile->SetDamageInfo(DamageInfo);
+	}
+
+	--CurrentAmmoCount;
+>>>>>>> a8cc1bd (rebase update)
 	PlayMuzzleEffect();
 }
 
@@ -250,6 +278,7 @@ void AProjectileWeaponBase::SetProjectileInfo()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 void AProjectileWeaponBase::SetProjectileInfo()
@@ -316,4 +345,7 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 	return SpawnedProjectile;
 }
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+
+>>>>>>> a8cc1bd (rebase update)
 

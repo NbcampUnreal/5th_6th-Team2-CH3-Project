@@ -10,6 +10,7 @@
 #include "Interface/EquipmentInterface.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -29,11 +30,23 @@ class AProjectileBase;
 >>>>>>> 7568c9b (weapon updated)
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+#include "Pooling/PoolingSubsystem.h"
+#include "Weapon/ProjectileBase.h"
+#include "Debug/UELOGCategories.h"
+#include "Anim/AnimationPair.h"
+
+#include "ProjectileWeaponBase.generated.h"
+
+
+
+>>>>>>> a8cc1bd (rebase update)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -42,6 +55,8 @@ class AMyCharacter;
 =======
 class AMyCharacter;
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> a8cc1bd (rebase update)
 
 
 UCLASS()
@@ -63,6 +78,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -70,6 +86,9 @@ protected:
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> a8cc1bd (rebase update)
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -148,8 +167,13 @@ protected:
 	TObjectPtr<UAnimMontage> FireAnimMontage;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
+=======
+
+	TMap<AActor*/*Owner*/, TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/>> FireAnimMontages;// for weapon, character and many more
+>>>>>>> a8cc1bd (rebase update)
 	// the anim pair is for playing animation on same trigger
 	// ex. fire weapon-> animations are required for player character's fire animation, weapon's recoil animation
 	//or weapon reload -> player reload weapon, weapon being reloaded
@@ -157,10 +181,13 @@ protected:
 
 
 	
+<<<<<<< HEAD
 =======
 >>>>>>> 7568c9b (weapon updated)
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> a8cc1bd (rebase update)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -274,6 +301,61 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 =======
 	void SetProjectileInfo();
 
+<<<<<<< HEAD
 	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+	// use template for different projectile subclass
+	template<typename T_ProjectileClass=AProjectileBase>// base as default
+	T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+	{
+		if (!ProjectileClass)
+		{
+			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile-> Projectile Class is null"));
+			return nullptr;
+		}
+		
+		// use this to prevent error
+		if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
+		{
+			UE_LOG(Weapon_Log, Error,
+				TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
+				*T_ProjectileClass::StaticClass()->GetName());
+			return nullptr;
+		}
+	
+		
+		T_ProjectileClass* SpawnedProjectile=nullptr;
+	
+		if (!bUsePool)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+			SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+			if (!SpawnedProjectile)
+			{
+				// spawn failed
+				return nullptr;
+			}
+		}
+		else
+		{
+			if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+			{
+				UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+				SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
+				if (!SpawnedProjectile)
+				{
+					return nullptr;
+				}
+			
+				SpawnedProjectile-> ActivateProjectileBase();//reactivate the projectile
+			}
+		}
+		// spawning new or from pool completed
+
+		return SpawnedProjectile;
+	}
+>>>>>>> a8cc1bd (rebase update)
 };
