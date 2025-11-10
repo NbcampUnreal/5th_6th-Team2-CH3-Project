@@ -8,656 +8,122 @@
 #include "Interface/WeaponInterface.h"
 #include "Interface/DamageInfo.h"
 #include "Interface/EquipmentInterface.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> cda4565 (11/11)
-=======
->>>>>>> 0c7c848 (no message)
-=======
->>>>>>> 29523ae (no message)
-=======
->>>>>>> 6a4e438 (no message)
-#include "Pooling/PoolingSubsystem.h"
-#include "Weapon/ProjectileBase.h"
-#include "Debug/UELOGCategories.h"
-
-#include "ProjectileWeaponBase.generated.h"
-
-
-
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-=======
->>>>>>> ea6a2be (11/10)
->>>>>>> 0c7c848 (no message)
 #include "ProjectileWeaponBase.generated.h"
 
 
 class AProjectileBase;
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 7568c9b (weapon updated)
-=======
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-#include "Pooling/PoolingSubsystem.h"
-#include "Weapon/ProjectileBase.h"
-#include "Debug/UELOGCategories.h"
-#include "Anim/AnimationPair.h"
-
-#include "ProjectileWeaponBase.generated.h"
-
-
-
->>>>>>> a8cc1bd (rebase update)
-=======
-=======
->>>>>>> cda4565 (11/11)
-#include "ProjectileWeaponBase.generated.h"
-
-
-class AProjectileBase;
-<<<<<<< HEAD
->>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
-=======
->>>>>>> ca434e8 (no message)
->>>>>>> cda4565 (11/11)
-=======
->>>>>>> ca434e8 (no message)
-=======
->>>>>>> ea6a2be (11/10)
-<<<<<<< HEAD
->>>>>>> 0c7c848 (no message)
-=======
-=======
-#include "Pooling/PoolingSubsystem.h"
-#include "Weapon/ProjectileBase.h"
-#include "Debug/UELOGCategories.h"
-#include "Anim/AnimationPair.h"
-
-#include "ProjectileWeaponBase.generated.h"
-
-
-
->>>>>>> 616ab73 (11/10)
-<<<<<<< HEAD
->>>>>>> 29523ae (no message)
-=======
-=======
-#include "ProjectileWeaponBase.generated.h"
-
-
-class AProjectileBase;
->>>>>>> f59b66a (11/10)
->>>>>>> 6a4e438 (no message)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 class AMyCharacter;
->>>>>>> 7568c9b (weapon updated)
-=======
-class AMyCharacter;
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
->>>>>>> a8cc1bd (rebase update)
-=======
-class AMyCharacter;
->>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
-=======
-=======
-class AMyCharacter;
->>>>>>> ca434e8 (no message)
->>>>>>> cda4565 (11/11)
-=======
-=======
->>>>>>> 29523ae (no message)
-=======
->>>>>>> 6a4e438 (no message)
-=======
-class AMyCharacter;
->>>>>>> ca434e8 (no message)
-=======
-class AMyCharacter;
->>>>>>> ea6a2be (11/10)
-<<<<<<< HEAD
->>>>>>> 0c7c848 (no message)
-=======
-=======
->>>>>>> 616ab73 (11/10)
-<<<<<<< HEAD
->>>>>>> 29523ae (no message)
-=======
-=======
-class AMyCharacter;
->>>>>>> f59b66a (11/10)
->>>>>>> 6a4e438 (no message)
 
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AProjectileWeaponBase :
-	public AActor,
-	public IInputReactionInterface,//for basic input reaction
-	public IWeaponInterface,// for reloading
-	public IEquipmentInterface/* for equipping and unequipping */
+    public AActor,
+    public IInputReactionInterface,//for basic input reaction
+    public IWeaponInterface,// for reloading
+    public IEquipmentInterface/* for equipping and unequipping */
 
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AProjectileWeaponBase();
-	
+    // Sets default values for this actor's properties
+    AProjectileWeaponBase();
+
 protected:
-	//Owner
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> 7568c9b (weapon updated)
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> a8cc1bd (rebase update)
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
-=======
-=======
->>>>>>> 0c7c848 (no message)
-=======
->>>>>>> 29523ae (no message)
-=======
->>>>>>> 6a4e438 (no message)
-	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> ca434e8 (no message)
-<<<<<<< HEAD
->>>>>>> cda4565 (11/11)
-=======
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> ea6a2be (11/10)
-<<<<<<< HEAD
->>>>>>> 0c7c848 (no message)
-=======
-=======
-	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> 616ab73 (11/10)
-<<<<<<< HEAD
->>>>>>> 29523ae (no message)
-=======
-=======
-	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
->>>>>>> f59b66a (11/10)
->>>>>>> 6a4e438 (no message)
+    //Owner
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
+    TObjectPtr<AMyCharacter> WeaponOwner = nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 
-	//==== Projectile ====//
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	FDamageInfo DamageInfo;// so that the projectile can get the damage from the weapon
+    //==== Projectile ====//
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    FDamageInfo DamageInfo;// so that the projectile can get the damage from the weapon
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	TObjectPtr<USceneComponent> Muzzle;// location, direction of weapon to be fired
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    TObjectPtr<USceneComponent> Muzzle;// location, direction of weapon to be fired
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
-=======
-	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
->>>>>>> 7568c9b (weapon updated)
-=======
-	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-=======
->>>>>>> 0c7c848 (no message)
-	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
-=======
-	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
->>>>>>> ca434e8 (no message)
-<<<<<<< HEAD
->>>>>>> cda4565 (11/11)
-=======
-=======
-	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
->>>>>>> ea6a2be (11/10)
->>>>>>> 0c7c848 (no message)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    TSubclassOf<AProjectileBase> ProjectileClass = nullptr;// projectile to be fired
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	float ReloadTime = 1.5f;// required time reload
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    float ReloadTime = 1.5f;// required time reload
 
-	//==For Rapid Fire while holding
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	float SpawnInterval = 0.2f;// time game between bulletshoot when it is using rapid fire
+    //==For Rapid Fire while holding
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    float SpawnInterval = 0.2f;// time game between bulletshoot when it is using rapid fire
 
-	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> cda4565 (11/11)
-=======
->>>>>>> 0c7c848 (no message)
-	
-=======
+    FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	float Damage;
-<<<<<<< HEAD
->>>>>>> 7568c9b (weapon updated)
-=======
-	
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
->>>>>>> ca434e8 (no message)
-<<<<<<< HEAD
->>>>>>> cda4565 (11/11)
-=======
-=======
-	
->>>>>>> ea6a2be (11/10)
->>>>>>> 0c7c848 (no message)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	int32 MaxAmmoCount;//
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
-	int32 CurrentAmmoCount;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
-	float CurrentChargingTime;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
-	float MinChargingTime;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging ")
-	float MaxChargingTime;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+    int32 MaxAmmoCount;//
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
+    int32 CurrentAmmoCount;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
+    float CurrentChargingTime;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging")
+    float MinChargingTime;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon | Charging ")
+    float MaxChargingTime;
 
-	bool bIsReloading = false;
-	bool bIsFiring = false;
+    bool bIsReloading = false;
+    bool bIsFiring = false;
 
 
-	/// Visual elements
+    /// Visual elements
 
-	//	Mesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon")
-	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;// weapon mesh with no animation
+    // Mesh
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon")
+    TObjectPtr<UStaticMeshComponent> StaticMeshComponent;// weapon mesh with no animation
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon")
-	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;// weapon mesh with animation
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon")
+    TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;// weapon mesh with animation
 
-	//	FX
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
-	TObjectPtr<UParticleSystem> MuzzleFlashEffect;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
-	TObjectPtr<USoundBase> FireSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
-	TObjectPtr<USoundBase> ReloadSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
-	TObjectPtr<USoundBase> FiringFailedSound;
+    // FX
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
+    TObjectPtr<UParticleSystem> MuzzleFlashEffect;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
+    TObjectPtr<USoundBase> FireSound;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
+    TObjectPtr<USoundBase> ReloadSound;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | FX")
+    TObjectPtr<USoundBase> FiringFailedSound;
 
-	//	when skeletal mesh has animaiton
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
-	TObjectPtr<UAnimMontage> FireAnimMontage;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> cda4565 (11/11)
-=======
->>>>>>> 0c7c848 (no message)
-=======
->>>>>>> 29523ae (no message)
-=======
->>>>>>> 6a4e438 (no message)
+    // when skeletal mesh has animaiton
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
+    TObjectPtr<UAnimMontage> FireAnimMontage;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
+    TObjectPtr<UAnimMontage> ReloadAnimMontage;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
+    TObjectPtr<UAnimMontage> FireFailedAnimMontage;
 
-	
-=======
-
-	TMap<AActor*/*Owner*/, TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/>> FireAnimMontages;// for weapon, character and many more
-<<<<<<< HEAD
->>>>>>> a8cc1bd (rebase update)
-=======
->>>>>>> 616ab73 (11/10)
->>>>>>> 29523ae (no message)
-	// the anim pair is for playing animation on same trigger
-	// ex. fire weapon-> animations are required for player character's fire animation, weapon's recoil animation
-	//or weapon reload -> player reload weapon, weapon being reloaded
-	// so, the taaray
-
-
-	
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 7568c9b (weapon updated)
-=======
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
->>>>>>> a8cc1bd (rebase update)
-=======
->>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
-=======
-=======
->>>>>>> 29523ae (no message)
-=======
->>>>>>> ca434e8 (no message)
-<<<<<<< HEAD
->>>>>>> cda4565 (11/11)
-=======
-=======
->>>>>>> ea6a2be (11/10)
-<<<<<<< HEAD
->>>>>>> 0c7c848 (no message)
-=======
-=======
->>>>>>> 616ab73 (11/10)
-<<<<<<< HEAD
->>>>>>> 29523ae (no message)
-=======
-=======
->>>>>>> f59b66a (11/10)
->>>>>>> 6a4e438 (no message)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
-	TObjectPtr<UAnimMontage> ReloadAnimMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
-	TObjectPtr<UAnimMontage> FireFailedAnimMontage;
-	
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
 
 protected:
-	virtual void FireWeapon();
-	virtual void AutoFire(float FireInterval);
-	virtual void ReloadWeapon();
-	virtual void PlayMuzzleEffect();
-	virtual void PlayReloadEffect();
-	virtual void PlayFiringFailedEffect();
+    virtual void FireWeapon();
+    virtual void AutoFire(float FireInterval);
+    virtual void ReloadWeapon();
+    virtual void PlayMuzzleEffect();
+    virtual void PlayReloadEffect();
+    virtual void PlayFiringFailedEffect();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b028351 (parabola weapon updated)
-=======
->>>>>>> cda4565 (11/11)
-=======
->>>>>>> 0c7c848 (no message)
-=======
-=======
->>>>>>> 5b3a91a (11/10)
->>>>>>> b0993a4 (no message)
-	//Equipment
-	virtual void OnEquipped_Implementation() override;
-	virtual void OnUnequipped_Implementation() override;
+    void SetProjectileInfo();
 
-	void SetProjectileInfo();
-
-<<<<<<< HEAD
-	// use template for different projectile subclass
-template<typename T_ProjectileClass = AProjectileBase> // base as default
-T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
-{
-	if (!ProjectileClass)
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> ProjectileClass is null"));
-		return nullptr;
-	}
-
-	// Safety check: ensure the template type is a subclass of AProjectileBase
-	if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
-	{
-		UE_LOG(Weapon_Log, Error,
-			TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
-			*T_ProjectileClass::StaticClass()->GetName());
-		return nullptr;
-	}
-
-	T_ProjectileClass* SpawnedProjectile = nullptr;
-
-	// Case 1: Spawn normally (not using pool)
-	if (!bUsePool)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-		if (!SpawnedProjectile)
-		{
-			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> Failed to spawn actor normally"));
-			return nullptr;
-		}
-	}
-	// Case 2: Try using pooling subsystem
-	else
-	{
-		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-		{
-			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
-			SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
-
-			if (!SpawnedProjectile)
-			{
-				UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> Failed to get pooled projectile"));
-				return nullptr;
-			}
-
-			// Reactivate pooled projectile
-			SpawnedProjectile->ActivateProjectileBase();
-		}
-		else
-		{
-			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> PoolingSubsystem not found in World"));
-			return nullptr;
-		}
-	}
-
-	//Log successful spawn info
-	if (SpawnedProjectile)
-	{
-		UE_LOG(Weapon_Log, Log,
-			TEXT("SpawnProjectile -> Spawned Projectile: %s (Class: %s) | Using Pool: %s"),
-			*SpawnedProjectile->GetName(),
-			*SpawnedProjectile->GetClass()->GetName(),
-			bUsePool ? TEXT("True") : TEXT("False"));
-	}
-	else
-	{
-		UE_LOG(Weapon_Log, Warning, TEXT("SpawnProjectile -> SpawnedProjectile is nullptr after spawn attempt"));
-	}
-
-	return SpawnedProjectile;
-}
-
-=======
-	void SetProjectileInfo();
-
-	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
-<<<<<<< HEAD
->>>>>>> 7568c9b (weapon updated)
-=======
-	void SetProjectileInfo();
-
-<<<<<<< HEAD
-	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
->>>>>>> 0f253c7 (Reapply "murge into seo")
-=======
-	// use template for different projectile subclass
-	template<typename T_ProjectileClass=AProjectileBase>// base as default
-	T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
-	{
-		if (!ProjectileClass)
-		{
-			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile-> Projectile Class is null"));
-			return nullptr;
-		}
-		
-		// use this to prevent error
-		if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
-		{
-			UE_LOG(Weapon_Log, Error,
-				TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
-				*T_ProjectileClass::StaticClass()->GetName());
-			return nullptr;
-		}
-	
-		
-		T_ProjectileClass* SpawnedProjectile=nullptr;
-	
-		if (!bUsePool)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
-			SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-			if (!SpawnedProjectile)
-			{
-				// spawn failed
-				return nullptr;
-			}
-		}
-		else
-		{
-			if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-			{
-				UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
-				SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
-				if (!SpawnedProjectile)
-				{
-					return nullptr;
-				}
-			
-				SpawnedProjectile-> ActivateProjectileBase();//reactivate the projectile
-			}
-		}
-		// spawning new or from pool completed
-
-		return SpawnedProjectile;
-	}
->>>>>>> a8cc1bd (rebase update)
-=======
-	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
->>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
-=======
->>>>>>> ca434e8 (no message)
-<<<<<<< HEAD
->>>>>>> cda4565 (11/11)
-=======
-=======
-	void SetProjectileInfo();
-
-<<<<<<< HEAD
-	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
->>>>>>> ea6a2be (11/10)
-<<<<<<< HEAD
->>>>>>> 0c7c848 (no message)
-=======
-=======
-	// use template for different projectile subclass
-	template<typename T_ProjectileClass=AProjectileBase>// base as default
-	T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
-	{
-		if (!ProjectileClass)
-		{
-			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile-> Projectile Class is null"));
-			return nullptr;
-		}
-		
-		// use this to prevent error
-		if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
-		{
-			UE_LOG(Weapon_Log, Error,
-				TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
-				*T_ProjectileClass::StaticClass()->GetName());
-			return nullptr;
-		}
-	
-		
-		T_ProjectileClass* SpawnedProjectile=nullptr;
-	
-		if (!bUsePool)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
-			SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-			if (!SpawnedProjectile)
-			{
-				// spawn failed
-				return nullptr;
-			}
-		}
-		else
-		{
-			if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-			{
-				UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
-				SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
-				if (!SpawnedProjectile)
-				{
-					return nullptr;
-				}
-			
-				SpawnedProjectile-> ActivateProjectileBase();//reactivate the projectile
-			}
-		}
-		// spawning new or from pool completed
-
-		return SpawnedProjectile;
-	}
->>>>>>> 616ab73 (11/10)
-<<<<<<< HEAD
->>>>>>> 29523ae (no message)
-=======
-=======
-	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
->>>>>>> f59b66a (11/10)
->>>>>>> 6a4e438 (no message)
+    AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 };
+
+
+
+
+
