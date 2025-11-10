@@ -97,12 +97,15 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> 4c49a91 (11/11)
 =======
 >>>>>>> b24b0c4 (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
@@ -153,7 +156,12 @@ public:
 	void SetTargetActor(AActor* NewTargetActor);
 	AActor* GetTargetActor()const{return TargetActor;}
 >>>>>>> b64879a (weapon updated)
+<<<<<<< HEAD
 >>>>>>> b24b0c4 (no message)
+=======
+=======
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 	
 protected:
 	virtual void BeginPlay() override;
@@ -174,9 +182,6 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	
 	FVector HitDirection;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy | Target")
-	AActor* TargetActor;
 	
 	
 	void PlayHitMontage(UAnimMontage* Montage);

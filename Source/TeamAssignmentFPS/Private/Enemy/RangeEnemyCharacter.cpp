@@ -45,10 +45,13 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 4c49a91 (11/11)
 =======
 >>>>>>> 2bf2f5b (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
@@ -76,7 +79,12 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> b64879a (weapon updated)
+<<<<<<< HEAD
 >>>>>>> b24b0c4 (no message)
+=======
+=======
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
@@ -88,6 +96,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 >>>>>>> 5e79537 (no message)
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -111,6 +120,8 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 =======
 >>>>>>> b24b0c4 (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
 <<<<<<< HEAD
@@ -178,6 +189,8 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> 54e6a7b (no message)
 =======
 =======
+=======
+>>>>>>> f59b66a (11/10)
 		AProjectileBase* ProjectileBase =
 			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
 
@@ -195,8 +208,17 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> abfb1f3 (update)
+<<<<<<< HEAD
 >>>>>>> 035f9ef (11/10)
+<<<<<<< HEAD
 >>>>>>> 5e79537 (no message)
+=======
+=======
+=======
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

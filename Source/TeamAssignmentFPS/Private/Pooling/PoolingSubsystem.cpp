@@ -186,7 +186,7 @@ AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, F
 	}
 	if (NewSpawnedActor && PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
 	{
-		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);
+		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);// why?
 	}
 	return NewSpawnedActor;
 >>>>>>> ea6a2be (11/10)

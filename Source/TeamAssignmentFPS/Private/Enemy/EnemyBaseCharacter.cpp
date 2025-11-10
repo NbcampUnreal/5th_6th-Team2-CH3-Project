@@ -152,10 +152,13 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> b24b0c4 (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -245,6 +248,8 @@ void AEnemyBaseCharacter::EndChase()
 
 	SetTargetActor(Player);
 >>>>>>> b64879a (weapon updated)
+=======
+>>>>>>> f59b66a (11/10)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -510,6 +515,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		bool WasDestoryed;
@@ -518,6 +524,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 078c989 (11/10)
 =======
 =======
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 >>>>>>> d74bc04 (fix)
@@ -597,24 +605,6 @@ void AEnemyBaseCharacter::EndEnemyDead()
 >>>>>>> 4237dcd (11/10)
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-}
-
-void AEnemyBaseCharacter::SetTargetActor(AActor* NewTargetActor)
-{
-	if (!NewTargetActor)
-	{
-		UE_LOG(Enemy_Log, Error, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Invalid Target"));
-		return;
-	}
-
-	if (NewTargetActor==TargetActor)
-	{
-		UE_LOG(Enemy_Log, Warning, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Already Setted to same target"));
-		return;
-	}
-
-	TargetActor=NewTargetActor;
-	UE_LOG(Enemy_Log, Log, TEXT("AEnemyBaseCharacter::SetTargetActor-> Target Set to %s"), *TargetActor->GetName())
 }
 
 void AEnemyBaseCharacter::EnemyDestroy()
@@ -1036,6 +1026,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 2bf2f5b (no message)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> 078c989 (11/10)
 
@@ -1053,6 +1044,11 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 
 	if (!TargetActor)
 >>>>>>> b64879a (weapon updated)
+=======
+	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!Player)
+>>>>>>> f59b66a (11/10)
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1128,7 +1124,7 @@ FRotator AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 2bf2f5b (no message)
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 

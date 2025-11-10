@@ -15,12 +15,15 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
 =======
 >>>>>>> 29523ae (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -88,7 +91,16 @@ class AProjectileBase;
 
 
 >>>>>>> 616ab73 (11/10)
+<<<<<<< HEAD
 >>>>>>> 29523ae (no message)
+=======
+=======
+#include "ProjectileWeaponBase.generated.h"
+
+
+class AProjectileBase;
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
@@ -101,6 +113,7 @@ class UAnimMontage;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 class AMyCharacter;
 >>>>>>> 7568c9b (weapon updated)
@@ -121,6 +134,8 @@ class AMyCharacter;
 =======
 >>>>>>> 29523ae (no message)
 =======
+>>>>>>> 6a4e438 (no message)
+=======
 class AMyCharacter;
 >>>>>>> ca434e8 (no message)
 =======
@@ -131,7 +146,13 @@ class AMyCharacter;
 =======
 =======
 >>>>>>> 616ab73 (11/10)
+<<<<<<< HEAD
 >>>>>>> 29523ae (no message)
+=======
+=======
+class AMyCharacter;
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 
 
 UCLASS()
@@ -158,6 +179,7 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -176,6 +198,8 @@ protected:
 >>>>>>> 0c7c848 (no message)
 =======
 >>>>>>> 29523ae (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -192,7 +216,13 @@ protected:
 =======
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> 616ab73 (11/10)
+<<<<<<< HEAD
 >>>>>>> 29523ae (no message)
+=======
+=======
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -308,12 +338,15 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> cda4565 (11/11)
 =======
 >>>>>>> 0c7c848 (no message)
 =======
 >>>>>>> 29523ae (no message)
+=======
+>>>>>>> 6a4e438 (no message)
 
 	
 =======
@@ -357,7 +390,12 @@ protected:
 =======
 =======
 >>>>>>> 616ab73 (11/10)
+<<<<<<< HEAD
 >>>>>>> 29523ae (no message)
+=======
+=======
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -610,5 +648,11 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 		return SpawnedProjectile;
 	}
 >>>>>>> 616ab73 (11/10)
+<<<<<<< HEAD
 >>>>>>> 29523ae (no message)
+=======
+=======
+	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
+>>>>>>> f59b66a (11/10)
+>>>>>>> 6a4e438 (no message)
 };
