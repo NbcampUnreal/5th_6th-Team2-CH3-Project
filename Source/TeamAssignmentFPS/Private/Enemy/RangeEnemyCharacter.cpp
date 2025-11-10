@@ -44,6 +44,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 4c49a91 (11/11)
 =======
@@ -56,10 +57,16 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 >>>>>>> 652a79a (Revert "delete")
 =======
+=======
+
+	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
+=======
+>>>>>>> b24b0c4 (no message)
 	DamageInfo.DamageCauser=this;// damage causer
 
 	// Projectile path direction
 	FVector ProjectileDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
+<<<<<<< HEAD
 >>>>>>> f79331c (weapon updated)
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
@@ -67,6 +74,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> b64879a (weapon updated)
+>>>>>>> b24b0c4 (no message)
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
@@ -75,6 +85,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -95,6 +106,8 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
+=======
+>>>>>>> b24b0c4 (no message)
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
 <<<<<<< HEAD
@@ -158,7 +171,19 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> 7d3e656 (11/10 enemybasecharacter)
+<<<<<<< HEAD
 >>>>>>> 54e6a7b (no message)
+=======
+=======
+		AProjectileBase* ProjectileBase =
+			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
+
+		if (!ProjectileBase)
+		{
+			//error
+		}
+>>>>>>> b64879a (weapon updated)
+>>>>>>> b24b0c4 (no message)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

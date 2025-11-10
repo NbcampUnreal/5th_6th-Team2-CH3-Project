@@ -151,8 +151,11 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> b24b0c4 (no message)
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -236,6 +239,12 @@ void AEnemyBaseCharacter::EndChase()
 	// 	return;
 	// }
 	EnemyAttack();
+=======
+	
+	AActor* Player=GetWorld()->GetFirstPlayerController()->GetPawn();
+
+	SetTargetActor(Player);
+>>>>>>> b64879a (weapon updated)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -575,6 +584,24 @@ void AEnemyBaseCharacter::EndEnemyDead()
 >>>>>>> 4237dcd (11/10)
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+}
+
+void AEnemyBaseCharacter::SetTargetActor(AActor* NewTargetActor)
+{
+	if (!NewTargetActor)
+	{
+		UE_LOG(Enemy_Log, Error, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Invalid Target"));
+		return;
+	}
+
+	if (NewTargetActor==TargetActor)
+	{
+		UE_LOG(Enemy_Log, Warning, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Already Setted to same target"));
+		return;
+	}
+
+	TargetActor=NewTargetActor;
+	UE_LOG(Enemy_Log, Log, TEXT("AEnemyBaseCharacter::SetTargetActor-> Target Set to %s"), *TargetActor->GetName())
 }
 
 void AEnemyBaseCharacter::EnemyDestroy()
@@ -995,6 +1022,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 4237dcd (11/10)
 >>>>>>> 2bf2f5b (no message)
 {
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> 078c989 (11/10)
 
@@ -1007,6 +1035,11 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 	FName SectionName = FName("Front");
 
 	if (Theta >= -45.f && Theta < 45.f)
+=======
+	//APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!TargetActor)
+>>>>>>> b64879a (weapon updated)
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
