@@ -66,9 +66,7 @@ protected:
 	
 	UFUNCTION()
 	void DestroyProjectile();
-	UFUNCTION()
 	void DestroyProjectileAfterLifetime();
-	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -78,27 +76,21 @@ public:
 	
 	virtual void OnProjectileHit(const FHitResult& HitResult, AActor* OtherActor);// when the projectile collide
 	
+<<<<<<< HEAD
 
 	// Pooling Interface Implementation
+=======
+>>>>>>> cccbfc2 (Revert "murge into seo")
 	virtual void OnSpawnFromPool_Implementation() override;
 	virtual void OnReturnToPool_Implementation() override;
 
-	void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
+	FORCEINLINE void SetDamageInfo(const FDamageInfo& NewDamageInfo) { DamageInfo = NewDamageInfo; }
 
-	//Projectile Pooling
-	virtual void ActivateProjectileBase();
-	virtual void DeactivateProjectileBase();
-
-	
-protected:
+private:
 
 	FTimerHandle LifeTimeHandle;
-	void ActivateLifeTimeHandle();
-	void DeactivateLifeTimerHandle();
-	
-
-	
-private:
 	void ReturnToPool(); 
-
+	
+	void ActivateLifeTimeHandle();
+	void DeactivateTimerHandle();
 };

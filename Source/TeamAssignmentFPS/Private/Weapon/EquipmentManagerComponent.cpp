@@ -441,6 +441,7 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 2966a65 (equipment updated)
 void UEquipmentManagerComponent::SwitchFromItemToWeapon()
@@ -455,6 +456,8 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 >>>>>>> 6bfcd5b (update)
 =======
 >>>>>>> 2966a65 (equipment updated)
+=======
+>>>>>>> cccbfc2 (Revert "murge into seo")
 
 
 bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)
