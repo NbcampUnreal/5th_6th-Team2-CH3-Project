@@ -65,6 +65,7 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 =======
@@ -92,6 +93,17 @@ void AEnemyBaseCharacter::BeginPlay()
 =======
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 >>>>>>> 652a79a (Revert "delete")
+=======
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
+=======
+<<<<<<< HEAD
+		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
+=======
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
+>>>>>>> f351064 (chore)
+>>>>>>> 002d088 (11/10 EnemybaseCharacter)
+>>>>>>> 2758b11 (11/11)
 	}
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -336,6 +348,10 @@ void AEnemyBaseCharacter::EndHitReact()
 >>>>>>> d74bc04 (fix)
 void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 002d088 (11/10 EnemybaseCharacter)
 	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
@@ -518,10 +534,13 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+>>>>>>> 2758b11 (11/11)
 		
 		FTimerHandle DelayHandle;
 
@@ -548,6 +567,7 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 		AIController->StartBehaviorTree();
 	}
 	EndEnemySpawn();
+<<<<<<< HEAD
 >>>>>>> f351064 (chore)
 =======
 	}
@@ -562,6 +582,9 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 	}
 
 >>>>>>> 652a79a (Revert "delete")
+=======
+>>>>>>> 002d088 (11/10 EnemybaseCharacter)
+>>>>>>> 2758b11 (11/11)
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()

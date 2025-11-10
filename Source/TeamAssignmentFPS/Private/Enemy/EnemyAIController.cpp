@@ -85,6 +85,7 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//DefaultSettingBlackBoard();
 =======
 	DefaultSettingBlackBoard();
@@ -98,6 +99,12 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 =======
 	//DefaultSettingBlackBoard();
 >>>>>>> 652a79a (Revert "delete")
+=======
+	//DefaultSettingBlackBoard();
+=======
+	DefaultSettingBlackBoard();
+>>>>>>> 002d088 (11/10 EnemybaseCharacter)
+>>>>>>> 2758b11 (11/11)
 }
 
 void AEnemyAIController::StartBehaviorTree()
