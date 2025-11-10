@@ -9,6 +9,7 @@
 #include "Interface/DamageInfo.h"
 #include "Interface/EquipmentInterface.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -18,20 +19,29 @@
 
 
 =======
+=======
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 #include "ProjectileWeaponBase.generated.h"
 
 
 class AProjectileBase;
+<<<<<<< HEAD
 >>>>>>> 7568c9b (weapon updated)
+=======
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 class AMyCharacter;
 >>>>>>> 7568c9b (weapon updated)
+=======
+class AMyCharacter;
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 
 
 UCLASS()
@@ -52,10 +62,14 @@ protected:
 	//Owner
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> 7568c9b (weapon updated)
+=======
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -66,10 +80,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
 =======
 	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
 >>>>>>> 7568c9b (weapon updated)
+=======
+	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -81,12 +99,16 @@ protected:
 
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	float Damage;
 >>>>>>> 7568c9b (weapon updated)
+=======
+	
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
@@ -125,6 +147,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> FireAnimMontage;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
 	// the anim pair is for playing animation on same trigger
@@ -136,6 +159,8 @@ protected:
 	
 =======
 >>>>>>> 7568c9b (weapon updated)
+=======
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -158,6 +183,7 @@ protected:
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
@@ -245,4 +271,9 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 
 	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
 >>>>>>> 7568c9b (weapon updated)
+=======
+	void SetProjectileInfo();
+
+	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 };

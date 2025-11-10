@@ -4,14 +4,19 @@
 #include "Weapon/ProjectileWeaponBase.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 7568c9b (weapon updated)
+=======
+#include "Weapon/ProjectileBase.h"
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Sound/SoundBase.h"
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 
@@ -19,6 +24,10 @@
 #include "Debug/UELOGCategories.h"
 #include "Pooling/PoolingSubsystem.h"
 >>>>>>> 7568c9b (weapon updated)
+=======
+#include "Debug/UELOGCategories.h"
+#include "Pooling/PoolingSubsystem.h"
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -37,10 +46,14 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 	Muzzle->SetupAttachment(SkeletalMeshComponent);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 >>>>>>> 7568c9b (weapon updated)
+=======
+	CurrentAmmoCount=MaxAmmoCount;// set the count
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 
 }
 
@@ -49,6 +62,7 @@ void AProjectileWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
 	//Set the value
@@ -56,6 +70,9 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 	
 >>>>>>> 7568c9b (weapon updated)
+=======
+	
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 }
 
 // Called every frame
@@ -67,10 +84,14 @@ void AProjectileWeaponBase::Tick(float DeltaTime)
 void AProjectileWeaponBase::FireWeapon()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (!ProjectileClass)
 =======
 	if (!Projectile)
 >>>>>>> 7568c9b (weapon updated)
+=======
+	if (!ProjectileClass)
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
 		return;
@@ -101,6 +122,7 @@ void AProjectileWeaponBase::FireWeapon()
 	SpawnParams.Instigator = GetInstigator();
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
 	if (SpawnedProjectile)
@@ -119,10 +141,20 @@ void AProjectileWeaponBase::FireWeapon()
 		if (SpawnedProjectile)
 		{
 			DamageInfo.DamageAmount = Damage;
+=======
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 			SpawnedProjectile->SetDamageInfo(DamageInfo);
 		}
 	}
 	
+<<<<<<< HEAD
 	// spawning success	
 
 	// SpawnParams.Owner=this;
@@ -141,6 +173,11 @@ void AProjectileWeaponBase::FireWeapon()
 
 	CurrentAmmoCount--;//subtract the ammo count
 >>>>>>> 7568c9b (weapon updated)
+=======
+	// spawning success
+
+	CurrentAmmoCount--;//subtract the ammo count
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	PlayMuzzleEffect();
 }
 
@@ -185,6 +222,7 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();
@@ -204,11 +242,14 @@ void AProjectileWeaponBase::OnUnequipped_Implementation()
 	IEquipmentInterface::OnUnequipped_Implementation();
 }
 
+=======
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 void AProjectileWeaponBase::SetProjectileInfo()
 {
 	DamageInfo.DamageCauser=GetInstigator();
 }
 
+<<<<<<< HEAD
 
 =======
 void AProjectileWeaponBase::SetProjectileInfo()
@@ -219,21 +260,37 @@ void AProjectileWeaponBase::SetProjectileInfo()
 
 void AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
 {
+=======
+AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
+{
+
+	AProjectileBase* SpawnedProjectile=nullptr;
+	
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	if (!bUsePool)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
+<<<<<<< HEAD
 		AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
+=======
+		SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (!SpawnedProjectile)
+		{
+			// spawn failed
+			return nullptr;
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 		}
 	}
 	else
 	{
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
+<<<<<<< HEAD
 			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (SpawnedProjectile)
@@ -245,4 +302,18 @@ void AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation
 	}
 }
 >>>>>>> 7568c9b (weapon updated)
+=======
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+			SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+			if (!SpawnedProjectile)
+			{
+				return nullptr;
+			}
+		}
+	}
+	// spawning new or from pool completed
+
+	return SpawnedProjectile;
+}
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 

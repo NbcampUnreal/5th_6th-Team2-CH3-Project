@@ -38,6 +38,7 @@ protected:
 	TObjectPtr<UWeaponQuickSlots> WeaponQuickSlot;
 	UPROPERTY()
 	TObjectPtr<UItemQuickSlots> ItemQuickSlot;
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +54,10 @@ protected:
 	
 =======
 >>>>>>> cccbfc2 (Revert "murge into seo")
+=======
+	
+	
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Temp Storage for fixed weapons and items
 	UPROPERTY()
@@ -140,6 +145,7 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
@@ -150,6 +156,10 @@ public:
 >>>>>>> 2966a65 (equipment updated)
 =======
 >>>>>>> cccbfc2 (Revert "murge into seo")
+=======
+	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
+
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 	
 
 

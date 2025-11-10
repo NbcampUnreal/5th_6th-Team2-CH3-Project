@@ -33,6 +33,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -60,6 +61,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	{
 =======
 >>>>>>> cccbfc2 (Revert "murge into seo")
+=======
+		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+>>>>>>> 0f253c7 (Reapply "murge into seo")
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> b8ccb7b (feat enemy anim)
 		ProjectileBase->SetDamageInfo(DamageInfo);
