@@ -1,15 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "ProjectilePathDrawer.generated.h"
-
-/*
- * // this is for 
- */
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API UProjectilePathDrawer : public UObject
@@ -18,17 +11,31 @@ class TEAMASSIGNMENTFPS_API UProjectilePathDrawer : public UObject
 
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Projectile|Path")
-	static FVector GetBezierParabolaPoint(
+	// Calculates a parabolic point between Start and End
+	static FVector GetLerpedParabolaPoint(
 		const FVector& Start,
 		const FVector& End,
-		float Scalar01,
+		float ScalarValue,
 		float MinHeight,
 		float MaxHeight,
-		float T
+		float LerpAlpha,
+		//Default values
+		float SlowRange = 0.0f // 0 = no slowdown, 1 = strong slowdown near top
 	);
-	
 
-
-	
+	// Draws a debug parabolic arc
+	static void DrawLerpedArc(
+		UWorld* World,
+		const FVector& Start,
+		const FVector& End,
+		float ScalarValue,
+		float MinHeight,
+		float MaxHeight,
+		//Default values
+		int32 Segments = 20,
+		FColor Color = FColor::Green,
+		float LineThickness = 2.0f,
+		float SlowRange = 0.0f
+	);
 };
+

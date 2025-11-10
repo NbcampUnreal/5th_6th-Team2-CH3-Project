@@ -59,6 +59,18 @@ void AEnemyBaseCharacter::BeginPlay()
 	{
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 	}
+
+	// Set TargetActor
+	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (!NewTargetActor)
+	{
+		UE_LOG(Enemy_Log, Error, TEXT("AEnemyBaseCharacter::BeginPlay-> invalid target actor"));
+	}
+	else
+	{
+		SetTargetActor(NewTargetActor);
+	}
+	
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -336,14 +348,12 @@ void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
 
 FRotator AEnemyBaseCharacter::LookAtPlayer()
 {
-	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	if (!Player)
+	if (!TargetActor)
 	{
 		return FRotator::ZeroRotator;
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
