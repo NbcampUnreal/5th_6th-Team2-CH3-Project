@@ -93,6 +93,7 @@ void AEnemyBaseCharacter::BeginPlay()
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 >>>>>>> 652a79a (Revert "delete")
 	}
+<<<<<<< HEAD
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -135,6 +136,12 @@ void AEnemyBaseCharacter::EndChase()
 	// 	return;
 	// }
 	EnemyAttack();
+=======
+	
+	AActor* Player=GetWorld()->GetFirstPlayerController()->GetPawn();
+
+	SetTargetActor(Player);
+>>>>>>> f79331c (weapon updated)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -364,6 +371,24 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 void AEnemyBaseCharacter::EndEnemyDead()
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+}
+
+void AEnemyBaseCharacter::SetTargetActor(AActor* NewTargetActor)
+{
+	if (!NewTargetActor)
+	{
+		UE_LOG(Enemy_Log, Error, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Invalid Target"));
+		return;
+	}
+
+	if (NewTargetActor==TargetActor)
+	{
+		UE_LOG(Enemy_Log, Warning, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Already Setted to same target"));
+		return;
+	}
+
+	TargetActor=NewTargetActor;
+	UE_LOG(Enemy_Log, Log, TEXT("AEnemyBaseCharacter::SetTargetActor-> Target Set to %s"), *TargetActor->GetName())
 }
 
 void AEnemyBaseCharacter::EnemyDestroy()
@@ -617,6 +642,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 =======
 >>>>>>> 652a79a (Revert "delete")
 {
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> b8ccb7b (feat enemy anim)
 
@@ -629,6 +655,11 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 	FName SectionName = FName("Front");
 
 	if (Theta >= -45.f && Theta < 45.f)
+=======
+	//APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!TargetActor)
+>>>>>>> f79331c (weapon updated)
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD

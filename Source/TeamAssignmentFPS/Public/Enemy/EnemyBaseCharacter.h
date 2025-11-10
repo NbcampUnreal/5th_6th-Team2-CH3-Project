@@ -86,6 +86,7 @@ public:
 	virtual void EnemyDead(FDamageInfo DamageInfo);
 	void EndEnemyDead();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
@@ -100,6 +101,11 @@ public:
 	virtual void EnemyDead(FDamageInfo DamageInfo);
 	void EndEnemyDead();
 >>>>>>> 652a79a (Revert "delete")
+=======
+
+	void SetTargetActor(AActor* NewTargetActor);
+	AActor* GetTargetActor()const{return TargetActor;}
+>>>>>>> f79331c (weapon updated)
 	
 protected:
 	virtual void BeginPlay() override;
@@ -120,6 +126,9 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	
 	FVector HitDirection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy | Target")
+	AActor* TargetActor;
 	
 	
 	void PlayHitMontage(UAnimMontage* Montage);

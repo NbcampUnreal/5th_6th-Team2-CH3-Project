@@ -31,6 +31,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
@@ -38,6 +39,12 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> 83cc9c5 (delete)
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+	DamageInfo.DamageCauser=this;// damage causer
+
+	// Projectile path direction
+	FVector ProjectileDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
+>>>>>>> f79331c (weapon updated)
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
@@ -79,8 +86,18 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+<<<<<<< HEAD
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 >>>>>>> d74bc04 (fix)
+=======
+		AProjectileBase* ProjectileBase =
+			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
+
+		if (!ProjectileBase)
+		{
+			//error
+		}
+>>>>>>> f79331c (weapon updated)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

@@ -129,7 +129,7 @@ AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, F
 	}
 	if (NewSpawnedActor && PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
 	{
-		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);// why?
+		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);
 	}
 	return NewSpawnedActor;
 >>>>>>> 0f253c7 (Reapply "murge into seo")
