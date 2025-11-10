@@ -138,7 +138,10 @@ void AGameStateManager::EndLevel()
 			FindObject();
 =======
 			FindTrap();
+<<<<<<< HEAD
 >>>>>>> faff7e0 (11/10 feat conroller)
+=======
+>>>>>>> a4eb477 (11/10)
 
 			AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 
