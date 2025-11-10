@@ -195,6 +195,7 @@ void AProjectileBase::ReturnToPool()
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
 	ActivateLifeTimeHandle();
+	ActivateProjectileBase();
 }
 
 void AProjectileBase::OnReturnToPool_Implementation()

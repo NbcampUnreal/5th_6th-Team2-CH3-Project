@@ -18,15 +18,15 @@ class TEAMASSIGNMENTFPS_API UProjectilePathDrawer : public UObject
 
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Projectile|Path")
-	static FVector GetBezierParabolaPoint(
-		const FVector& Start,
-		const FVector& End,
-		float Scalar01,
-		float MinHeight,
-		float MaxHeight,
-		float T
-	);
+	//UFUNCTION(BlueprintCallable, Category = "Projectile|Path")
+	//static FVector GetBezierParabolaPoint(
+	//	const FVector& Start,
+	//	const FVector& End,
+	//	float Scalar01,
+	//	float MinHeight,
+	//	float MaxHeight,
+	//	float T
+	//);
 	
 
 
