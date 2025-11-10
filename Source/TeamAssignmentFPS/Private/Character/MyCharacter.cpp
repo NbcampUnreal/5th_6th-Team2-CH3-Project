@@ -342,11 +342,10 @@ void AMyCharacter::OnDodgeFinished()
 void AMyCharacter::OnDagamed(FDamageInfo Damage)
 {
 	KockBackCharacter(Damage);
-
+	UE_LOG(LogTemp, Error, TEXT("Damaged"));
 	// additional effects
 	// camera shake
 	//
-	
 }
 
 void AMyCharacter::OnDeath(FDamageInfo Damage)
@@ -362,12 +361,12 @@ void AMyCharacter::OnDeath(FDamageInfo Damage)
 void AMyCharacter::KockBackCharacter(FDamageInfo Damage)
 {
 	//knock back
-	if (!Damage.DamageDirection.IsNearlyZero())
-	{
-		//error, direction invalid
-		return;
-	}
-
+	// if (!Damage.DamageDirection.IsNearlyZero())
+	// {
+	// 	//error, direction invalid
+	// 	return;
+	// }
+	
 	FVector KnockBackDirection=Damage.DamageDirection.GetSafeNormal();
 	
 	float KnockBackAmountMultiplier=50.f;//temp
