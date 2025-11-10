@@ -14,7 +14,7 @@ FVector UProjectilePathDrawer::GetLerpedParabolaPoint(
 	float SlowRange)
 {
 	ScalarValue = FMath::Clamp(ScalarValue, 0.0f, 1.0f);
-	LerpAlpha   = FMath::Clamp(LerpAlpha, 0.0f, 1.0f);
+	//LerpAlpha   = FMath::Clamp(LerpAlpha, 0.0f, 1.0f);-> dont lerp so that it can go on till hit
 	SlowRange   = FMath::Clamp(SlowRange, 0.0f, 1.0f);
 
 	// Apply slowdown shaping to LerpAlpha
