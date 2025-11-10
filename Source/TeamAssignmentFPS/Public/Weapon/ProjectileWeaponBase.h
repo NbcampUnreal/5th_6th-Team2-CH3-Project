@@ -8,6 +8,7 @@
 #include "Interface/WeaponInterface.h"
 #include "Interface/DamageInfo.h"
 #include "Interface/EquipmentInterface.h"
+<<<<<<< HEAD
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -16,11 +17,21 @@
 
 
 
+=======
+#include "ProjectileWeaponBase.generated.h"
+
+
+class AProjectileBase;
+>>>>>>> 7568c9b (weapon updated)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+<<<<<<< HEAD
+=======
+class AMyCharacter;
+>>>>>>> 7568c9b (weapon updated)
 
 
 UCLASS()
@@ -40,7 +51,11 @@ public:
 protected:
 	//Owner
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+=======
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> 7568c9b (weapon updated)
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -50,7 +65,11 @@ protected:
 	TObjectPtr<USceneComponent> Muzzle;// location, direction of weapon to be fired
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+<<<<<<< HEAD
 	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
+=======
+	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
+>>>>>>> 7568c9b (weapon updated)
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -61,7 +80,13 @@ protected:
 	float SpawnInterval = 0.2f;// time game between bulletshoot when it is using rapid fire
 
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
+<<<<<<< HEAD
 	
+=======
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
+	float Damage;
+>>>>>>> 7568c9b (weapon updated)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
@@ -99,6 +124,7 @@ protected:
 	//	when skeletal mesh has animaiton
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> FireAnimMontage;
+<<<<<<< HEAD
 
 	
 	// the anim pair is for playing animation on same trigger
@@ -108,6 +134,8 @@ protected:
 
 
 	
+=======
+>>>>>>> 7568c9b (weapon updated)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -130,6 +158,7 @@ protected:
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
+<<<<<<< HEAD
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;
@@ -211,4 +240,9 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 	return SpawnedProjectile;
 }
 
+=======
+	void SetProjectileInfo();
+
+	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
+>>>>>>> 7568c9b (weapon updated)
 };

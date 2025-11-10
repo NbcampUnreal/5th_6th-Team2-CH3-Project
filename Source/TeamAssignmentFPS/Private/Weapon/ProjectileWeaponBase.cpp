@@ -3,13 +3,22 @@
 
 #include "Weapon/ProjectileWeaponBase.h"
 
+<<<<<<< HEAD
+=======
+#include "Weapon/ProjectileBase.h"
+>>>>>>> 7568c9b (weapon updated)
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Sound/SoundBase.h"
+<<<<<<< HEAD
 
 
+=======
+#include "Debug/UELOGCategories.h"
+#include "Pooling/PoolingSubsystem.h"
+>>>>>>> 7568c9b (weapon updated)
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -27,7 +36,11 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle location"));// where bullet is spawned
 	Muzzle->SetupAttachment(SkeletalMeshComponent);
 
+<<<<<<< HEAD
 	
+=======
+	CurrentAmmoCount=MaxAmmoCount;// set the count
+>>>>>>> 7568c9b (weapon updated)
 
 }
 
@@ -35,10 +48,14 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 void AProjectileWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+<<<<<<< HEAD
 
 	
 	//Set the value
 	CurrentAmmoCount=MaxAmmoCount;// set the count
+=======
+	
+>>>>>>> 7568c9b (weapon updated)
 }
 
 // Called every frame
@@ -49,7 +66,11 @@ void AProjectileWeaponBase::Tick(float DeltaTime)
 
 void AProjectileWeaponBase::FireWeapon()
 {
+<<<<<<< HEAD
 	if (!ProjectileClass)
+=======
+	if (!Projectile)
+>>>>>>> 7568c9b (weapon updated)
 	{
 		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
 		return;
@@ -79,6 +100,7 @@ void AProjectileWeaponBase::FireWeapon()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 	
+<<<<<<< HEAD
 
 	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
 	if (SpawnedProjectile)
@@ -87,6 +109,38 @@ void AProjectileWeaponBase::FireWeapon()
 	}
 
 	--CurrentAmmoCount;
+=======
+	float FinalDamage = Damage;
+
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+			DamageInfo.DamageAmount = Damage;
+			SpawnedProjectile->SetDamageInfo(DamageInfo);
+		}
+	}
+	
+	// spawning success	
+
+	// SpawnParams.Owner=this;
+	// SpawnParams.Instigator=GetInstigator();
+	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
+	//if (!SpawnedProjectile)
+	//{
+	//	UE_LOG(Weapon_Log, Error, TEXT("WeaponBase::FireWeapon -> Spawning Projectile Failed."));
+
+	//	return;
+	//}
+
+
+	// spawning success
+
+	CurrentAmmoCount--;//subtract the ammo count
+>>>>>>> 7568c9b (weapon updated)
 	PlayMuzzleEffect();
 }
 
@@ -130,6 +184,7 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 {
 }
 
+<<<<<<< HEAD
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();
@@ -155,4 +210,39 @@ void AProjectileWeaponBase::SetProjectileInfo()
 }
 
 
+=======
+void AProjectileWeaponBase::SetProjectileInfo()
+{
+	DamageInfo.DamageAmount=Damage;
+	DamageInfo.DamageCauser=GetInstigator();//
+}
+
+void AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+{
+	if (!bUsePool)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
+		if (!SpawnedProjectile)
+		{
+			// spawn failed
+		}
+	}
+	else
+	{
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+		{
+			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+			if (SpawnedProjectile)
+			{
+				DamageInfo.DamageAmount = Damage;
+				SpawnedProjectile->SetDamageInfo(DamageInfo);
+			}
+		}
+	}
+}
+>>>>>>> 7568c9b (weapon updated)
 
