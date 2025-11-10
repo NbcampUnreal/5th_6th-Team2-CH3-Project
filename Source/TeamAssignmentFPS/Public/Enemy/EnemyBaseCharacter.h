@@ -98,6 +98,7 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
@@ -106,10 +107,15 @@ public:
 >>>>>>> b24b0c4 (no message)
 =======
 >>>>>>> 6a4e438 (no message)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
 	AActor* TargetActor=nullptr;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -132,6 +138,8 @@ public:
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
+=======
+>>>>>>> 6018cf4 (no message)
 =======
 >>>>>>> 078c989 (11/10)
 <<<<<<< HEAD
@@ -161,7 +169,12 @@ public:
 =======
 =======
 >>>>>>> f59b66a (11/10)
+<<<<<<< HEAD
 >>>>>>> 6a4e438 (no message)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 	
 protected:
 	virtual void BeginPlay() override;

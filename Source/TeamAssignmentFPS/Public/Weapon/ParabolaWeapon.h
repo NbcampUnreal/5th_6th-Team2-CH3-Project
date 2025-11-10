@@ -8,6 +8,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 class ULockonComponent;
 
 =======
@@ -16,6 +17,12 @@ class ULockonComponent;
 class ULockonComponent;
 
 >>>>>>> e7a41e7 (update)
+=======
+class ULockonComponent;
+
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 UCLASS()
 class TEAMASSIGNMENTFPS_API AParabolaWeapon : public AProjectileWeaponBase
 {
@@ -27,17 +34,25 @@ public:
 protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e7a41e7 (update)
+=======
+>>>>>>> 6018cf4 (no message)
 
 	UPROPERTY()
 	ULockonComponent* LockonComponent=nullptr;// to get the landing location
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> e7a41e7 (update)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 	/** Charging and input */
 	bool bIsCharging = false;
 	float CurrentChargeTime = 0.f;
@@ -45,11 +60,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Charging")
 	float MaxChargeTime = 2.f;
 
+<<<<<<< HEAD
+=======
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Charging")
+	float MinChargeTime = 0.2f;
+
+>>>>>>> 5d17d88 (11/10)
 	/** Parabola settings */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
 	float MinThrowDistance = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
+<<<<<<< HEAD
+=======
+	float MaxThrowDistance = 2000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
+>>>>>>> 5d17d88 (11/10)
 	float MinParabolaHeight = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
@@ -64,6 +91,9 @@ protected:
 protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6018cf4 (no message)
 	virtual void BeginPlay() override;
 =======
 >>>>>>> 9dec185 (parabola weapon update)
@@ -73,18 +103,28 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	
 	
+=======
+	virtual void Tick(float DeltaTime) override;
+
+>>>>>>> 5d17d88 (11/10)
 	/** InputReactionInterface */
 	virtual void OnInputTap_Implementation() override;
 	virtual void OnInputHoldStart_Implementation() override;
 	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
 	virtual void OnInputRelease_Implementation() override;
 
+<<<<<<< HEAD
 	void FireParabolaProjectile();
 	/** Fire the parabola projectile */
 	void LaunchParabolaProjectile();
 
 	void TossParabolaProjectile();
 
+=======
+	/** Fire the parabola projectile */
+	void LaunchParabolaProjectile();
+
+>>>>>>> 5d17d88 (11/10)
 	/** Draw debug path */
 	void DrawParabolaPath(float ChargeRatio);
 };

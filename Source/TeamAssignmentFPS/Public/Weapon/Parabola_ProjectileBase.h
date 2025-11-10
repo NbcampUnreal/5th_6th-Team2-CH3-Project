@@ -47,9 +47,12 @@ public:
 	void GetStartAndEndVector(FVector& Start, FVector& End) const {Start=StartLocation; End=TargetLocation;}
 	float GetElapsedTime() const {return ElapsedTime;}
 
+<<<<<<< HEAD
 	float GetTravelTime() const {return TravelTime;}
 	void SetTravelTime(float NewTravelTime) {TravelTime = NewTravelTime;}
 
+=======
+>>>>>>> 5d17d88 (11/10)
 	//	Setter
 	void SetStartAndEndLocation(const FVector& Start, const FVector& End) {StartLocation=Start, TargetLocation=End;}
 	void SetMaxHeightForParabola(float NewMaxHeight) {MaxHeight = NewMaxHeight;};

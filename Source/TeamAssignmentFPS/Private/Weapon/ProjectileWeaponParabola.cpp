@@ -6,11 +6,15 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6018cf4 (no message)
 #include "Character/MyCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "LockonTarget/LockonComponent.h"
 
 =======
+<<<<<<< HEAD
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 #include "LockonTarget/LockonComponent.h"
@@ -20,6 +24,9 @@
 #include "LockonTarget/LockonComponent.h"
 
 >>>>>>> d159577 (weapon update)
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 
 AParabolaWeapon::AParabolaWeapon()
 {
@@ -29,8 +36,11 @@ AParabolaWeapon::AParabolaWeapon()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d159577 (weapon update)
+=======
+>>>>>>> 6018cf4 (no message)
 void AParabolaWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,18 +56,28 @@ void AParabolaWeapon::BeginPlay()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> d159577 (weapon update)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 void AParabolaWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	if (bIsCharging)
 	{
+<<<<<<< HEAD
 		CurrentChargeTime = FMath::Min(CurrentChargeTime + DeltaTime, MaxChargeTime);
 		float ChargeRatio = CurrentChargeTime / MaxChargeTime;
+=======
+		CurrentChargeTime += DeltaTime;
+		float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
+>>>>>>> 5d17d88 (11/10)
 		DrawParabolaPath(ChargeRatio);
 	}
 }
@@ -67,7 +87,12 @@ void AParabolaWeapon::OnInputTap_Implementation()
 {
 	// Quick tap -> fire fast projectile
 	bIsCharging = false;
+<<<<<<< HEAD
 	TossParabolaProjectile();
+=======
+	CurrentChargeTime = MinChargeTime;
+	LaunchParabolaProjectile();
+>>>>>>> 5d17d88 (11/10)
 }
 
 void AParabolaWeapon::OnInputHoldStart_Implementation()
@@ -85,6 +110,7 @@ void AParabolaWeapon::OnInputHoldUpdate_Implementation(float InputValue)
 void AParabolaWeapon::OnInputRelease_Implementation()
 {
 	// Release -> fire with Stacked charge value
+<<<<<<< HEAD
 	bIsCharging = false;
 	LaunchParabolaProjectile();
 	CurrentChargeTime = 0.f;//reset
@@ -102,11 +128,19 @@ void AParabolaWeapon::FireParabolaProjectile()
 	else
 	{
 		LaunchParabolaProjectile();
+=======
+	if (bIsCharging)
+	{
+		bIsCharging = false;
+		LaunchParabolaProjectile();
+		CurrentChargeTime = 0.f;
+>>>>>>> 5d17d88 (11/10)
 	}
 }
 
 void AParabolaWeapon::LaunchParabolaProjectile()
 {
+<<<<<<< HEAD
 	if (!ProjectileClass || !LockonComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LaunchParabolaProjectile -> Missing LockonComponent or ProjectileClass"));
@@ -296,5 +330,45 @@ void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 		PathColor,
 		0.f
 	);
+<<<<<<< HEAD
 >>>>>>> e3d1c8a (parabola update)
+=======
+=======
+	if (!ProjectileClass || !Muzzle)
+		return;
+
+	// Compute throw distance based on charge
+	float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
+	float ThrowDistance = FMath::Lerp(MinThrowDistance, MaxThrowDistance, ChargeRatio);
+	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+
+	FVector SpawnLocation = Muzzle->GetComponentLocation();
+	FRotator SpawnRotation = Muzzle->GetComponentRotation();
+	FVector TargetLocation = SpawnLocation + SpawnRotation.Vector() * ThrowDistance;
+
+	// Spawn the projectile from pool
+	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, SpawnRotation);// use template to spawn different one
+	if (Projectile)
+	{
+		Projectile->SetStartAndEndLocation(SpawnLocation,TargetLocation);
+		Projectile->SetMaxHeightForParabola(ApexHeight);
+
+		Projectile->SetDamageInfo(DamageInfo);
+	}
+}
+
+void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)//temp, debug
+{
+	if (!Muzzle)
+		return;
+
+	float ThrowDistance = FMath::Lerp(MinThrowDistance, MaxThrowDistance, ChargeRatio);
+	float ApexHeight = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
+
+	FVector StartLocation = Muzzle->GetComponentLocation();
+	FVector EndLocation = StartLocation + Muzzle->GetComponentRotation().Vector() * ThrowDistance;
+
+	UProjectilePathDrawer::DrawLerpedArc(GetWorld(), StartLocation, EndLocation, 1.f, StartLocation.Z, StartLocation.Z + ApexHeight, PathSegments, PathColor, 0.f);
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 }

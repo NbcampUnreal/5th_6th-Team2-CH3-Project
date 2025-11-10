@@ -153,12 +153,17 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
 >>>>>>> b24b0c4 (no message)
 =======
 >>>>>>> 6a4e438 (no message)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+>>>>>>> 6018cf4 (no message)
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -171,6 +176,7 @@ void AEnemyBaseCharacter::BeginPlay()
 		SetTargetActor(NewTargetActor);
 	}
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 }
 
@@ -212,6 +218,8 @@ void AEnemyBaseCharacter::EndChase()
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> 6018cf4 (no message)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -250,6 +258,8 @@ void AEnemyBaseCharacter::EndChase()
 >>>>>>> b64879a (weapon updated)
 =======
 >>>>>>> f59b66a (11/10)
+=======
+>>>>>>> 5d17d88 (11/10)
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -1027,6 +1037,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> 078c989 (11/10)
 
@@ -1049,6 +1060,9 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 
 	if (!Player)
 >>>>>>> f59b66a (11/10)
+=======
+	if (!TargetActor)
+>>>>>>> 5d17d88 (11/10)
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1124,7 +1138,7 @@ FRotator AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 2bf2f5b (no message)
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
