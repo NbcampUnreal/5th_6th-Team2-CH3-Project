@@ -134,7 +134,7 @@ void AGameStateManager::EndLevel()
 			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
 			PhaseOver.Broadcast();
-			FindTrap();
+			FindObject();
 
 			AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 
