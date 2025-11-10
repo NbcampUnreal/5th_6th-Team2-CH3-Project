@@ -7,10 +7,15 @@
 #include "ParabolaWeapon.generated.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class ULockonComponent;
 
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+class ULockonComponent;
+
+>>>>>>> e7a41e7 (update)
 UCLASS()
 class TEAMASSIGNMENTFPS_API AParabolaWeapon : public AProjectileWeaponBase
 {
@@ -21,12 +26,18 @@ public:
 
 protected:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e7a41e7 (update)
 
 	UPROPERTY()
 	ULockonComponent* LockonComponent=nullptr;// to get the landing location
 	
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> e7a41e7 (update)
 	/** Charging and input */
 	bool bIsCharging = false;
 	float CurrentChargeTime = 0.f;
