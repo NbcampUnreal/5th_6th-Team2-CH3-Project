@@ -61,9 +61,12 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 =======
+=======
+>>>>>>> f351064 (chore)
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 >>>>>>> f351064 (chore)
 =======
@@ -173,7 +176,15 @@ void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 
 double AEnemyBaseCharacter::GetKnockbackDireation(FVector Direction)
 {
+<<<<<<< HEAD
 	const FVector ForwardVector = GetActorForwardVector();
+=======
+	
+	//DisableEnemyCollision();
+	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
+
+	ChangeEnemyState(EEnemyState::EES_Dead);
+>>>>>>> f351064 (chore)
 	
 	const FVector ToHit  = Direction.GetSafeNormal();
 	
@@ -314,6 +325,7 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+<<<<<<< HEAD
 		
 		FTimerHandle DelayHandle;
 
@@ -334,6 +346,11 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 		
 	}
 
+=======
+		AIController->StartBehaviorTree();
+	}
+	EndEnemySpawn();
+>>>>>>> f351064 (chore)
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()
