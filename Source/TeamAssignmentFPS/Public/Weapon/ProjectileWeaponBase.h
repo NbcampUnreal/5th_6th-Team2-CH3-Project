@@ -12,6 +12,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cda4565 (11/11)
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -21,6 +24,7 @@
 
 
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 #include "ProjectileWeaponBase.generated.h"
@@ -43,16 +47,23 @@ class AProjectileBase;
 
 >>>>>>> a8cc1bd (rebase update)
 =======
+=======
+>>>>>>> cda4565 (11/11)
 #include "ProjectileWeaponBase.generated.h"
 
 
 class AProjectileBase;
+<<<<<<< HEAD
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -68,6 +79,11 @@ class AMyCharacter;
 =======
 class AMyCharacter;
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+=======
+class AMyCharacter;
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 
 
 UCLASS()
@@ -91,6 +107,7 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -104,6 +121,12 @@ protected:
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+=======
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -115,6 +138,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
 =======
 	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
@@ -122,6 +146,12 @@ protected:
 =======
 	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
+=======
+	TSubclassOf<AProjectileBase> Projectile=nullptr;// projectile to be fired
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -134,15 +164,22 @@ protected:
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cda4565 (11/11)
 	
 =======
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	float Damage;
+<<<<<<< HEAD
 >>>>>>> 7568c9b (weapon updated)
 =======
 	
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
@@ -184,6 +221,9 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cda4565 (11/11)
 
 	
 =======
@@ -198,6 +238,7 @@ protected:
 
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 7568c9b (weapon updated)
 =======
@@ -206,6 +247,10 @@ protected:
 >>>>>>> a8cc1bd (rebase update)
 =======
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+=======
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -231,8 +276,11 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b028351 (parabola weapon updated)
+=======
+>>>>>>> cda4565 (11/11)
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;
@@ -319,6 +367,7 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 	void SetProjectileInfo();
 
 	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
+<<<<<<< HEAD
 >>>>>>> 7568c9b (weapon updated)
 =======
 	void SetProjectileInfo();
@@ -383,4 +432,7 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 =======
 	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+>>>>>>> ca434e8 (no message)
+>>>>>>> cda4565 (11/11)
 };
