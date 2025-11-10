@@ -244,13 +244,6 @@ void AMyCharacter::StopSprinting()
 
 }
 
-void AMyCharacter::SetMovementSpeedMultiplier(float MultValue)
-{
-	// temp clamp value
-	float MaxMultValue=5.f;
-	MovementSpeedMultiplier=FMath::Clamp(MultValue,0.1f, MaxMultValue);
-}
-
 void AMyCharacter::Dodge()
 {
 	if (bIsDodging)

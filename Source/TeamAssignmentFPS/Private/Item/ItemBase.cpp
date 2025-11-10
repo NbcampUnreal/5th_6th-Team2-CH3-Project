@@ -25,38 +25,3 @@ void AItemBase::Tick(float DeltaTime)
 
 }
 
-void AItemBase::OnInputPressed_Implementation()
-{
-	IInputReactionInterface::OnInputPressed_Implementation();
-}
-
-void AItemBase::OnInputTap_Implementation()
-{
-	IInputReactionInterface::OnInputTap_Implementation();
-}
-
-void AItemBase::OnInputHoldStart_Implementation()
-{
-	IInputReactionInterface::OnInputHoldStart_Implementation();
-}
-
-void AItemBase::OnInputHoldUpdate_Implementation(float InputValue)
-{
-	IInputReactionInterface::OnInputHoldUpdate_Implementation(InputValue);
-}
-
-void AItemBase::OnInputRelease_Implementation()
-{
-	IInputReactionInterface::OnInputRelease_Implementation();
-}
-
-void AItemBase::OnEquipped_Implementation()
-{
-	IEquipmentInterface::OnEquipped_Implementation();
-}
-
-void AItemBase::OnUnequipped_Implementation()
-{
-	IEquipmentInterface::OnUnequipped_Implementation();
-}
-

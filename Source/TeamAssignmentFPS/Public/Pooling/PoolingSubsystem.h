@@ -15,7 +15,7 @@ struct FPoolArray
 	UPROPERTY()
 	TArray<AActor*> ObjectPool;
 
-	bool IsEmpty() const
+	bool IsEmpty()
 	{
 		return ObjectPool.IsEmpty();
 	}
@@ -38,17 +38,17 @@ class TEAMASSIGNMENTFPS_API UPoolingSubsystem : public UWorldSubsystem
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Pool Subsystem")
-	AActor* BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation);
+	AActor* SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation);
 
 	UFUNCTION(BlueprintCallable, Category = "Pool Subsystem")
-	bool ReturnToPoolOrDestroy(AActor* Poolable, bool& bWasDestroyed);
+	void ReturnToPool(AActor* Poolable);
 
 	UFUNCTION(BlueprintCallable, Category = "Pool Subsystem")
-	bool InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize);
+	void InitializePool(TSubclassOf<AActor> PoolClass, int32 MaxSize);
 	
 private:
 	TMap<UClass*, FPoolArray> ObjectPools;
 
-	AActor* GetActorFromPool(TSubclassOf<AActor> PoolClass);
+	AActor* GetActorFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation);
 	
 };
