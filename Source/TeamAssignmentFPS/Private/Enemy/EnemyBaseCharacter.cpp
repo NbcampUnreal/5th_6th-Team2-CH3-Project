@@ -185,7 +185,6 @@ void AEnemyBaseCharacter::EndHitReact()
 }
 
 
-
 void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
 	//DisableEnemyCollision();
@@ -195,9 +194,10 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	//StopMontage(HitReactMontage);
 	PlayMontage(DeadMontage);
 	ChangeEnemyState(EEnemyState::EES_Dead);
-	
+    
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -205,10 +205,25 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		bool WasDestoryed;
 		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+=======
+    
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+>>>>>>> d74bc04 (fix)
 		{
-			//Error, Failed to Return Enemy actor or destory it.
-			return;
+			bool WasDestoryed;
+			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+			{
+				//Error, Failed to Return Enemy actor or destroy it.
+				return;
+			}
+			// if if worked
+
+			FString EnemyName=this->GetName();
+			FString LogText=WasDestoryed? TEXT("Destroyed"):TEXT("Returned to pool");
+			UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
+			AIController->StopBehaviorTree();
 		}
+<<<<<<< HEAD
 
 		// if if worked
 
@@ -223,13 +238,14 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 		AIController->StopBehaviorTree();
 >>>>>>> b8ccb7b (feat enemy anim)
+=======
+>>>>>>> d74bc04 (fix)
 	}
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
-	
+    
 }
-
 void AEnemyBaseCharacter::EndEnemyDead()
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
