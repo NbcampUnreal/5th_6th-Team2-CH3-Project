@@ -87,6 +87,7 @@ public:
 	void EndEnemyDead();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
@@ -106,6 +107,8 @@ public:
 	void SetTargetActor(AActor* NewTargetActor);
 	AActor* GetTargetActor()const{return TargetActor;}
 >>>>>>> f79331c (weapon updated)
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 	
 protected:
 	virtual void BeginPlay() override;
@@ -126,9 +129,6 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	
 	FVector HitDirection;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy | Target")
-	AActor* TargetActor;
 	
 	
 	void PlayHitMontage(UAnimMontage* Montage);

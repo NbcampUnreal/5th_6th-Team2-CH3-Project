@@ -94,6 +94,7 @@ void AEnemyBaseCharacter::BeginPlay()
 >>>>>>> 652a79a (Revert "delete")
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	// Set TargetActor
 	AActor* NewTargetActor= UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -142,6 +143,8 @@ void AEnemyBaseCharacter::EndChase()
 
 	SetTargetActor(Player);
 >>>>>>> f79331c (weapon updated)
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -347,6 +350,9 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
@@ -372,24 +378,6 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 void AEnemyBaseCharacter::EndEnemyDead()
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-}
-
-void AEnemyBaseCharacter::SetTargetActor(AActor* NewTargetActor)
-{
-	if (!NewTargetActor)
-	{
-		UE_LOG(Enemy_Log, Error, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Invalid Target"));
-		return;
-	}
-
-	if (NewTargetActor==TargetActor)
-	{
-		UE_LOG(Enemy_Log, Warning, TEXT(" AEnemyBaseCharacter::SetTargetActor-> Already Setted to same target"));
-		return;
-	}
-
-	TargetActor=NewTargetActor;
-	UE_LOG(Enemy_Log, Log, TEXT("AEnemyBaseCharacter::SetTargetActor-> Target Set to %s"), *TargetActor->GetName())
 }
 
 void AEnemyBaseCharacter::EnemyDestroy()
@@ -651,6 +639,7 @@ void AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 652a79a (Revert "delete")
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> b8ccb7b (feat enemy anim)
 
@@ -668,6 +657,11 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 
 	if (!TargetActor)
 >>>>>>> f79331c (weapon updated)
+=======
+	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (!Player)
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -729,7 +723,7 @@ FRotator AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 652a79a (Revert "delete")
 	}
 
-	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
+	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 

@@ -11,6 +11,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Pooling/PoolingSubsystem.h"
 #include "Weapon/ProjectileBase.h"
 #include "Debug/UELOGCategories.h"
@@ -41,11 +42,18 @@ class AProjectileBase;
 
 
 >>>>>>> a8cc1bd (rebase update)
+=======
+#include "ProjectileWeaponBase.generated.h"
+
+
+class AProjectileBase;
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -57,6 +65,9 @@ class AMyCharacter;
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> a8cc1bd (rebase update)
+=======
+class AMyCharacter;
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 
 
 UCLASS()
@@ -79,6 +90,7 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 =======
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -89,6 +101,9 @@ protected:
 =======
 	TObjectPtr<ACharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 >>>>>>> a8cc1bd (rebase update)
+=======
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -168,6 +183,7 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
 =======
@@ -188,6 +204,8 @@ protected:
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> a8cc1bd (rebase update)
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
@@ -218,6 +236,7 @@ protected:
 
 	void SetProjectileInfo();
 
+<<<<<<< HEAD
 	// use template for different projectile subclass
 template<typename T_ProjectileClass = AProjectileBase> // base as default
 T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
@@ -358,4 +377,7 @@ T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotato
 		return SpawnedProjectile;
 	}
 >>>>>>> a8cc1bd (rebase update)
+=======
+	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 };

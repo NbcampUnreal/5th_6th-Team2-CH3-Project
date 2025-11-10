@@ -28,14 +28,6 @@ AProjectileBase::AProjectileBase()
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	// the collision component handles the collision, no need for the mesh
-
-	//=== VFX, SFX===//
-	ImpactEffect=CreateDefaultSubobject<UParticleSystem>(TEXT("Impact Effect"));
-	LifetimeEndEffect=CreateDefaultSubobject<UParticleSystem>(TEXT("LifetimeEnd Effect"));
-
-	ImpactSound=CreateDefaultSubobject<USoundBase>(TEXT("Impact Sound"));
-	LifetimeEndSound=CreateDefaultSubobject<USoundBase>(TEXT("LifetimeEnd Sound"));
-	
 	
 	//=== Movement ===//
 	MovementComponent=CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComp"));
@@ -205,6 +197,7 @@ void AProjectileBase::OnSpawnFromPool_Implementation()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	ActivateProjectileBase();
 =======
 
@@ -218,6 +211,9 @@ void AProjectileBase::OnSpawnFromPool_Implementation()
 =======
 	ActivateProjectileBase();
 >>>>>>> f79331c (weapon updated)
+=======
+	ActivateLifeTimeHandle();
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 }
 
 void AProjectileBase::OnReturnToPool_Implementation()
@@ -268,10 +264,6 @@ void AProjectileBase::ActivateProjectileBase()
 		MovementComponent->SetUpdatedComponent(this->GetRootComponent());
 		MovementComponent->Velocity=GetActorForwardVector() * MovementComponent->InitialSpeed;
 		MovementComponent->Activate(true);
-	}
-	else
-	{
-		UE_LOG(Weapon_Log, Error, TEXT(" AProjectileBase::ActivateProjectileBase-> Invalid MovementComp"));
 	}
 
 	ActivateLifeTimeHandle();//restart the life timer

@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #include "Weapon/ProjectileBase.h"
 >>>>>>> 7568c9b (weapon updated)
@@ -14,6 +15,9 @@
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 >>>>>>> a8cc1bd (rebase update)
+=======
+#include "Weapon/ProjectileBase.h"
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 #include "Animation/AnimInstance.h"
 #include "Character/MyCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -22,6 +26,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 =======
@@ -36,6 +41,10 @@
 
 
 >>>>>>> a8cc1bd (rebase update)
+=======
+#include "Debug/UELOGCategories.h"
+#include "Pooling/PoolingSubsystem.h"
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 
 // Sets default values
 AProjectileWeaponBase::AProjectileWeaponBase()
@@ -72,6 +81,7 @@ void AProjectileWeaponBase::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	
 	//Set the value
@@ -93,6 +103,9 @@ void AProjectileWeaponBase::BeginPlay()
 	}
 	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
 >>>>>>> a8cc1bd (rebase update)
+=======
+	
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 }
 
 // Called every frame
@@ -144,12 +157,19 @@ void AProjectileWeaponBase::FireWeapon()
 <<<<<<< HEAD
 <<<<<<< HEAD
 
-	AProjectileBase* SpawnedProjectile = SpawnProjectile<AProjectileBase>(true, SpawnLocation, SpawnRotation);
-	if (SpawnedProjectile)
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		SpawnedProjectile->SetDamageInfo(DamageInfo);
+		UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+		AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
+		if (SpawnedProjectile)
+		{
+			SpawnedProjectile->SetDamageInfo(DamageInfo);
+		}
 	}
+	
+	// spawning success
 
+<<<<<<< HEAD
 	--CurrentAmmoCount;
 =======
 	float FinalDamage = Damage;
@@ -206,6 +226,9 @@ void AProjectileWeaponBase::FireWeapon()
 
 	--CurrentAmmoCount;
 >>>>>>> a8cc1bd (rebase update)
+=======
+	CurrentAmmoCount--;//subtract the ammo count
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 	PlayMuzzleEffect();
 }
 
@@ -279,6 +302,7 @@ void AProjectileWeaponBase::SetProjectileInfo()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 void AProjectileWeaponBase::SetProjectileInfo()
@@ -296,29 +320,43 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 	AProjectileBase* SpawnedProjectile=nullptr;
 	
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const
+{
+
+	AProjectileBase* SpawnedProjectile=nullptr;
+	
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 	if (!bUsePool)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
 		AProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
 =======
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 		SpawnedProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 		if (!SpawnedProjectile)
 		{
 			// spawn failed
 			return nullptr;
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 		}
 	}
 	else
 	{
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
+<<<<<<< HEAD
 <<<<<<< HEAD
 			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
@@ -332,6 +370,8 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 }
 >>>>>>> 7568c9b (weapon updated)
 =======
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
 			SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (!SpawnedProjectile)
@@ -344,8 +384,11 @@ AProjectileBase* AProjectileWeaponBase::SpawnProjectile(bool bUsePool, FVector S
 
 	return SpawnedProjectile;
 }
+<<<<<<< HEAD
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 
 >>>>>>> a8cc1bd (rebase update)
+=======
+>>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 
