@@ -59,7 +59,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	
-	
 	/** InputReactionInterface */
 	virtual void OnInputTap_Implementation() override;
 	virtual void OnInputHoldStart_Implementation() override;
