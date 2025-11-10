@@ -66,6 +66,7 @@ void AEnemyBaseCharacter::BeginPlay()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 =======
@@ -94,16 +95,29 @@ void AEnemyBaseCharacter::BeginPlay()
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 >>>>>>> 652a79a (Revert "delete")
 =======
+=======
+>>>>>>> 4c49a91 (11/11)
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
 =======
+=======
+>>>>>>> 078c989 (11/10)
 <<<<<<< HEAD
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 =======
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 >>>>>>> f351064 (chore)
+<<<<<<< HEAD
 >>>>>>> 002d088 (11/10 EnemybaseCharacter)
+<<<<<<< HEAD
 >>>>>>> 2758b11 (11/11)
+=======
+=======
+=======
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
+>>>>>>> b8ccb7b (feat enemy anim)
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 	}
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -163,6 +177,36 @@ void AEnemyBaseCharacter::EndChase()
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+}
+
+void AEnemyBaseCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	//UE_LOG(LogTemp, Error, TEXT("range %f"), EnemyData.Range);
+}
+
+void AEnemyBaseCharacter::EndEnemySpawn()
+{
+	ChangeEnemyState(EEnemyState::EES_Chase);
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StartBehaviorTree();
+		
+	}
+
+	
+}
+
+void AEnemyBaseCharacter::EndChase()
+{
+	//ChangeEnemyState(EEnemyState::EES_Idle);
+	// if (bCanAttack == false)
+	// {
+	// 	return;
+	// }
+	EnemyAttack();
 }
 
 void AEnemyBaseCharacter::Tick(float DeltaSeconds)
@@ -282,6 +326,7 @@ void AEnemyBaseCharacter::EndHitReact()
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -352,6 +397,12 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 =======
 	
 >>>>>>> 002d088 (11/10 EnemybaseCharacter)
+=======
+
+
+void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
+{
+>>>>>>> 078c989 (11/10)
 	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
@@ -359,6 +410,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 	//StopMontage(HitReactMontage);
 	PlayMontage(DeadMontage);
 	ChangeEnemyState(EEnemyState::EES_Dead);
+<<<<<<< HEAD
     
 <<<<<<< HEAD
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
@@ -377,6 +429,14 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
     
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+=======
+	
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+<<<<<<< HEAD
+		bool WasDestoryed;
+		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+>>>>>>> 078c989 (11/10)
 		{
 			bool WasDestoryed;
 			if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
@@ -391,12 +451,31 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 			UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
 			AIController->StopBehaviorTree();
 		}
+<<<<<<< HEAD
 	}
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
     
 }
+=======
+
+		// if if worked
+
+		FString EnemyName=this->GetName();
+		FString LogText=WasDestoryed? TEXT("Destoryed"):TEXT("Returned to pool");
+		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
+=======
+		AIController->StopBehaviorTree();
+>>>>>>> b8ccb7b (feat enemy anim)
+	}
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
+	
+}
+
+>>>>>>> 078c989 (11/10)
 void AEnemyBaseCharacter::EndEnemyDead()
 {
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
@@ -535,12 +614,17 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 >>>>>>> 652a79a (Revert "delete")
 =======
 >>>>>>> 2758b11 (11/11)
+=======
+=======
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 		
 		FTimerHandle DelayHandle;
 
@@ -561,6 +645,9 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 		
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c49a91 (11/11)
 	}
 
 =======
@@ -584,7 +671,14 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 >>>>>>> 652a79a (Revert "delete")
 =======
 >>>>>>> 002d088 (11/10 EnemybaseCharacter)
+<<<<<<< HEAD
 >>>>>>> 2758b11 (11/11)
+=======
+=======
+	}
+
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()
@@ -603,9 +697,13 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+=======
+>>>>>>> 4c49a91 (11/11)
 
 void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 {
@@ -743,10 +841,72 @@ void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
 
 FRotator AEnemyBaseCharacter::LookAtPlayer()
 {
+	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+>>>>>>> 078c989 (11/10)
+
+void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
+{
+	double Theta = GetKnockbackDireation(HitDirection);
+
+	UE_LOG(Enemy_Log, Warning, TEXT("%f"), Theta);
+	
+	FName SectionName = FName("Front");
+
+	if (Theta >= -45.f && Theta < 45.f)
+	{
+<<<<<<< HEAD
+		SectionName = FName("Back");
+	}
+	else if (Theta >= -135.f && Theta < -45.f)
+	{
+		SectionName = FName("Right");
+	}
+	else if (Theta >= 45.f && Theta < 135.f)
+	{
+		SectionName = FName("Left");
+	}
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+		AnimInstance->Montage_JumpToSection(SectionName, Montage);
+	}
+}
+
+void AEnemyBaseCharacter::PlayMontage(UAnimMontage* Montage)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+	}
+}
+
+void AEnemyBaseCharacter::StopMontage(UAnimMontage* Montage)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Stop(-1.f, Montage);
+	}
+}
+
+void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
+{
+	UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation());
+}
+
+FRotator AEnemyBaseCharacter::LookAtPlayer()
+{
 	if (!TargetActor)
 	{
 =======
+<<<<<<< HEAD
 >>>>>>> b8ccb7b (feat enemy anim)
+=======
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 		return FRotator::ZeroRotator;
 =======
 		return;

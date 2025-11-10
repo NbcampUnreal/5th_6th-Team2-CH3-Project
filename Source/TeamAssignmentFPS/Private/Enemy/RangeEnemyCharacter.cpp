@@ -34,6 +34,9 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c49a91 (11/11)
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
@@ -83,11 +86,15 @@ void ARangeEnemyCharacter::SpawnProjectile()
 =======
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
+<<<<<<< HEAD
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> 4c49a91 (11/11)
 =======
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
+<<<<<<< HEAD
 =======
 >>>>>>> cccbfc2 (Revert "murge into seo")
 =======
@@ -118,6 +125,10 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 
@@ -138,10 +149,15 @@ void ARangeEnemyCharacter::EnemyAttack()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 83cc9c5 (delete)
 =======
 >>>>>>> 83cc9c5 (delete)
+=======
+=======
+<<<<<<< HEAD
+>>>>>>> 4c49a91 (11/11)
 	LookAtPlayer();
 	//GetWorld()->SpawnActor<AActor>(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 
@@ -149,10 +165,14 @@ void ARangeEnemyCharacter::EnemyAttack()
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c49a91 (11/11)
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
+<<<<<<< HEAD
 =======
 		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
@@ -167,6 +187,9 @@ void ARangeEnemyCharacter::EnemyAttack()
 >>>>>>> 83cc9c5 (delete)
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 	
 }
 

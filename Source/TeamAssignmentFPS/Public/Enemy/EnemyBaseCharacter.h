@@ -89,12 +89,16 @@ public:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+>>>>>>> 4c49a91 (11/11)
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
 	AActor* TargetActor=nullptr;
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
@@ -115,6 +119,10 @@ public:
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
 =======
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+=======
+>>>>>>> 078c989 (11/10)
+>>>>>>> 4c49a91 (11/11)
 	
 protected:
 	virtual void BeginPlay() override;
