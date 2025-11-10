@@ -270,6 +270,7 @@ void AWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator
 			// SpawnFromPool�� ��ȯ���� �ӽ� ������ ���� �� Cast
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
 =======
 			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
@@ -277,6 +278,12 @@ void AWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator
 =======
 			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
+=======
+			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+>>>>>>> a09f308 (no message)
+>>>>>>> 8442e60 (11/11)
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (SpawnedProjectile)
 			{
