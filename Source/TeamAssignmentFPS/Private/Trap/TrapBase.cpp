@@ -116,7 +116,10 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			}
 		}
 
+<<<<<<< HEAD
 		// 임시 스코어 테스트
+=======
+>>>>>>> faff7e0 (11/10 feat conroller)
 		if (UWorld* World = GetWorld())
 		{
 			if (AGameStateManager* GameState = World->GetGameState<AGameStateManager>())
@@ -126,7 +129,10 @@ void ATrapBase::OnTrapOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			}
 		}
 
+<<<<<<< HEAD
 		// 임시 오브젝트 꺼짐
+=======
+>>>>>>> faff7e0 (11/10 feat conroller)
 		TrapMesh->SetVisibility(false);
 
 		// 트랩 제거

@@ -134,7 +134,11 @@ void AGameStateManager::EndLevel()
 			GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 			AddScore(Score);
 			PhaseOver.Broadcast();
+<<<<<<< HEAD
 			FindObject();
+=======
+			FindTrap();
+>>>>>>> faff7e0 (11/10 feat conroller)
 
 			AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 
