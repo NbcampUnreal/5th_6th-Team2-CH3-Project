@@ -94,6 +94,35 @@ void AParabolaWeapon::OnInputRelease_Implementation()
 
 void AParabolaWeapon::FireParabolaProjectile()
 {
+	if (!GetWorld() || !Muzzle)
+		return;
+
+	if (!ProjectileClass)
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
+		return;
+	}
+	if (bIsReloading)
+	{
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileWeaponBase::FireWeapon -> Cannot fire while reloading."));
+		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);// no longer cannot fire the weapon
+		// TODO:UI-> signal ui manager to show fire failed
+		return;
+	}
+	if (CurrentAmmoCount<=0)
+	{
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileWeaponBase::FireWeapon -> Not enough amo to shoot."));
+		ReloadWeapon();// auto reload 
+		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);//same here
+		// TODO:UI-> signal ui manager to show fire failed
+		
+		return;
+	}
+
+
+
+
+	
 	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 
 	// If released early → toss
