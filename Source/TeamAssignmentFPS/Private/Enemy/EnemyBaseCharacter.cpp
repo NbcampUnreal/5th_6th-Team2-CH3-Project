@@ -183,6 +183,7 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
     
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+    
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
 			bool WasDestoryed;
