@@ -78,8 +78,13 @@ public:
 	void NextLevel();
 >>>>>>> 96bdeb1 (11/07 feat GameStateManager)
 
+<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable, Category = "Phase")
 	void NextPhase();
+=======
+	UFUNCTION(BlueprintCallable, Category = "Menu")
+	void NextLevel();
+>>>>>>> 96bdeb1 (11/07 feat GameStateManager)
 
 	UPROPERTY()
 	FPhaseOver PhaseOver;
