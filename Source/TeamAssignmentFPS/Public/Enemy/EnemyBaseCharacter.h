@@ -51,6 +51,7 @@ public:
 
 
 class UHealthComponent;
+class UAnimMontage;
 
 UCLASS()
 class TEAMASSIGNMENTFPS_API AEnemyBaseCharacter : public ACharacter , public IPoolingInterface
@@ -62,17 +63,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;
-
+	
+	UFUNCTION()
+	void EnemyDestroy();
+	
 	FOnEnemyDead OnEnemyDead;
 	FOnEnemyStateChanged OnEnemyStateChanged;
 
 	FVector knockbackDirection;
-
-	bool bCanAttack = true;
-	UFUNCTION()
-	virtual void EnemyDead(FDamageInfo DamageInfo);
-	UFUNCTION()
-	virtual void EnemyDeadByPhaseEnd();// for death with no damage info
 	
 	void InitializeEnemyData(FEnemyDataRow* InData); // Enemy ���� �� �� Enemy�� ������ �� ���� �޾� �ʱ�ȭ
 	void ChangeEnemyState(EEnemyState NewEnemyState);
@@ -80,13 +78,15 @@ public:
 	virtual void EndEnemySpawn();
 	void EndChase();
 	virtual void EnemyAttack();
+	virtual void EndEnemyAttack();
 	virtual void EnemyTakeDamage(FDamageInfo DamageInfo);
-
+	virtual void EndHitReact();
+	virtual void EnemyDead(FDamageInfo DamageInfo);
+	void EndEnemyDead();
 	
-
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void Tick( float DeltaSeconds) override;
 	/*UPROPERTY(VisibleAnywhere, Category = "Enemy")
 	EEnemyState EnemyState;*/
 
@@ -98,17 +98,35 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UHealthComponent> HealthComponent;
-
-	virtual void EnemyAttackEnd();
-	void LookAtPlayer();
-	//void Knockback();
 	
-	//void EnemyDestroy();
+	FVector HitDirection;
+	
+	
+	void PlayHitMontage(UAnimMontage* Montage);
+	void PlayMontage(UAnimMontage* Montage);
+	void StopMontage(UAnimMontage* Montage);
+	void PlaySound(USoundBase* Sound);
+	
+	FRotator LookAtPlayer();
+	void ReturnToChase();
+	double GetKnockbackDireation(FVector Direction);
+
+	
 
 private:
+	//void DisableEnemyCollision();
 
-	
-	void DisableEnemyCollision();
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> DeadMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> HitSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> AttackSound;
 public:
 	
 	
