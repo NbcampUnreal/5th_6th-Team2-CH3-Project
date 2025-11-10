@@ -53,6 +53,7 @@ public:
 	// 오브젝트 상호작용
 	void FindObject();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
@@ -66,6 +67,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void NextLevel();
 >>>>>>> 96bdeb1 (11/07 feat GameStateManager)
+=======
+>>>>>>> 6d37467 (11/10)
 
 <<<<<<< HEAD
 	UFUNCTION(BlueprintCallable, Category = "Phase")

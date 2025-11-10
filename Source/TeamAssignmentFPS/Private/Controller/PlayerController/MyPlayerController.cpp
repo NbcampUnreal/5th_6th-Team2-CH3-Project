@@ -363,6 +363,7 @@ void AMyPlayerController::StartGame()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     SetPause(false);
 =======
 >>>>>>> faff7e0 (11/10 feat conroller)
@@ -371,5 +372,8 @@ void AMyPlayerController::StartGame()
 >>>>>>> 891ff6b (11/10 feat GameStageManager)
 =======
 >>>>>>> a4eb477 (11/10)
+=======
+    SetPause(false);
+>>>>>>> 6d37467 (11/10)
 }
 
