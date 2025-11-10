@@ -18,7 +18,6 @@ UCLASS()
 class TEAMASSIGNMENTFPS_API AFuelWeaponBase :
 	public AActor,
 	public IInputReactionInterface,//for basic input reaction
-	public IWeaponInterface,// for reloading
 	public IEquipmentInterface/* for equipping and unequipping */
 
 {
@@ -43,8 +42,27 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	float ReloadTime = 1.5f;// required time reload
 
+	//=== Fuel ===//
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Fuel")
+	float MaxFuel = 100.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Fuel")
+	float CurrentFuel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Fuel")
+	float FuelConsumptionRate = 20.f; //consumption per second
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Fuel")
+	float MinFuelToFire = 1.f;// minimum required to fire. wait till it charge or chare by reload
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Fuel")
+	float FuelRecoveryRate = 10.f; //replenish the fuel by time
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Fuel")
+	float RecoveryPauseTime = 1.5f;// pausing time after stopping fire, 
+
+	float TimeSinceLastFire = 0.f;
 	
-	bool bIsReloading = false;
 	bool bIsFiring = false;
 
 	/// Visual elements
@@ -77,9 +95,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	//Weapon
-	virtual void OnReloadInputPressed_Implementation() override;
+	
 	//Input Reaction
 	virtual void OnInputHoldStart_Implementation() override;
 	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
@@ -87,7 +103,13 @@ protected:
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;
-	
+
+	// Fuel
+	void ConsumeFuel(float DeltaSeconds);
+	void RecoverFuel(float DeltaSeconds);
+	void PlayMuzzleEffect();
+	void PlayReloadEffect();
+	void PlayFiringFailedEffect();
 
 public:
 	// Called every frame

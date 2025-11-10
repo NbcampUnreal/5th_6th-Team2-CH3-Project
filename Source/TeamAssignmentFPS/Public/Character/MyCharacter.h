@@ -196,6 +196,4 @@ private:
 	void DecideMovementState();
 	
 	void SetMovementState(ECharacterMovementState NewState);
-
-
 };

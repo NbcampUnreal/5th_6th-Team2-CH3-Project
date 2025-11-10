@@ -153,6 +153,7 @@ void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 void AProjectileWeaponBase::OnUnequipped_Implementation()
 {
 	IEquipmentInterface::OnUnequipped_Implementation();
+	WeaponOwner = nullptr;// no more master dobby is fucking freeasldjk;afdafroj asfhoij; faoi; hfewropfesa
 }
 
 void AProjectileWeaponBase::SetProjectileInfo()
