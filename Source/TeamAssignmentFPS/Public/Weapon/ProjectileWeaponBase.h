@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,11 +8,9 @@
 #include "Interface/WeaponInterface.h"
 #include "Interface/DamageInfo.h"
 #include "Interface/EquipmentInterface.h"
+#include "ProjectileWeaponBase.generated.h"
 
-#include "WeaponBase.generated.h"
 
-
-//forward declare
 class AProjectileBase;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
@@ -22,31 +20,21 @@ class UAnimMontage;
 class AMyCharacter;
 
 
-UENUM(BlueprintType)
-enum class EWeaponType :uint8
-{
-	None UMETA(DisplayName = "None"),
-	Shot UMETA(DisplayName = "Shot"),
-	AutoShot UMETA(DisplayName = "AutoShot"),
-	ChargingShot UMETA(DisplayName = "ChargingShot"),
-};
-
-
 UCLASS()
-class TEAMASSIGNMENTFPS_API AWeaponBase :
+class TEAMASSIGNMENTFPS_API AProjectileWeaponBase :
 	public AActor,
-	public IInputReactionInterface,
-	public IWeaponInterface,
+	public IInputReactionInterface,//for basic input reaction
+	public IWeaponInterface,// for reloading
 	public IEquipmentInterface/* for equipping and unequipping */
+
 {
 	GENERATED_BODY()
 
 public:
-
-	AWeaponBase();
-
+	// Sets default values for this actor's properties
+	AProjectileWeaponBase();
+	
 protected:
-
 	//Owner
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
 	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
@@ -59,10 +47,8 @@ protected:
 	TObjectPtr<USceneComponent> Muzzle;// location, direction of weapon to be fired
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	TSubclassOf<AProjectileBase> Projectile;// projectile to be fired
+	TSubclassOf<AProjectileBase> ProjectileClass=nullptr;// projectile to be fired
 
-	UPROPERTY(EditAnywhere)
-	EWeaponType WeaponType = EWeaponType::None;//default
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	float ReloadTime = 1.5f;// required time reload
@@ -72,9 +58,7 @@ protected:
 	float SpawnInterval = 0.2f;// time game between bulletshoot when it is using rapid fire
 
 	FTimerHandle AutoFireTimerHandle;// timer handle for looping time setting
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
-	float Damage;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
 	int32 MaxAmmoCount;//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Projectile")
@@ -88,6 +72,7 @@ protected:
 
 	bool bIsReloading = false;
 	bool bIsFiring = false;
+
 
 	/// Visual elements
 
@@ -115,8 +100,7 @@ protected:
 	TObjectPtr<UAnimMontage> ReloadAnimMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> FireFailedAnimMontage;
-
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -125,26 +109,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Weapon
-	virtual void OnReloadInputPressed_Implementation() override;
-	//Input Reaction
-	virtual void OnInputPressed_Implementation() override;
-	virtual void OnInputTap_Implementation() override;
-	virtual void OnInputHoldStart_Implementation() override;
-	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
-	virtual void OnInputRelease_Implementation() override;
-	//Equipment
-	virtual void OnEquipped_Implementation() override;
-	virtual void OnUnequipped_Implementation() override;
-	
 
 protected:
 	virtual void FireWeapon();
+	virtual void AutoFire(float FireInterval);
 	virtual void ReloadWeapon();
 	virtual void PlayMuzzleEffect();
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
-	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
+	void SetProjectileInfo();
 
+	AProjectileBase* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation) const;
 };
