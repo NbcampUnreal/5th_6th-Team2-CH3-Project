@@ -59,6 +59,10 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	if (!bIsActivated||!OwnerController) return;
 
 	UpdateCursor();
+
+	//temp
+	UE_LOG(LockonTarget_Log, Log,
+		TEXT("ULockonComponent::TickComponent, Cursor world location= %s"), *CursorWorldLocation.ToString());
 	DetectTarget();
 	LockonClosestTargetByCoord();
 	UpdateCameraBoomLocation();

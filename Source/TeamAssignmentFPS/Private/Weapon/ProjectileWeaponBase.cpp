@@ -139,9 +139,9 @@ void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 	WeaponOwner=Cast<ACharacter>(OwnerActor);
 	if (!WeaponOwner)
 	{
-		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
+		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::OnEquipped_Implementation-> Cannot find valid owner"));
 	}
-	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::OnEquipped_Implementation-> valid owner found"));
 }
 
 void AProjectileWeaponBase::OnUnequipped_Implementation()

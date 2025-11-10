@@ -17,27 +17,23 @@ AParabolaWeapon::AParabolaWeapon()
 void AParabolaWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (AMyCharacter* CharOwner = Cast<AMyCharacter>(GetOwner()))
-	{
-		LockonComponent = CharOwner->GetLoconComp();
-		if (!LockonComponent)
-		{
-			UE_LOG(Weapon_Log, Warning, TEXT("ParabolaWeapon: No LockonComponent found on owner!"));
-		}
-	}
 }
 
 void AParabolaWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsCharging)
+
+	//Temp checking
+	
+	/*if (LockonComponent && WeaponOwner)
 	{
-		CurrentChargeTime = FMath::Min(CurrentChargeTime + DeltaTime, MaxChargeTime);
-		float ChargeRatio = CurrentChargeTime / MaxChargeTime;
-		DrawParabolaPath(ChargeRatio);
+		UE_LOG(Weapon_Log, Warning, TEXT("lock on comp and weapon owner is valid"));
 	}
+	else
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("lock on comp or weapon owner is invalid"));
+	}*/
 }
 
 
@@ -57,14 +53,29 @@ void AParabolaWeapon::OnInputHoldStart_Implementation()
 
 void AParabolaWeapon::OnInputHoldUpdate_Implementation(float InputValue)
 {
-	CurrentChargeTime = FMath::Clamp(CurrentChargeTime + InputValue, 0.f, MaxChargeTime);
+	if(!GetWorld())
+	{
+		// error, cannot get world
+		return;
+	}
+	if (bIsCharging)
+	{
+		
+		CurrentChargeTime = FMath::Min(CurrentChargeTime + GetWorld()->GetDeltaSeconds(), MaxChargeTime);
+		float ChargeRatio = CurrentChargeTime / MaxChargeTime;
+		DrawParabolaPath(ChargeRatio);
+
+		//Temp
+		//UE_LOG(Weapon_Log, Log, TEXT("ChargeRatio=%f"),ChargeRatio)
+		// ratio update check
+	}
 }
 
 void AParabolaWeapon::OnInputRelease_Implementation()
 {
 	// Release -> fire with Stacked charge value
 	bIsCharging = false;
-	LaunchParabolaProjectile();
+	FireParabolaProjectile();
 	CurrentChargeTime = 0.f;//reset
 }
 
@@ -92,12 +103,7 @@ void AParabolaWeapon::LaunchParabolaProjectile()
 	}
 
 	FVector SpawnLocation = Muzzle->GetComponentLocation();
-	FVector TargetLocation;
-	if (!LockonComponent->GetDeprojectedCursorLocation(TargetLocation))
-	{
-		UE_LOG(Weapon_Log, Error, TEXT(" AParabolaWeapon::DrawParabolaPath-> Deprojection failed. cannot draw path"));
-		return;
-	}
+	FVector TargetLocation =LockonComponent->GetCursorWorldLocation();
 
 	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, FRotator::ZeroRotator);
 	if (!Projectile) return;
@@ -136,17 +142,18 @@ void AParabolaWeapon::TossParabolaProjectile()
 
 void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 {
-	if (!LockonComponent) return;
-
-	FVector StartLocation = Muzzle->GetComponentLocation();
-	FVector EndLocation;
-	if (!LockonComponent->GetDeprojectedCursorLocation(EndLocation))
+	if (!LockonComponent)
 	{
-		UE_LOG(Weapon_Log, Error, TEXT(" AParabolaWeapon::DrawParabolaPath-> Deprojection failed. cannot draw path"));
+		UE_LOG(Weapon_Log, Error, TEXT("AParabolaWeapon::DrawParabolaPath-> LockonComp is invalid"));
 		return;
 	}
-	// end location set
 	
+	FVector StartLocation = Muzzle->GetComponentLocation();
+	FVector EndLocation = LockonComponent->GetCursorWorldLocation();
+	
+	UE_LOG(Weapon_Log, Log, TEXT("AParabolaWeapon::DrawParabolaPath-> CursorWorldLocation: %s"), *EndLocation.ToString());
+
+
 	float Height = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
 
 	UProjectilePathDrawer::DrawLerpedArc(
@@ -160,4 +167,27 @@ void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 		PathColor,
 		0.f
 	);
+}
+
+void AParabolaWeapon::OnEquipped_Implementation()
+{
+	Super::OnEquipped_Implementation();
+
+	// Now WeaponOwner is guaranteed to be valid because parent class sets it
+	if (WeaponOwner)
+	{
+		LockonComponent = WeaponOwner->FindComponentByClass<ULockonComponent>();
+		if (LockonComponent)
+		{
+			UE_LOG(Weapon_Log, Log, TEXT("ParabolaWeapon -> LockonComponent found: %s"), *LockonComponent->GetName());
+		}
+		else
+		{
+			UE_LOG(Weapon_Log, Warning, TEXT("ParabolaWeapon -> LockonComponent not found on %s"), *WeaponOwner->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("ParabolaWeapon -> WeaponOwner invalid during OnEquipped"));
+	}
 }

@@ -120,8 +120,9 @@ public:
 	bool PutActorIntoSlot(uint8 SlotIndex, EEquipmentType SlotType, AActor* NewEquipment);
 	
 	void ActivateOrDeactivate(bool bIsEquip, AActor* Equipment);// activate, or deactivate
-
-	void EquipCurrentEquipment(AActor* NewEquipment);
+	
+	UFUNCTION(BlueprintCallable)
+	void EquipNewEquipment(AActor* NewEquipment);
 	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
 
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
@@ -144,6 +145,9 @@ public:
 	UFUNCTION()
 	void SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value);// will be done by mouse wheel scroll(one scroll== one switch)
 	
+	UFUNCTION(BlueprintCallable, Category="Equipment")
+	void SetPlacementTemp(USceneComponent* NewPlacement) {Placement=NewPlacement;}
+
 	
 	//==== Number Key Input Binding =====//
 	UFUNCTION()

@@ -61,7 +61,7 @@ void UProjectilePathDrawer::DrawLerpedArc(
 		float T = static_cast<float>(i) / Segments;
 		FVector Next = GetLerpedParabolaPoint(Start, End, Scalar01, MinHeight, MaxHeight, T, SlowRange);
 
-		DrawDebugLine(World, Prev, Next, Color, false, -1.0f, 0, LineThickness);
+		DrawDebugLine(World, Prev, Next, Color, false, 0.05f, 0, LineThickness);
 		Prev = Next;
 	}
 }

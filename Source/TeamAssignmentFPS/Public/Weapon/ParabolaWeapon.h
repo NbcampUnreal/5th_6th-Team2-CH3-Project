@@ -61,6 +61,13 @@ protected:
 
 	void TossParabolaProjectile();
 
+	// Debug checking
+	UFUNCTION(BlueprintPure)
+	bool IsCharging() const {return bIsCharging;}
+
 	/** Draw debug path */
 	void DrawParabolaPath(float ChargeRatio);
+
+	//equpiment
+	virtual void OnEquipped_Implementation() override;
 };

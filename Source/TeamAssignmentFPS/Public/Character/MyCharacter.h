@@ -185,7 +185,7 @@ public:
 
 	// == Getter
 
-	ULockonComponent* GetLoconComp() const {return LockonComp;};
+	ULockonComponent* GetLockonComp() const {return LockonComp;};
 private:
 
 	void HealthComponentSetup();

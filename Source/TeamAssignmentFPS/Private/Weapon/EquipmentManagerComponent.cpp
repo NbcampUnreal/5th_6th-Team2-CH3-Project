@@ -380,28 +380,59 @@ void UEquipmentManagerComponent::ActivateOrDeactivate(bool bIsEquip, AActor* Equ
 	
 }
 
-void UEquipmentManagerComponent::EquipCurrentEquipment(AActor* NewEquipment)
+void UEquipmentManagerComponent::EquipNewEquipment(AActor* NewEquipment)
 {
 	if (!NewEquipment)
 	{
-		//error, invalid new equipment. equipment failed
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("EquipNewEquipment -> Invalid NewEquipment"));
 		return;
 	}
-	
-	//Switch
-	//previous equipment-> unequip
-	AActor* PreviousEquipment=CurrentEquipment;
-	if (!PreviousEquipment) return;// invalid, just return
-	if (!PreviousEquipment->Implements<UEquipmentInterface>()) return;// no equipment just deactivate
-	
-	IEquipmentInterface::Execute_OnUnequipped(PreviousEquipment);
-	
-	// new current equipment-> equip
-	CurrentEquipment=NewEquipment;
-	if (!CurrentEquipment) return;
-	if (!CurrentEquipment->Implements<UEquipmentInterface>()) return;
-	
-	IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);
+
+	// Unequip previous
+	if (CurrentEquipment && CurrentEquipment->Implements<UEquipmentInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::EquipNewEquipment -> Previous equipment unequipped"));
+		IEquipmentInterface::Execute_OnUnequipped(CurrentEquipment);
+	}
+
+	// Set new
+	CurrentEquipment = NewEquipment;
+
+	// Attach to placement first (Placement should be valid)
+	if (Placement)
+	{
+		CurrentEquipment->AttachToComponent(Placement, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		CurrentEquipment->SetActorRelativeLocation(FVector::ZeroVector);
+		CurrentEquipment->SetActorRelativeRotation(FRotator::ZeroRotator);
+	}
+	else
+	{
+		UE_LOG(Equipment_Manager_Log, Warning, TEXT("EquipNewEquipment -> Placement is null"));
+	}
+
+	// Ensure the owner is valid **before calling OnEquipped**
+	APawn* PawnOwner = Cast<APawn>(GetOwner());
+	if (PawnOwner)
+	{
+		CurrentEquipment->SetOwner(PawnOwner);
+	}
+	else
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("EquipNewEquipment -> Invalid Pawn Owner!"));
+	}
+
+	// Trigger equipped interface after owner is set
+	if (CurrentEquipment->Implements<UEquipmentInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Log,
+	TEXT("UEquipmentManagerComponent::EquipNewEquipment -> New equipment equipped"));
+		IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);
+	}
+	else
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("EquipNewEquipment -> NewEquipment has no EquipmentInterface"));
+	}
 }
 
 void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot,
@@ -435,7 +466,7 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 
 		if (!NextEquipment) continue;
 
-		EquipCurrentEquipment(NextEquipment);
+		EquipNewEquipment(NextEquipment);
 	}
 }
 
@@ -443,7 +474,7 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 {
 	AActor* CurrentWeapon= TempWeaponQuickSlot[CurrentWeaponSlotIndex];// bring the current weapon from current index
 
-	EquipCurrentEquipment(CurrentWeapon);
+	EquipNewEquipment(CurrentWeapon);
 	//
 }
 

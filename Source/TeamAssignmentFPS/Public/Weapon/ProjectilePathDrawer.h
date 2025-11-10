@@ -27,7 +27,7 @@ public:
 		UWorld* World,
 		const FVector& Start,
 		const FVector& End,
-		float Scalar01,
+		float ScalarValue,
 		float MinHeight,
 		float MaxHeight,
 		//Default values
