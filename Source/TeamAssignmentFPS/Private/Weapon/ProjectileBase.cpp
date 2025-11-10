@@ -32,7 +32,8 @@ AProjectileBase::AProjectileBase()
 	//=== Movement ===//
 	MovementComponent=CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComp"));
 	// details in the editor
-	
+
+	// start the timer for projectile lifetime
 }
 
 
@@ -62,15 +63,15 @@ void AProjectileBase::BeginPlay()
 	if (GameStateManager)
 	{
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
-		GameStateManager->PhaseOver.AddDynamic(this, &AProjectileBase::DestroyProjectile);
+		GameStateManager->PhaseOver.AddDynamic(this, &AProjectileBase::DestroyProjectileAfterLifetime);
 	}
 	
-	MovementComponent->SetUpdatedComponent(NULL);
+	DeactivateProjectileBase();
 }
 
 void AProjectileBase::DestroyProjectile()
 {
-	//TODO: make trail to dissapear faster when the projectile is dead
+	//TODO: make trail to disappear faster when the projectile is dead
 
 	if (!TrailComponent)
 	{
@@ -135,22 +136,39 @@ void AProjectileBase::OnProjectileHit(const FHitResult& HitResult, AActor* Other
 			HealthComp->GetDamage_Implementation(TransprotedDamageInfo);
 		}
 	}
+	// put direction value to damage info
+
+	DamageInfo.DamageDirection=MovementComponent->Velocity.GetSafeNormal();// now the projectile has the direction value when hit
+
+
+
+	//---- VFX, SFX ----//
 	
 	if (!ImpactEffect)
 	{
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileBase::OnProjectileHit-> No VFX for hit."));
 		//no valid effect --> add log category for weapon
 	}
-	UGameplayStatics::SpawnEmitterAtLocation(
+	else
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
 		GetWorld(),
 		ImpactEffect,//effect to spawn
 		HitResult.ImpactPoint,//spawn tranformation: locaton
 		HitResult.ImpactNormal.Rotation());//spawn tranformation: rotation
+	}
+	
 
 	if (!ImpactSound)
 	{
 		//no sound effect
+		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileBase::OnProjectileHit-> No SFX for hit."));
 	}
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+	else
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, HitResult.ImpactPoint);
+	}
+	
 
 	DestroyProjectile();
 }
@@ -159,24 +177,28 @@ void AProjectileBase::ReturnToPool()
 {
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
-		PoolingSubsystem->ReturnToPool(this);
+		bool WasDestoryed;
+		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
+		{
+			UE_LOG(Weapon_Log, Error, TEXT("AProjectileBase::ReturnToPool-> Failed to return or destroy"));
+			return;
+		}
+
+		FString LogString=WasDestoryed? TEXT("is Destroyed"):TEXT("has returned to pool");
+
+		UE_LOG(Weapon_Log,Log, TEXT("AProjectileBase::ReturnToPool-> Projectile %s"), *LogString);
 	}
 }
 
 
 void AProjectileBase::OnSpawnFromPool_Implementation()
 {
-
-	MovementComponent->SetUpdatedComponent(this->GetRootComponent());
-	MovementComponent->Velocity = GetActorForwardVector() * MovementComponent->InitialSpeed;
-
 	ActivateLifeTimeHandle();
 }
 
 void AProjectileBase::OnReturnToPool_Implementation()
 {
-	DeactivateTimerHandle();
-	MovementComponent->SetUpdatedComponent(NULL);
+	DeactivateProjectileBase();
 }
 
 
@@ -191,7 +213,6 @@ GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AProjectileBase::DestroyP
 	GetWorldTimerManager().SetTimerForNextTick([this]()// make a reservation for lambda to run on next tick
 	{
 		//next tick-> triggert the set timer function
-		LifeTimeHandle;
 		GetWorldTimerManager().SetTimer(
 			LifeTimeHandle,
 			this,
@@ -201,11 +222,57 @@ GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AProjectileBase::DestroyP
 			);
 	});
 }
-void AProjectileBase::DeactivateTimerHandle()
+void AProjectileBase::DeactivateLifeTimerHandle()
 {
 	if (LifeTimeHandle.IsValid())
 	{
 		GetWorldTimerManager().ClearTimer(LifeTimeHandle);
 	}
 }
+
+void AProjectileBase::ActivateProjectileBase()
+{
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
+
+	if (MovementComponent)
+	{
+		MovementComponent->StopMovementImmediately();
+		MovementComponent->ResetInterpolation();
+		
+		MovementComponent->SetUpdatedComponent(this->GetRootComponent());
+		MovementComponent->Velocity=GetActorForwardVector() * MovementComponent->InitialSpeed;
+		MovementComponent->Activate(true);
+	}
+
+	ActivateLifeTimeHandle();//restart the life timer
+
+	if (TrailComponent)// trail comp
+	{
+		TrailComponent->Activate(true);
+	}
+}
+
+void AProjectileBase::DeactivateProjectileBase()
+{
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+
+	if (MovementComponent)
+	{
+		MovementComponent->StopMovementImmediately();
+		MovementComponent->Deactivate();
+		MovementComponent->SetUpdatedComponent(nullptr);
+	}
+
+	DeactivateLifeTimerHandle();
+
+	if (TrailComponent)// trail comp
+	{
+		TrailComponent->Deactivate();
+	}
+}
+
 

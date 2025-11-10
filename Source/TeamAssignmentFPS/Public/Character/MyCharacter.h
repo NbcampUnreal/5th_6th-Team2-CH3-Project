@@ -81,8 +81,11 @@ protected:
 	float SprintSpeedMultiplier=1.5;
 
 	bool bIsSprinting=false;
+	bool bCanSprint=true;
 	
 	float CurrentMaxSpeed=600.f;//default
+
+	float MovementSpeedMultiplier=1.f;//default
 
 	FVector2D MovementInputValue;
 
@@ -144,12 +147,20 @@ public:
 	void TriggerQuickMovement_Released(const FInputActionValue& Value);
 	UFUNCTION()
 	void TriggerQuickMovement_Canceled(const FInputActionValue& Value);
+
+	//Basic movement Setting
+	void SetMovementSpeedMultiplier(float MultValue);// this is for debuffing, or buffing the speed by cases
+	
+	// Sprint
+	bool CanCharacterSprint() const {return bCanSprint;}
+	void SetCanCharacterSprint(bool CanSprint) {bCanSprint=CanSprint;}
 	
 	UFUNCTION()
 	void StartSprinting();
 	UFUNCTION()
 	void StopSprinting();
 
+	
 	//=== Dodge/BackDash ===//
 	UFUNCTION()
 	void Dodge();

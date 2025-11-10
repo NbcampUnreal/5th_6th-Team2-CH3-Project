@@ -19,6 +19,7 @@ class USkeletalMeshComponent;
 class UParticleSystem;
 class USoundBase;
 class UAnimMontage;
+class AMyCharacter;
 
 
 UENUM(BlueprintType)
@@ -45,6 +46,10 @@ public:
 	AWeaponBase();
 
 protected:
+
+	//Owner
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Owner")
+	TObjectPtr<AMyCharacter> WeaponOwner=nullptr;// so that the weapon can trigger specific animation or effect from the owenr character
 
 	//==== Projectile ====//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Projectile")
@@ -120,12 +125,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Weapon
 	virtual void OnReloadInputPressed_Implementation() override;
+	//Input Reaction
 	virtual void OnInputPressed_Implementation() override;
 	virtual void OnInputTap_Implementation() override;
 	virtual void OnInputHoldStart_Implementation() override;
 	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
 	virtual void OnInputRelease_Implementation() override;
+	//Equipment
+	virtual void OnEquipped_Implementation() override;
+	virtual void OnUnequipped_Implementation() override;
+	
 
 protected:
 	virtual void FireWeapon();
@@ -133,5 +144,7 @@ protected:
 	virtual void PlayMuzzleEffect();
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
+
+	void SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation);
 
 };
