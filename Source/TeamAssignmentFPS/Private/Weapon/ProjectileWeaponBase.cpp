@@ -64,6 +64,7 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
@@ -71,6 +72,9 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 =======
 	CurrentAmmoCount=MaxAmmoCount;// set the count
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+	
+>>>>>>> b028351 (parabola weapon updated)
 
 }
 
@@ -94,6 +98,7 @@ void AProjectileWeaponBase::BeginPlay()
 >>>>>>> 0f253c7 (Reapply "murge into seo")
 =======
 
+<<<<<<< HEAD
 	// Set the owner
 	AActor* OwnerActor=GetOwner();
 	WeaponOwner=Cast<ACharacter>(OwnerActor);
@@ -106,6 +111,11 @@ void AProjectileWeaponBase::BeginPlay()
 =======
 	
 >>>>>>> da14490 (Revert "Merge pull request from New_New-DevBranch")
+=======
+	
+	//Set the value
+	CurrentAmmoCount=MaxAmmoCount;// set the count
+>>>>>>> b028351 (parabola weapon updated)
 }
 
 // Called every frame
@@ -274,6 +284,9 @@ void AProjectileWeaponBase::PlayFiringFailedEffect()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b028351 (parabola weapon updated)
 void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
 {
 	IEquipmentInterface::OnEquipped_Implementation();
@@ -293,8 +306,11 @@ void AProjectileWeaponBase::OnUnequipped_Implementation()
 	IEquipmentInterface::OnUnequipped_Implementation();
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 0f253c7 (Reapply "murge into seo")
+=======
+>>>>>>> b028351 (parabola weapon updated)
 void AProjectileWeaponBase::SetProjectileInfo()
 {
 	DamageInfo.DamageCauser=GetInstigator();

@@ -230,6 +230,9 @@ protected:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b028351 (parabola weapon updated)
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
 	virtual void OnUnequipped_Implementation() override;

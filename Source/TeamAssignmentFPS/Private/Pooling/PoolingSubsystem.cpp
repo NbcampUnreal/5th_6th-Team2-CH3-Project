@@ -79,6 +79,7 @@ AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, F
 	// if no valid actor from pool was found
 	// spawn it
 <<<<<<< HEAD
+<<<<<<< HEAD
 	UE_LOG(Pooling_Log, Warning, TEXT("UPoolingSubsystem::BringFromPoolOrSpawn->Invalid Actor for PoolSystem, Try Spawning"));
 	
 	if (!GetWorld())
@@ -91,10 +92,13 @@ AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, F
 >>>>>>> cccbfc2 (Revert "murge into seo")
 =======
 	UE_LOG(Pooling_Log, Warning, TEXT("UPoolingSubsystem::SpawnFromPool->Invalid Actor for PoolSystem, Try Spawning"));
+=======
+	UE_LOG(Pooling_Log, Warning, TEXT("UPoolingSubsystem::BringFromPoolOrSpawn->Invalid Actor for PoolSystem, Try Spawning"));
+>>>>>>> b028351 (parabola weapon updated)
 	
 	if (!GetWorld())
 	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::SpawnFromPool-> Failed to get World"));
+		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::BringFromPoolOrSpawn-> Failed to get World"));
 		return nullptr;
 	}
 	
@@ -122,14 +126,14 @@ AActor* UPoolingSubsystem::BringFromPoolOrSpawn(TSubclassOf<AActor> PoolClass, F
 >>>>>>> cccbfc2 (Revert "murge into seo")
 =======
 	AActor* NewSpawnedActor = GetWorld()->SpawnActor<AActor>(PoolClass, Location, Rotation, SpawnParams);
-	if (NewSpawnedActor)
+	if (!NewSpawnedActor)// when even the spawned actor is invalid-> pooling, spawning failed
 	{
-		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::SpawnFromPool-> Failed to spawn the actor"));
+		UE_LOG(Pooling_Log, Error, TEXT("UPoolingSubsystem::BringFromPoolOrSpawn-> Failed to spawn the actor"));
 		return nullptr;
 	}
-	if (NewSpawnedActor && PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
+	if (PoolClass.Get()->ImplementsInterface((UPoolingInterface::StaticClass())))
 	{
-		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);// why?
+		IPoolingInterface::Execute_OnSpawnFromPool(NewSpawnedActor);
 	}
 	return NewSpawnedActor;
 >>>>>>> 0f253c7 (Reapply "murge into seo")
