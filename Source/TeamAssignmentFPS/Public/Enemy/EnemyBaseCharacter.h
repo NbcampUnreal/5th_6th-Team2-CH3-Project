@@ -83,10 +83,13 @@ public:
 	virtual void EndHitReact();
 	virtual void EnemyDead(FDamageInfo DamageInfo);
 	void EndEnemyDead();
+<<<<<<< HEAD
 
 	// target actor
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category="Enemy | Target")
 	AActor* TargetActor=nullptr;
+=======
+>>>>>>> b8ccb7b (feat enemy anim)
 	
 protected:
 	virtual void BeginPlay() override;

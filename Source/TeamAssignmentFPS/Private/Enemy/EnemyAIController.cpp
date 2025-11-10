@@ -82,10 +82,14 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 
 	//StartBehaviorTree();
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//DefaultSettingBlackBoard();
 =======
 	DefaultSettingBlackBoard();
 >>>>>>> f351064 (chore)
+=======
+	//DefaultSettingBlackBoard();
+>>>>>>> b8ccb7b (feat enemy anim)
 }
 
 void AEnemyAIController::StartBehaviorTree()

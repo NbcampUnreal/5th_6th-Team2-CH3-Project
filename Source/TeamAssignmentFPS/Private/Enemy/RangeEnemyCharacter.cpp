@@ -25,6 +25,7 @@ void ARangeEnemyCharacter::SpawnProjectile()
 
 	FDamageInfo DamageInfo;
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
+<<<<<<< HEAD
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 	
@@ -52,6 +53,12 @@ void ARangeEnemyCharacter::SpawnProjectile()
 		AProjectileBase* ProjectileBase = Cast<AProjectileBase>
 		(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), SpawnDirection.Rotation()));
 >>>>>>> 9dec185 (parabola weapon update)
+=======
+	
+	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	{
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
+>>>>>>> b8ccb7b (feat enemy anim)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 
@@ -66,6 +73,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 	Super::EnemyAttack();
 
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -87,6 +95,8 @@ void ARangeEnemyCharacter::EnemyAttack()
 >>>>>>> 83cc9c5 (delete)
 =======
 >>>>>>> 652a79a (Revert "delete")
+=======
+>>>>>>> b8ccb7b (feat enemy anim)
 	
 }
 
