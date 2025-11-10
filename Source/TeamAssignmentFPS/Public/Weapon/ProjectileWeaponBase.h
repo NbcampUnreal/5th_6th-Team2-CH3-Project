@@ -130,6 +130,10 @@ protected:
 	virtual void PlayReloadEffect();
 	virtual void PlayFiringFailedEffect();
 
+	//Equipment
+	virtual void OnEquipped_Implementation() override;
+	virtual void OnUnequipped_Implementation() override;
+
 	void SetProjectileInfo();
 
 	// use template for different projectile subclass

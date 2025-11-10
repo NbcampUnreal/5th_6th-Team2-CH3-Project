@@ -27,7 +27,7 @@ AProjectileWeaponBase::AProjectileWeaponBase()
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle location"));// where bullet is spawned
 	Muzzle->SetupAttachment(SkeletalMeshComponent);
 
-	CurrentAmmoCount=MaxAmmoCount;// set the count
+	
 
 }
 
@@ -36,14 +36,9 @@ void AProjectileWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Set the owner
-	AActor* OwnerActor=GetOwner();
-	WeaponOwner=Cast<ACharacter>(OwnerActor);
-	if (!WeaponOwner)
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
-	}
-	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+	
+	//Set the value
+	CurrentAmmoCount=MaxAmmoCount;// set the count
 }
 
 // Called every frame
@@ -133,6 +128,25 @@ void AProjectileWeaponBase::PlayReloadEffect()
 
 void AProjectileWeaponBase::PlayFiringFailedEffect()
 {
+}
+
+void AProjectileWeaponBase::OnEquipped_Implementation()// put the owner here,
+{
+	IEquipmentInterface::OnEquipped_Implementation();
+
+	// Set the owner
+	AActor* OwnerActor=GetOwner();
+	WeaponOwner=Cast<ACharacter>(OwnerActor);
+	if (!WeaponOwner)
+	{
+		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::BeginPlay-> Cannot find valid owner"));
+	}
+	UE_LOG(Weapon_Log, Log, TEXT("AProjectileWeaponBase::BeginPlay-> valid owner found"));
+}
+
+void AProjectileWeaponBase::OnUnequipped_Implementation()
+{
+	IEquipmentInterface::OnUnequipped_Implementation();
 }
 
 void AProjectileWeaponBase::SetProjectileInfo()
