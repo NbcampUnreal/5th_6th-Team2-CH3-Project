@@ -6,6 +6,8 @@
 #include "Parabola_ProjectileBase.h"
 #include "ParabolaWeapon.generated.h"
 
+class ULockonComponent;
+
 UCLASS()
 class TEAMASSIGNMENTFPS_API AParabolaWeapon : public AProjectileWeaponBase
 {
@@ -15,6 +17,10 @@ public:
 	AParabolaWeapon();
 
 protected:
+
+	UPROPERTY()
+	ULockonComponent* LockonComponent=nullptr;// to get the landing location
+	
 	/** Charging and input */
 	bool bIsCharging = false;
 	float CurrentChargeTime = 0.f;
