@@ -23,6 +23,7 @@ protected:
 	
 	/** Charging and input */
 	bool bIsCharging = false;
+	bool bIsCharged = false;
 	float CurrentChargeTime = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Charging")
@@ -41,9 +42,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
 	int32 PathSegments = 24;
 
+	//Temp path indicator
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
-	FColor PathColor = FColor::Green;
+	FColor PathColor_Uncharged = FColor::Red;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
+	FColor PathColor_Charged = FColor::Green;
+
+
+	//debug draw custom tick
+	FTimerHandle ParabolaDrawTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Parabola | Settings")
+    float ParabolaDrawInterval = 0.03f; 
+    
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -67,6 +78,8 @@ protected:
 
 	/** Draw debug path */
 	void DrawParabolaPath(float ChargeRatio);
+
+	void DrawParabolaTimerTick();
 
 	//equpiment
 	virtual void OnEquipped_Implementation() override;

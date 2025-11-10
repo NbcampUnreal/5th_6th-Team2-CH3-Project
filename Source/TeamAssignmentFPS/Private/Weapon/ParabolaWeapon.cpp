@@ -49,6 +49,15 @@ void AParabolaWeapon::OnInputHoldStart_Implementation()
 	// Begin holding
 	bIsCharging = true;
 	CurrentChargeTime = 0.f;
+
+	//Set Timer for debug draw
+	GetWorld()->GetTimerManager().SetTimer(
+	ParabolaDrawTimer,
+	this,
+	&AParabolaWeapon::DrawParabolaTimerTick,
+	ParabolaDrawInterval,
+	true
+);
 }
 
 void AParabolaWeapon::OnInputHoldUpdate_Implementation(float InputValue)
@@ -63,8 +72,10 @@ void AParabolaWeapon::OnInputHoldUpdate_Implementation(float InputValue)
 		
 		CurrentChargeTime = FMath::Min(CurrentChargeTime + GetWorld()->GetDeltaSeconds(), MaxChargeTime);
 		float ChargeRatio = CurrentChargeTime / MaxChargeTime;
-		DrawParabolaPath(ChargeRatio);
+		
+		bIsCharged = (CurrentChargeTime >= MaxChargeTime - KINDA_SMALL_NUMBER);
 
+		
 		//Temp
 		//UE_LOG(Weapon_Log, Log, TEXT("ChargeRatio=%f"),ChargeRatio)
 		// ratio update check
@@ -77,6 +88,8 @@ void AParabolaWeapon::OnInputRelease_Implementation()
 	bIsCharging = false;
 	FireParabolaProjectile();
 	CurrentChargeTime = 0.f;//reset
+
+	GetWorld()->GetTimerManager().ClearTimer(ParabolaDrawTimer);//reset the timer for debug draw
 }
 
 void AParabolaWeapon::FireParabolaProjectile()
@@ -156,6 +169,23 @@ void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 
 	float Height = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
 
+	// Lerp the color
+
+	// Choose color based on charge state
+	FColor CurrentColor;
+	if (bIsCharged)
+	{
+		CurrentColor = PathColor_Charged;
+	}
+	else
+	{
+		FLinearColor StartColor = FLinearColor(PathColor_Uncharged);
+		FLinearColor EndColor   = FLinearColor(PathColor_Charged);
+		FLinearColor LerpColor  = FMath::Lerp(StartColor, EndColor, ChargeRatio);
+
+		CurrentColor = LerpColor.ToFColor(true);
+	}
+	
 	UProjectilePathDrawer::DrawLerpedArc(
 		GetWorld(),
 		StartLocation,
@@ -164,9 +194,17 @@ void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)
 		StartLocation.Z,
 		StartLocation.Z + Height,
 		PathSegments,
-		PathColor,
+		CurrentColor,
 		0.f
 	);
+}
+
+void AParabolaWeapon::DrawParabolaTimerTick()
+{
+	if (!bIsCharging) return;
+
+	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
+	DrawParabolaPath(ChargeRatio);
 }
 
 void AParabolaWeapon::OnEquipped_Implementation()
