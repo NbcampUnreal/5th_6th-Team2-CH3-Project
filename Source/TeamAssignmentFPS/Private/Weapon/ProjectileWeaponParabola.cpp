@@ -8,10 +8,13 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 6018cf4 (no message)
 =======
 >>>>>>> f8cd34c (no message)
+=======
+>>>>>>> dc8828f (no message)
 #include "Character/MyCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "LockonTarget/LockonComponent.h"
@@ -35,7 +38,15 @@
 =======
 #include "LockonTarget/LockonComponent.h"
 >>>>>>> cacbb6f (11/10)
+<<<<<<< HEAD
 >>>>>>> f8cd34c (no message)
+=======
+=======
+#include "Character/MyCharacter.h"
+#include "LockonTarget/LockonComponent.h"
+
+>>>>>>> 286abce (11/10)
+>>>>>>> dc8828f (no message)
 
 AParabolaWeapon::AParabolaWeapon()
 {
@@ -46,10 +57,15 @@ AParabolaWeapon::AParabolaWeapon()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d159577 (weapon update)
 =======
 >>>>>>> 6018cf4 (no message)
+=======
+=======
+>>>>>>> 286abce (11/10)
+>>>>>>> dc8828f (no message)
 void AParabolaWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -66,6 +82,7 @@ void AParabolaWeapon::BeginPlay()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9dec185 (parabola weapon update)
 =======
@@ -74,6 +91,12 @@ void AParabolaWeapon::BeginPlay()
 =======
 >>>>>>> 5d17d88 (11/10)
 >>>>>>> 6018cf4 (no message)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+=======
+>>>>>>> 286abce (11/10)
+>>>>>>> dc8828f (no message)
 void AParabolaWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

@@ -114,8 +114,11 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 6018cf4 (no message)
+=======
+>>>>>>> dc8828f (no message)
 	virtual void BeginPlay() override;
 =======
 >>>>>>> 9dec185 (parabola weapon update)
@@ -126,6 +129,9 @@ protected:
 	
 	
 =======
+=======
+	virtual void BeginPlay() override;
+>>>>>>> 286abce (11/10)
 	virtual void Tick(float DeltaTime) override;
 
 >>>>>>> 5d17d88 (11/10)
