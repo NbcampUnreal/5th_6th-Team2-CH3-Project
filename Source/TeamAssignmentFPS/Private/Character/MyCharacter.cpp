@@ -169,6 +169,14 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 
 void AMyCharacter::RotateTowardTarget(float Deltatime)
 {
+	if (!LockonComp)
+	{
+		//temp
+		UE_LOG(Character_Log, Error, TEXT("AMyCharacter::RotateTowardTarget-> lock on comp invalid"));
+		return;
+	}
+	
+	
 	FVector CursorLocation;
 	if (!LockonComp->GetDeprojectedCursorLocation(CursorLocation))
 	{
