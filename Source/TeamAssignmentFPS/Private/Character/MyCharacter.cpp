@@ -47,6 +47,9 @@ void AMyCharacter::BeginPlay()
 	{
 		InteractionComp->SetActivationForInteractionComponent(true);
 	}
+
+	// hp set up
+	HealthComponentSetup();
 	
 }
 
