@@ -122,7 +122,7 @@ void AMyCharacter::Tick(float DeltaTime)
 	}
 
 	//temp rotaion without state case
-	//RotateTowardTarget(DeltaTime);
+	RotateTowardTarget(DeltaTime);
 	//temp with simple trigger
 
 	//evaluate what movement state character has right now
