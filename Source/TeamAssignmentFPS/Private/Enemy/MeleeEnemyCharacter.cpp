@@ -93,9 +93,13 @@ void AMeleeEnemyCharacter::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, 
 		return;
 	}
 
+	DisableAttackCollision();
+
 	FDamageInfo DamageInfo;
 
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
+	DamageInfo.DamageDirection = -(GetActorLocation() - OtherActor->GetActorLocation()).GetSafeNormal();
+    DamageInfo.DamageDirection.Z = 0.f;
 
 	UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
 	if (HealthComp && HealthComp->GetClass()->ImplementsInterface(UInterfaceHP::StaticClass()))

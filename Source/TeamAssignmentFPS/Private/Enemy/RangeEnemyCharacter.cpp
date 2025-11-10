@@ -25,21 +25,11 @@ void ARangeEnemyCharacter::SpawnProjectile()
 
 	FDamageInfo DamageInfo;
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
-	DamageInfo.DamageCauser=this;// damage causer
-
-	// Projectile path direction
-	FVector ProjectileDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 	
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 		//PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
-		AProjectileBase* ProjectileBase =
-			Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileDirection.Rotation()));
-
-		if (!ProjectileBase)
-		{
-			//error
-		}
+		AProjectileBase* ProjectileBase = Cast<AProjectileBase>(PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), LookAtPlayer()));
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
 

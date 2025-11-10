@@ -83,9 +83,6 @@ public:
 	virtual void EndHitReact();
 	virtual void EnemyDead(FDamageInfo DamageInfo);
 	void EndEnemyDead();
-
-	void SetTargetActor(AActor* NewTargetActor);
-	AActor* GetTargetActor()const{return TargetActor;}
 	
 protected:
 	virtual void BeginPlay() override;
@@ -103,9 +100,6 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	
 	FVector HitDirection;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy | Target")
-	AActor* TargetActor;
 	
 	
 	void PlayHitMontage(UAnimMontage* Montage);
