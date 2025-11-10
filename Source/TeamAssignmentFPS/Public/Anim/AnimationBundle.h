@@ -5,30 +5,28 @@
 #include "CoreMinimal.h"
 #include "AnimationBundle.generated.h"
 
+class UAnimMontage;
+
 USTRUCT(Blueprintable)
-struct TEAMASSIGNMENTFPS_API FAnimationPair
+struct FActorAnimationBundle
 {
 	GENERATED_BODY()
-	
+    
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	AActor* AnimPlayer;// the actor that use the anim montage 
-	
-	TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/> AnimMontageBundle;
-	
-	// multiple anim montage per owner
-	
+	TWeakObjectPtr<AActor> Actor; // safer than raw pointer
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	TArray<UAnimMontage*> AnimMontages;
 };
 
 USTRUCT(Blueprintable)
-struct TEAMASSIGNMENTFPS_API FAnimationBundle
+struct FAnimationBundle
 {
 	GENERATED_BODY()
-	
+    
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	AActor* AnimPlayer;// the actor that use the anim montage 
+	FName AnimationName;
 
-	TMap<uint8/*Anim ID*/, UAnimMontage/*Anim montage*/> AnimMontageBundle;
-	
-	// multiple anim montage per owner
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	TArray<FActorAnimationBundle> ActorBundles;
 };
