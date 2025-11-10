@@ -7,6 +7,7 @@
 #include "Interface/InputReactionInterface.h"
 #include "Interface/WeaponInterface.h"
 #include "Interface/DamageInfo.h"
+#include "Interface/EquipmentInterface.h"
 
 #include "WeaponBase.generated.h"
 
@@ -34,7 +35,8 @@ UCLASS()
 class TEAMASSIGNMENTFPS_API AWeaponBase :
 	public AActor,
 	public IInputReactionInterface,
-	public IWeaponInterface
+	public IWeaponInterface,
+	public IEquipmentInterface/* for equipping and unequipping */
 {
 	GENERATED_BODY()
 
