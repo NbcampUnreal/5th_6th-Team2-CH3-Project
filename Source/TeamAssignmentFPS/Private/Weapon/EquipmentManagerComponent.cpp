@@ -439,6 +439,7 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AAc
 	}
 }
 
+<<<<<<< HEAD
 void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 {
 	AActor* CurrentWeapon= TempWeaponQuickSlot[CurrentWeaponSlotIndex];// bring the current weapon from current index
@@ -446,6 +447,8 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 	EquipCurrentEquipment(CurrentWeapon);
 	//
 }
+=======
+>>>>>>> 6bfcd5b (update)
 
 
 bool UEquipmentManagerComponent::AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type)
