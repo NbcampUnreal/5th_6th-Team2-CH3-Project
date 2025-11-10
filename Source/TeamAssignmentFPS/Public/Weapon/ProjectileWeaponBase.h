@@ -137,55 +137,78 @@ protected:
 	void SetProjectileInfo();
 
 	// use template for different projectile subclass
-	template<typename T_ProjectileClass=AProjectileBase>// base as default
-	T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+template<typename T_ProjectileClass = AProjectileBase> // base as default
+T_ProjectileClass* SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator SpawnRotation)
+{
+	if (!ProjectileClass)
 	{
-		if (!ProjectileClass)
+		UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> ProjectileClass is null"));
+		return nullptr;
+	}
+
+	// Safety check: ensure the template type is a subclass of AProjectileBase
+	if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
+	{
+		UE_LOG(Weapon_Log, Error,
+			TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
+			*T_ProjectileClass::StaticClass()->GetName());
+		return nullptr;
+	}
+
+	T_ProjectileClass* SpawnedProjectile = nullptr;
+
+	// Case 1: Spawn normally (not using pool)
+	if (!bUsePool)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (!SpawnedProjectile)
 		{
-			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile-> Projectile Class is null"));
+			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> Failed to spawn actor normally"));
 			return nullptr;
 		}
-		
-		// use this to prevent error
-		if (!T_ProjectileClass::StaticClass()->IsChildOf(AProjectileBase::StaticClass()))
+	}
+	// Case 2: Try using pooling subsystem
+	else
+	{
+		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
-			UE_LOG(Weapon_Log, Error,
-				TEXT("SpawnProjectile -> Invalid template! %s is not a child of AProjectileBase"),
-				*T_ProjectileClass::StaticClass()->GetName());
-			return nullptr;
-		}
-	
-		
-		T_ProjectileClass* SpawnedProjectile=nullptr;
-	
-		if (!bUsePool)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
-			SpawnedProjectile = GetWorld()->SpawnActor<T_ProjectileClass>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
+			SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
+
 			if (!SpawnedProjectile)
 			{
-				// spawn failed
+				UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> Failed to get pooled projectile"));
 				return nullptr;
 			}
+
+			// Reactivate pooled projectile
+			SpawnedProjectile->ActivateProjectileBase();
 		}
 		else
 		{
-			if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-			{
-				UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(ProjectileClass, SpawnLocation, SpawnRotation);
-				SpawnedProjectile = Cast<T_ProjectileClass>(SpawnedObj);
-				if (!SpawnedProjectile)
-				{
-					return nullptr;
-				}
-			
-				SpawnedProjectile-> ActivateProjectileBase();//reactivate the projectile
-			}
+			UE_LOG(Weapon_Log, Error, TEXT("SpawnProjectile -> PoolingSubsystem not found in World"));
+			return nullptr;
 		}
-		// spawning new or from pool completed
-
-		return SpawnedProjectile;
 	}
+
+	//Log successful spawn info
+	if (SpawnedProjectile)
+	{
+		UE_LOG(Weapon_Log, Log,
+			TEXT("SpawnProjectile -> Spawned Projectile: %s (Class: %s) | Using Pool: %s"),
+			*SpawnedProjectile->GetName(),
+			*SpawnedProjectile->GetClass()->GetName(),
+			bUsePool ? TEXT("True") : TEXT("False"));
+	}
+	else
+	{
+		UE_LOG(Weapon_Log, Warning, TEXT("SpawnProjectile -> SpawnedProjectile is nullptr after spawn attempt"));
+	}
+
+	return SpawnedProjectile;
+}
+
 };
