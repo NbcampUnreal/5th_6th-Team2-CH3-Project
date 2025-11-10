@@ -94,76 +94,34 @@ void AParabolaWeapon::OnInputRelease_Implementation()
 
 void AParabolaWeapon::FireParabolaProjectile()
 {
-	if (!GetWorld() || !Muzzle)
-		return;
-
-	if (!ProjectileClass)
-	{
-		UE_LOG(Weapon_Log, Error, TEXT("AProjectileWeaponBase::FireWeapon -> No ProjectileClass tp Spawn."));
-		return;
-	}
-	if (bIsReloading)
-	{
-		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileWeaponBase::FireWeapon -> Cannot fire while reloading."));
-		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);// no longer cannot fire the weapon
-		// TODO:UI-> signal ui manager to show fire failed
-		return;
-	}
-	if (CurrentAmmoCount<=0)
-	{
-		UE_LOG(Weapon_Log, Warning, TEXT("AProjectileWeaponBase::FireWeapon -> Not enough amo to shoot."));
-		ReloadWeapon();// auto reload 
-		GetWorldTimerManager().ClearTimer(AutoFireTimerHandle);//same here
-		// TODO:UI-> signal ui manager to show fire failed
-		
-		return;
-	}
-	
 	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 
-	// Always refresh cursor before firing
-	FVector CurrentCursorLocation = FVector::ZeroVector;
-	if (LockonComponent)
-		CurrentCursorLocation = LockonComponent->GetCursorWorldLocation();
-
-	// Toss (quick tap or undercharged)
+	// If released early → toss
 	if (ChargeRatio < 1.f)
 	{
-		TossParabolaProjectile(); // forward toss
+		TossParabolaProjectile();
 	}
 	else
 	{
-		LaunchParabolaProjectile(); // proper arc launch
+		LaunchParabolaProjectile();
 	}
-
-	//Decrement amo count
-	--CurrentAmmoCount;
-	// 
-	PlayMuzzleEffect();
-	
-	// Reset state
-	bIsCharging = false;
-	bIsCharged = false;
-	CurrentChargeTime = 0.f;
-
-	GetWorld()->GetTimerManager().ClearTimer(ParabolaDrawTimer);
 }
 
 void AParabolaWeapon::LaunchParabolaProjectile()
 {
-	if (!ProjectileClass || !LockonComponent || !Muzzle)
+	if (!ProjectileClass || !LockonComponent)
 	{
-		UE_LOG(Weapon_Log, Warning, TEXT("LaunchParabolaProjectile -> Missing requirements"));
+		UE_LOG(LogTemp, Warning, TEXT("LaunchParabolaProjectile -> Missing LockonComponent or ProjectileClass"));
 		return;
 	}
 
 	FVector SpawnLocation = Muzzle->GetComponentLocation();
-	FVector TargetLocation = LockonComponent->GetCursorWorldLocation(); // always fresh
+	FVector TargetLocation =LockonComponent->GetCursorWorldLocation();
 
 	AParabola_ProjectileBase* Projectile = SpawnProjectile<AParabola_ProjectileBase>(true, SpawnLocation, FRotator::ZeroRotator);
 	if (!Projectile) return;
 
-	float ChargeRatio = FMath::Clamp(CurrentChargeTime / MaxChargeTime, 0.f, 1.f);
+	float ChargeRatio = CurrentChargeTime / MaxChargeTime;
 	float Height = FMath::Lerp(MinParabolaHeight, MaxParabolaHeight, ChargeRatio);
 	float TravelTime = FMath::Lerp(0.8f, 1.6f, ChargeRatio);
 
@@ -172,12 +130,12 @@ void AParabolaWeapon::LaunchParabolaProjectile()
 	Projectile->SetTravelTime(TravelTime);
 	Projectile->SetActorLocation(SpawnLocation);
 
-	UE_LOG(Weapon_Log, Log, TEXT("LaunchParabolaProjectile -> Arc launched to %s (%.2fs travel)"), *TargetLocation.ToString(), TravelTime);
+	UE_LOG(LogTemp, Log, TEXT("LaunchParabolaProjectile -> Arc launched toward cursor (%.1fs travel)"), TravelTime);
 }
 
 void AParabolaWeapon::TossParabolaProjectile()
 {
-	if (!ProjectileClass || !Muzzle) return;
+	if (!ProjectileClass) return;
 
 	FVector SpawnLocation = Muzzle->GetComponentLocation();
 	FRotator SpawnRotation = Muzzle->GetComponentRotation();
@@ -189,10 +147,10 @@ void AParabolaWeapon::TossParabolaProjectile()
 	{
 		MoveComp->ProjectileGravityScale = 1.f;
 		MoveComp->bShouldBounce = true;
-		MoveComp->Velocity = SpawnRotation.Vector() * 1500.f; // always fresh forward
+		MoveComp->Velocity = SpawnRotation.Vector() * 1500.f;
 	}
 
-	UE_LOG(Weapon_Log, Log, TEXT("TossParabolaProjectile -> Toss launched forward"));
+	UE_LOG(LogTemp, Log, TEXT("TossParabolaProjectile -> Toss launched"));
 }
 
 void AParabolaWeapon::DrawParabolaPath(float ChargeRatio)

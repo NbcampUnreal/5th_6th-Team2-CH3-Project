@@ -169,13 +169,6 @@ void AMyCharacter::MoveForwardAndRight(const FInputActionValue& Value)
 
 void AMyCharacter::RotateTowardTarget(float Deltatime)
 {
-	if (!LockonComp)
-	{
-		//temp
-		UE_LOG(Character_Log, Error, TEXT("AMyCharacter::RotateTowardTarget-> lock on comp invalid"));
-		return;
-	}
-	
 	FVector CursorLocation;
 	if (!LockonComp->GetDeprojectedCursorLocation(CursorLocation))
 	{
@@ -354,6 +347,7 @@ void AMyCharacter::OnDagamed(FDamageInfo Damage)
 void AMyCharacter::OnDeath(FDamageInfo Damage)
 {
 	// do what death does
+
 	KockBackCharacter(Damage);
 	// add Death widget
 	// disable controll
@@ -362,11 +356,21 @@ void AMyCharacter::OnDeath(FDamageInfo Damage)
 
 void AMyCharacter::KockBackCharacter(FDamageInfo Damage)
 {
+	//knock back
+	// if (!Damage.DamageDirection.IsNearlyZero())
+	// {
+	// 	//error, direction invalid
+	// 	return;
+	// }
+	
 	FVector KnockBackDirection=Damage.DamageDirection.GetSafeNormal();
 	
 	float KnockBackAmountMultiplier=50.f;//temp
 	float MaxKnockBackForce=1000.f;//temp
+	
 	float KnockBackForce=FMath::Clamp(Damage.DamageAmount*KnockBackAmountMultiplier,0.f,MaxKnockBackForce);
+	
+
 	LaunchCharacter(KnockBackDirection*KnockBackForce, true, true);
 }
 
@@ -429,4 +433,7 @@ void AMyCharacter::DecideMovementState()
 
 void AMyCharacter::SetMovementState(ECharacterMovementState NewState)
 {
+	
 }
+
+
