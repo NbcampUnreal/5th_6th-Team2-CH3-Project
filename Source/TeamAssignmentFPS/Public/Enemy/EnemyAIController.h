@@ -16,9 +16,10 @@ class TEAMASSIGNMENTFPS_API AEnemyAIController : public AAIController
 	
 public:
 	AEnemyAIController();
-
+	void DefaultSettingBlackBoard();
 	void StartBehaviorTree();
 	void StopBehaviorTree();
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
@@ -30,7 +31,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 
-	void DefaultSettingBlackBoard();
+	
 
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
@@ -38,6 +39,8 @@ private:
 	
 
 public:
+	void SetCanAttackRotate(bool b);
+	
 	FORCEINLINE UBlackboardComponent* GetBlackboardComp() const { return BlackboardComp; }
-
+	
 };

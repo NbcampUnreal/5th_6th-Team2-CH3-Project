@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pooling/PoolingSubsystem.h"
+#include "Enemy/EnemyAIController.h"
 //#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
@@ -13,6 +14,9 @@ ARangeEnemyCharacter::ARangeEnemyCharacter()
 
 	ProjectileSpawn = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Location"));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 652a79a (Revert "delete")
 	ProjectileSpawn->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 }
 
@@ -26,13 +30,15 @@ void ARangeEnemyCharacter::SpawnProjectile()
 	FDamageInfo DamageInfo;
 	DamageInfo.DamageAmount = GetEnemyData().Damage;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
 =======
 	ProjectileSpawn->SetupAttachment(RootComponent);
 >>>>>>> 83cc9c5 (delete)
+=======
+>>>>>>> 652a79a (Revert "delete")
 	
-<<<<<<< HEAD
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
@@ -72,21 +78,19 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> b8ccb7b (feat enemy anim)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
-=======
-	EnemyData.Range = 1000.f;
->>>>>>> parent of b8ccb7b (feat enemy anim)
 
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->SetCanAttackRotate(false);
+	}
 }
 
 void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
-	if (!Projectile || !ProjectileSpawn)
-	{
-		return;
-	}
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -119,6 +123,8 @@ void ARangeEnemyCharacter::EnemyAttack()
 		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
 >>>>>>> 83cc9c5 (delete)
+=======
+>>>>>>> 652a79a (Revert "delete")
 	
 }
 

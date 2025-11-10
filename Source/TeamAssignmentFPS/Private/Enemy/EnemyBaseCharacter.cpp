@@ -19,6 +19,10 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	bUseControllerRotationYaw = false;	
+	Movement->RotationRate = FRotator(0.f, 540.f, 0.f);
+	Movement->bOrientRotationToMovement = true;
 	EnemyState = EEnemyState::EES_None;
 
 }
@@ -38,9 +42,10 @@ void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
 	EnemyData.Score = InData->Score;
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	//Movement->bOrientRotationToMovement = true;
-
 	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
+
+	float RandomValue = FMath::RandRange(EnemyData.HeightMinRatio, EnemyData.HeightMaxRatio);
+	SetActorScale3D(GetActorScale3D()* RandomValue);
 }
 
 void AEnemyBaseCharacter::BeginPlay()
@@ -52,6 +57,7 @@ void AEnemyBaseCharacter::BeginPlay()
 	AGameStateManager* GameStateManager = Cast<AGameStateManager>(GetWorld()->GetGameState());
 	if (GameStateManager)
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -83,6 +89,9 @@ void AEnemyBaseCharacter::BeginPlay()
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 >>>>>>> 83cc9c5 (delete)
+=======
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
+>>>>>>> 652a79a (Revert "delete")
 	}
 
 	// Set TargetActor
@@ -128,6 +137,36 @@ void AEnemyBaseCharacter::EndChase()
 	EnemyAttack();
 }
 
+void AEnemyBaseCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	//UE_LOG(LogTemp, Error, TEXT("range %f"), EnemyData.Range);
+}
+
+void AEnemyBaseCharacter::EndEnemySpawn()
+{
+	ChangeEnemyState(EEnemyState::EES_Chase);
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StartBehaviorTree();
+		
+	}
+
+	
+}
+
+void AEnemyBaseCharacter::EndChase()
+{
+	//ChangeEnemyState(EEnemyState::EES_Idle);
+	// if (bCanAttack == false)
+	// {
+	// 	return;
+	// }
+	EnemyAttack();
+}
+
 void AEnemyBaseCharacter::EnemyAttack()
 {
 	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack"));
@@ -137,43 +176,48 @@ void AEnemyBaseCharacter::EnemyAttack()
 		return;
 	}
 
-	if (bCanAttack == false)
+	//LookAtPlayer();
+	
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
-		return;
+		AIController->SetCanAttackRotate(true);
 	}
 
 	ChangeEnemyState(EEnemyState::EES_Attack);
-
-	FTimerHandle TestTimerHandle;
-
-	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &AEnemyBaseCharacter::EnemyAttackEnd, 3.f);
-
 }
 
-void AEnemyBaseCharacter::EnemyAttackEnd()
+void AEnemyBaseCharacter::EndEnemyAttack()
 {
-	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack End"));
+	ChangeEnemyState(EEnemyState::EES_Idle);
 
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::ReturnToChase, EnemyData.Delay, false);
+}
+
+void AEnemyBaseCharacter::ReturnToChase()
+{
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
 void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 {
 	//������ ���� �� ȣ���� �Լ�
-
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
-
-	if (GetEnemyState() == EEnemyState::EES_Spawn)
+	
+	HitDirection = DamageInfo.DamageDirection;
+	
+	if (GetEnemyState() == EEnemyState::EES_Spawn || GetEnemyState() == EEnemyState::EES_Damaged || GetEnemyState() == EEnemyState::EES_Dead)
 	{
 		return;
 	}
+
 	
-	//Knockback();
+	PlayHitMontage(HitReactMontage);
 	
 	ChangeEnemyState(EEnemyState::EES_Damaged);
 	
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 double AEnemyBaseCharacter::GetKnockbackDireation(FVector Direction)
 <<<<<<< HEAD
@@ -183,6 +227,9 @@ double AEnemyBaseCharacter::GetKnockbackDireation(FVector Direction)
 =======
 	
 =======
+=======
+double AEnemyBaseCharacter::GetKnockbackDireation(FVector Direction)
+>>>>>>> 652a79a (Revert "delete")
 {
 	const FVector ForwardVector = GetActorForwardVector();
 	
@@ -208,6 +255,7 @@ void AEnemyBaseCharacter::EndHitReact()
 }
 
 
+<<<<<<< HEAD
 
 void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
@@ -228,12 +276,21 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
 	
 >>>>>>> 83cc9c5 (delete)
+=======
+
+void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
+{
+>>>>>>> 652a79a (Revert "delete")
 	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
+	SetActorEnableCollision(false);
+	//StopMontage(HitReactMontage);
+	PlayMontage(DeadMontage);
 	ChangeEnemyState(EEnemyState::EES_Dead);
 >>>>>>> f351064 (chore)
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	const FVector ToHit  = Direction.GetSafeNormal();
@@ -272,6 +329,8 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 =======
 =======
 >>>>>>> 83cc9c5 (delete)
+=======
+>>>>>>> 652a79a (Revert "delete")
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		bool WasDestoryed;
@@ -288,25 +347,20 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
 		AIController->StopBehaviorTree();
 	}
-=======
-	//Destroy();
->>>>>>> parent of b8ccb7b (feat enemy anim)
 
-	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
-	{
-		PoolingSubsystem->ReturnToPool(this);
-	}
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
 	
 }
 
-void AEnemyBaseCharacter::EnemyDeadByPhaseEnd()
+void AEnemyBaseCharacter::EndEnemyDead()
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead by phase over"));
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+}
 
-	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
-
-	ChangeEnemyState(EEnemyState::EES_Dead);
-
+void AEnemyBaseCharacter::EnemyDestroy()
+{
+	ChangeEnemyState(EEnemyState::EES_None);
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 >>>>>>> b8ccb7b (feat enemy anim)
 	{
@@ -395,11 +449,14 @@ void AEnemyBaseCharacter::EnemyDestroy()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
 =======
 
 >>>>>>> 83cc9c5 (delete)
+=======
+>>>>>>> 652a79a (Revert "delete")
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
 	EnemyState = NewEnemyState;
@@ -407,40 +464,29 @@ void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 	OnEnemyStateChanged.Broadcast(EnemyState);
 }
 
-void AEnemyBaseCharacter::EndEnemySpawn()
-{
-	ChangeEnemyState(EEnemyState::EES_Chase);
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Spawn End"));
-}
 
-void AEnemyBaseCharacter::EndChase()
-{
-	ChangeEnemyState(EEnemyState::EES_Idle);
-	if (bCanAttack == false)
-	{
-		return;
-	}
-	EnemyAttack();
-}
-
-void AEnemyBaseCharacter::DisableEnemyCollision()
-{
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
+// void AEnemyBaseCharacter::DisableEnemyCollision()
+// {
+// 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+// }
 
 void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 {
 	IPoolingInterface::OnSpawnFromPool_Implementation();
 
 	ChangeEnemyState(EEnemyState::EES_Spawn);
-	LookAtPlayer();
+	SetActorRotation(LookAtPlayer());
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
+=======
+>>>>>>> 652a79a (Revert "delete")
 		
 		FTimerHandle DelayHandle;
 
@@ -460,6 +506,7 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
 	}
 
 =======
@@ -476,6 +523,10 @@ void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 	}
 	EndEnemySpawn();
 >>>>>>> 83cc9c5 (delete)
+=======
+	}
+
+>>>>>>> 652a79a (Revert "delete")
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()
@@ -483,7 +534,7 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 	IPoolingInterface::OnReturnToPool_Implementation();
 
 	ChangeEnemyState(EEnemyState::EES_None);
-	
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		AIController->StopBehaviorTree();
@@ -493,7 +544,10 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 652a79a (Revert "delete")
 
 void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 {
@@ -548,9 +602,12 @@ void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
 }
 
 FRotator AEnemyBaseCharacter::LookAtPlayer()
+<<<<<<< HEAD
 =======
 void AEnemyBaseCharacter::LookAtPlayer()
 >>>>>>> 83cc9c5 (delete)
+=======
+>>>>>>> 652a79a (Revert "delete")
 {
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 >>>>>>> b8ccb7b (feat enemy anim)
@@ -565,6 +622,7 @@ void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
 
 	if (Theta >= -45.f && Theta < 45.f)
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		SectionName = FName("Back");
@@ -619,11 +677,17 @@ FRotator AEnemyBaseCharacter::LookAtPlayer()
 =======
 		return;
 >>>>>>> 83cc9c5 (delete)
+=======
+		return FRotator::ZeroRotator;
+>>>>>>> 652a79a (Revert "delete")
 	}
 
 	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
-	SetActorRotation(TargetRotation);
+	return TargetRotation;
 }
+
+
+
