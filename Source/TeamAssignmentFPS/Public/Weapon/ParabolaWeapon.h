@@ -9,6 +9,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 class ULockonComponent;
 
 =======
@@ -18,11 +19,20 @@ class ULockonComponent;
 
 >>>>>>> e7a41e7 (update)
 =======
+=======
+>>>>>>> f8cd34c (no message)
 class ULockonComponent;
 
 =======
 >>>>>>> 5d17d88 (11/10)
+<<<<<<< HEAD
 >>>>>>> 6018cf4 (no message)
+=======
+=======
+class ULockonComponent;
+
+>>>>>>> cacbb6f (11/10)
+>>>>>>> f8cd34c (no message)
 UCLASS()
 class TEAMASSIGNMENTFPS_API AParabolaWeapon : public AProjectileWeaponBase
 {
@@ -35,14 +45,20 @@ protected:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e7a41e7 (update)
 =======
 >>>>>>> 6018cf4 (no message)
+=======
+=======
+>>>>>>> cacbb6f (11/10)
+>>>>>>> f8cd34c (no message)
 
 	UPROPERTY()
 	ULockonComponent* LockonComponent=nullptr;// to get the landing location
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -53,6 +69,12 @@ protected:
 =======
 >>>>>>> 5d17d88 (11/10)
 >>>>>>> 6018cf4 (no message)
+=======
+=======
+>>>>>>> 5d17d88 (11/10)
+=======
+>>>>>>> cacbb6f (11/10)
+>>>>>>> f8cd34c (no message)
 	/** Charging and input */
 	bool bIsCharging = false;
 	float CurrentChargeTime = 0.f;
