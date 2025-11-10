@@ -135,10 +135,15 @@ public:
 	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 =======
 >>>>>>> 6bfcd5b (update)
+=======
+	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
+
+>>>>>>> 2966a65 (equipment updated)
 	
 
 

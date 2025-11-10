@@ -264,7 +264,11 @@ void AWeaponBase::SpawnProjectile(bool bUsePool, FVector SpawnLocation, FRotator
 		if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 		{
 			// SpawnFromPool�� ��ȯ���� �ӽ� ������ ���� �� Cast
+<<<<<<< HEAD
 			UObject* SpawnedObj = PoolingSubsystem->BringFromPoolOrSpawn(Projectile, SpawnLocation, SpawnRotation);
+=======
+			UObject* SpawnedObj = PoolingSubsystem->SpawnFromPool(Projectile, SpawnLocation, SpawnRotation);
+>>>>>>> 2966a65 (equipment updated)
 			AProjectileBase* SpawnedProjectile = Cast<AProjectileBase>(SpawnedObj);
 			if (SpawnedProjectile)
 			{
