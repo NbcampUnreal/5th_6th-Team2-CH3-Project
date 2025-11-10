@@ -19,6 +19,10 @@ AEnemyBaseCharacter::AEnemyBaseCharacter()
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	bUseControllerRotationYaw = false;	
+	Movement->RotationRate = FRotator(0.f, 540.f, 0.f);
+	Movement->bOrientRotationToMovement = true;
 	EnemyState = EEnemyState::EES_None;
 
 }
@@ -38,9 +42,10 @@ void AEnemyBaseCharacter::InitializeEnemyData(FEnemyDataRow* InData)
 	EnemyData.Score = InData->Score;
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	//Movement->bOrientRotationToMovement = true;
-
 	Movement->MaxWalkSpeed = EnemyData.MoveSpeed;
+
+	float RandomValue = FMath::RandRange(EnemyData.HeightMinRatio, EnemyData.HeightMaxRatio);
+	SetActorScale3D(GetActorScale3D()* RandomValue);
 }
 
 void AEnemyBaseCharacter::BeginPlay()
@@ -53,12 +58,46 @@ void AEnemyBaseCharacter::BeginPlay()
 	if (GameStateManager)
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 		UE_LOG(Enemy_Log, Error, TEXT("GameStateManager Found"));
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDeadByPhaseEnd);
 =======
 		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDead);
 >>>>>>> f351064 (chore)
+=======
+		GameStateManager->PhaseOver.AddDynamic(this, &AEnemyBaseCharacter::EnemyDestroy);
+>>>>>>> b8ccb7b (feat enemy anim)
 	}
+}
+
+void AEnemyBaseCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	//UE_LOG(LogTemp, Error, TEXT("range %f"), EnemyData.Range);
+}
+
+void AEnemyBaseCharacter::EndEnemySpawn()
+{
+	ChangeEnemyState(EEnemyState::EES_Chase);
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StartBehaviorTree();
+		
+	}
+
+	
+}
+
+void AEnemyBaseCharacter::EndChase()
+{
+	//ChangeEnemyState(EEnemyState::EES_Idle);
+	// if (bCanAttack == false)
+	// {
+	// 	return;
+	// }
+	EnemyAttack();
 }
 
 void AEnemyBaseCharacter::EnemyAttack()
@@ -70,66 +109,87 @@ void AEnemyBaseCharacter::EnemyAttack()
 		return;
 	}
 
-	if (bCanAttack == false)
+	//LookAtPlayer();
+	
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
-		return;
+		AIController->SetCanAttackRotate(true);
 	}
 
 	ChangeEnemyState(EEnemyState::EES_Attack);
-
-	FTimerHandle TestTimerHandle;
-
-	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &AEnemyBaseCharacter::EnemyAttackEnd, 3.f);
-
 }
 
-void AEnemyBaseCharacter::EnemyAttackEnd()
+void AEnemyBaseCharacter::EndEnemyAttack()
 {
-	//UE_LOG(Enemy_Log, Error, TEXT("Enemy Attack End"));
+	ChangeEnemyState(EEnemyState::EES_Idle);
 
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::ReturnToChase, EnemyData.Delay, false);
+}
+
+void AEnemyBaseCharacter::ReturnToChase()
+{
 	ChangeEnemyState(EEnemyState::EES_Chase);
 }
 
 void AEnemyBaseCharacter::EnemyTakeDamage(FDamageInfo DamageInfo)
 {
 	//������ ���� �� ȣ���� �Լ�
-
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Damaged"));
-
-	if (GetEnemyState() == EEnemyState::EES_Spawn)
+	
+	HitDirection = DamageInfo.DamageDirection;
+	
+	if (GetEnemyState() == EEnemyState::EES_Spawn || GetEnemyState() == EEnemyState::EES_Damaged || GetEnemyState() == EEnemyState::EES_Dead)
 	{
 		return;
 	}
+
 	
-	//Knockback();
+	PlayHitMontage(HitReactMontage);
 	
 	ChangeEnemyState(EEnemyState::EES_Damaged);
 	
 }
 
-// void AEnemyBaseCharacter::Knockback()
-// {
-// 	if (EnemyState == EEnemyState::EES_Dead)
-// 	{
-// 		return;
-// 	}
-// 	FVector D = GetActorForwardVector();
-// 	SetActorLocation(GetActorLocation()+ D * 100.f);
-// 	
-// }
+double AEnemyBaseCharacter::GetKnockbackDireation(FVector Direction)
+{
+	const FVector ForwardVector = GetActorForwardVector();
+	
+	const FVector ToHit  = Direction.GetSafeNormal();
+	
+	const double CosTheta = FVector::DotProduct(ForwardVector, ToHit);
+	double Theta = FMath::Acos(CosTheta);
+
+	Theta = FMath::RadiansToDegrees(Theta);
+
+	const FVector CrossProduct = FVector::CrossProduct(ForwardVector, ToHit);
+	if (CrossProduct.Z < 0)
+	{
+		Theta *= -1.f;	
+	}
+
+	return Theta;
+}
+
+void AEnemyBaseCharacter::EndHitReact()
+{
+	ChangeEnemyState(EEnemyState::EES_Chase);
+}
+
+
 
 void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 {
-	
 	//DisableEnemyCollision();
 	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
 
+	SetActorEnableCollision(false);
+	//StopMontage(HitReactMontage);
+	PlayMontage(DeadMontage);
 	ChangeEnemyState(EEnemyState::EES_Dead);
 	
-	//Destroy();
-
-	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
+<<<<<<< HEAD
 		bool WasDestoryed;
 		if (!PoolingSubsystem->ReturnToPoolOrDestroy(this,WasDestoryed))
 		{
@@ -142,18 +202,24 @@ void AEnemyBaseCharacter::EnemyDead(FDamageInfo DamageInfo)
 		FString EnemyName=this->GetName();
 		FString LogText=WasDestoryed? TEXT("Destoryed"):TEXT("Returned to pool");
 		UE_LOG(Enemy_Log, Log,TEXT("AEnemyBaseCharacter::EnemyDead-> Enemy [%s] is dead and %s"),*EnemyName,*LogText);
+=======
+		AIController->StopBehaviorTree();
+>>>>>>> b8ccb7b (feat enemy anim)
 	}
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEnemyBaseCharacter::EnemyDestroy, 10.f, false);
 	
 }
 
-void AEnemyBaseCharacter::EnemyDeadByPhaseEnd()
+void AEnemyBaseCharacter::EndEnemyDead()
 {
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Dead by phase over"));
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+}
 
-	OnEnemyDead.ExecuteIfBound(GetEnemyData().Score);
-
-	ChangeEnemyState(EEnemyState::EES_Dead);
-
+void AEnemyBaseCharacter::EnemyDestroy()
+{
+	ChangeEnemyState(EEnemyState::EES_None);
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 		bool WasDestoryed;
@@ -169,7 +235,6 @@ void AEnemyBaseCharacter::EnemyDeadByPhaseEnd()
 	}
 }
 
-
 void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 {
 	EnemyState = NewEnemyState;
@@ -177,38 +242,41 @@ void AEnemyBaseCharacter::ChangeEnemyState(EEnemyState NewEnemyState)
 	OnEnemyStateChanged.Broadcast(EnemyState);
 }
 
-void AEnemyBaseCharacter::EndEnemySpawn()
-{
-	ChangeEnemyState(EEnemyState::EES_Chase);
-	UE_LOG(Enemy_Log, Error, TEXT("Enemy Spawn End"));
-}
 
-void AEnemyBaseCharacter::EndChase()
-{
-	ChangeEnemyState(EEnemyState::EES_Idle);
-	if (bCanAttack == false)
-	{
-		return;
-	}
-	EnemyAttack();
-}
-
-void AEnemyBaseCharacter::DisableEnemyCollision()
-{
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
+// void AEnemyBaseCharacter::DisableEnemyCollision()
+// {
+// 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+// }
 
 void AEnemyBaseCharacter::OnSpawnFromPool_Implementation()
 {
 	IPoolingInterface::OnSpawnFromPool_Implementation();
 
 	ChangeEnemyState(EEnemyState::EES_Spawn);
-	LookAtPlayer();
+	SetActorRotation(LookAtPlayer());
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
-		AIController->StartBehaviorTree();
+		
+		FTimerHandle DelayHandle;
+
+		GetWorld()->GetTimerManager().SetTimer(
+			DelayHandle,
+			[this, AIController]()
+			{
+				if (AIController)
+				{
+					AIController->DefaultSettingBlackBoard();
+					
+				}
+			},
+			0.2f,  
+			false  
+		);
+
+		
 	}
-	EndEnemySpawn();
+
 }
 
 void AEnemyBaseCharacter::OnReturnToPool_Implementation()
@@ -216,7 +284,7 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 	IPoolingInterface::OnReturnToPool_Implementation();
 
 	ChangeEnemyState(EEnemyState::EES_None);
-	
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		AIController->StopBehaviorTree();
@@ -224,18 +292,74 @@ void AEnemyBaseCharacter::OnReturnToPool_Implementation()
 	
 }
 
-void AEnemyBaseCharacter::LookAtPlayer()
+
+void AEnemyBaseCharacter::PlayHitMontage(UAnimMontage* Montage)
+{
+	double Theta = GetKnockbackDireation(HitDirection);
+
+	UE_LOG(Enemy_Log, Warning, TEXT("%f"), Theta);
+	
+	FName SectionName = FName("Front");
+
+	if (Theta >= -45.f && Theta < 45.f)
+	{
+		SectionName = FName("Back");
+	}
+	else if (Theta >= -135.f && Theta < -45.f)
+	{
+		SectionName = FName("Right");
+	}
+	else if (Theta >= 45.f && Theta < 135.f)
+	{
+		SectionName = FName("Left");
+	}
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+		AnimInstance->Montage_JumpToSection(SectionName, Montage);
+	}
+}
+
+void AEnemyBaseCharacter::PlayMontage(UAnimMontage* Montage)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+	}
+}
+
+void AEnemyBaseCharacter::StopMontage(UAnimMontage* Montage)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Stop(-1.f, Montage);
+	}
+}
+
+void AEnemyBaseCharacter::PlaySound(USoundBase* Sound)
+{
+	UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation());
+}
+
+FRotator AEnemyBaseCharacter::LookAtPlayer()
 {
 	APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
 	if (!Player)
 	{
-		return;
+		return FRotator::ZeroRotator;
 	}
 
 	FRotator TargetRotation	= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
 	TargetRotation.Roll = 0.f;
 	TargetRotation.Pitch = 0.f;
 
-	SetActorRotation(TargetRotation);
+	return TargetRotation;
 }
+
+
+

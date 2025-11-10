@@ -15,7 +15,7 @@
 AGameStateManager::AGameStateManager()
 {
 	Score = 0;
-	LevelDuration = 5.0f; // �� ������ 30��
+	LevelDuration = 15.0f; // �� ������ 30��
 	CurrentLevelIndex = 0;
 	MaxLevels = 3;
 
