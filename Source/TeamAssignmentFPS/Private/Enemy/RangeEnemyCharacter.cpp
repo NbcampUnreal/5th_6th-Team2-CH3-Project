@@ -6,13 +6,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pooling/PoolingSubsystem.h"
-#include "Enemy/EnemyAIController.h"
 //#include 
 ARangeEnemyCharacter::ARangeEnemyCharacter()
 {
 	EnemyType = EEnemyType::EET_Range;
 
 	ProjectileSpawn = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Location"));
+<<<<<<< HEAD
 	ProjectileSpawn->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 }
 
@@ -28,7 +28,11 @@ void ARangeEnemyCharacter::SpawnProjectile()
 <<<<<<< HEAD
 
 	FVector SpawnDirection=(TargetActor->GetActorLocation()-GetActorLocation()).GetSafeNormal();
+=======
+	ProjectileSpawn->SetupAttachment(RootComponent);
+>>>>>>> 83cc9c5 (delete)
 	
+<<<<<<< HEAD
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
 <<<<<<< HEAD
@@ -68,22 +72,28 @@ void ARangeEnemyCharacter::SpawnProjectile()
 >>>>>>> b8ccb7b (feat enemy anim)
 		ProjectileBase->SetDamageInfo(DamageInfo);
 	}
+=======
+	EnemyData.Range = 1000.f;
+>>>>>>> parent of b8ccb7b (feat enemy anim)
 
-	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
-	{
-		AIController->SetCanAttackRotate(false);
-	}
 }
 
 void ARangeEnemyCharacter::EnemyAttack()
 {
 	Super::EnemyAttack();
 
+	if (!Projectile || !ProjectileSpawn)
+	{
+		return;
+	}
 	
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 83cc9c5 (delete)
 =======
 >>>>>>> 83cc9c5 (delete)
 	LookAtPlayer();
@@ -91,6 +101,7 @@ void ARangeEnemyCharacter::EnemyAttack()
 
 	if (UPoolingSubsystem* PoolingSubsystem = GetWorld()->GetSubsystem<UPoolingSubsystem>())
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 		PoolingSubsystem->BringFromPoolOrSpawn(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
 	}
@@ -104,6 +115,10 @@ void ARangeEnemyCharacter::EnemyAttack()
 >>>>>>> 652a79a (Revert "delete")
 =======
 >>>>>>> b8ccb7b (feat enemy anim)
+=======
+		PoolingSubsystem->SpawnFromPool(Projectile, ProjectileSpawn->GetComponentLocation(), ProjectileSpawn->GetComponentRotation());
+	}
+>>>>>>> 83cc9c5 (delete)
 	
 }
 

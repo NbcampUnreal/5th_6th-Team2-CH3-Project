@@ -3,8 +3,7 @@
 
 #include "Enemy/EnemyAnimInstance.h"
 #include "Enemy/EnemyBaseCharacter.h"
-#include "Enemy/MeleeEnemyCharacter.h"
-#include "Enemy/RangeEnemyCharacter.h"
+
 
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
@@ -38,57 +37,10 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UEnemyAnimInstance::AnimNotify_SpawnEnd()
 {
+	UE_LOG(Enemy_Log, Error, TEXT("SpawnEnd"));
 	if (Enemy)
 	{
 		Enemy->EndEnemySpawn();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_AttackEnd()
-{
-	if (Enemy)
-	{
-		Enemy->EndEnemyAttack();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_EndHitReact()
-{
-	if (Enemy)
-	{
-		Enemy->EndHitReact();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_EndDead()
-{
-	if (Enemy)
-	{
-		Enemy->EndEnemyDead();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_EnableCollision()
-{
-	if (AMeleeEnemyCharacter* MeleeEnemy = Cast<AMeleeEnemyCharacter>(Enemy))
-	{
-		MeleeEnemy->EnableAttackCollision();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_DisableCollision()
-{
-	if (AMeleeEnemyCharacter* MeleeEnemy = Cast<AMeleeEnemyCharacter>(Enemy))
-	{
-		MeleeEnemy->DisableAttackCollision();
-	}
-}
-
-void UEnemyAnimInstance::AnimNotify_SpawnProjectile()
-{
-	if (ARangeEnemyCharacter* Range = Cast<ARangeEnemyCharacter>(Enemy))
-	{
-		Range->SpawnProjectile();
 	}
 }
 
