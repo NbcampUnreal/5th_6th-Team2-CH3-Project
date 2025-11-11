@@ -10,11 +10,11 @@ struct FDamageInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* DamageCauser;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageAmount;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FVector DamageDirection;
 	
 	//buff debuff added later
