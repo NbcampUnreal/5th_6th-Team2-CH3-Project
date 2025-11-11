@@ -56,48 +56,42 @@ void ALaserWeapon::StopFiringWeapon()
 
 void ALaserWeapon::PerformLaserTrace(float DeltaSeconds)
 {
-    if (!Muzzle) return;
+	if (!Muzzle) return;
 
-    FVector StartLocation = Muzzle->GetComponentLocation();
-    FVector ForwardVector = Muzzle->GetForwardVector();
-    FVector EndLocation = StartLocation + ForwardVector * MaxDistance;
+	FVector StartLocation = Muzzle->GetComponentLocation();
+	FVector ForwardDirection = Muzzle->GetForwardVector();
+	FVector EndLocation = StartLocation + ForwardDirection * MaxDistance;
 
-    FCollisionQueryParams TraceParams;
-    TraceParams.AddIgnoredActor(this);
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
 
-    // Set object types to hit: WorldStatic
-    FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic); // optional if hitting movable props
 
-    TArray<FHitResult> HitResults;
-    bool bHit = GetWorld()->LineTraceMultiByObjectType(
-        HitResults,
-        StartLocation,
-        EndLocation,
-        ObjectQueryParams,
-        TraceParams
-    );
+	TArray<FHitResult> HitResults;
 
-    // Draw debug line
-    DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Green, false, 0.1f, 0, 1.f);
+	bool bHit = GetWorld()->LineTraceMultiByObjectType(
+		HitResults,
+		StartLocation,
+		EndLocation,
+		ObjectQueryParams,
+		TraceParams
+	);
 
-    if (bHit)
-    {
-        for (const FHitResult& Hit : HitResults)
-        {
-            // Draw debug sphere at hit points
-            DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.f, 12, FColor::Yellow, false, 0.1f, 0, 1.5f);
+	// Draw full laser line
+	FVector LaserEnd = EndLocation;
 
-            // Optional: Damage static actors if you want (depends on your design)
-        }
-
-        // Shorten laser to first hit
-        EndLocation = HitResults[0].ImpactPoint;
-    }
-
-    // Draw laser line
-    DrawDebugLine(GetWorld(), StartLocation, EndLocation, LaserColor, false, -1.f, 0, LaserThickness);
+	if (bHit && HitResults.Num() > 0)// if there is hit result
+	{
+		for (const FHitResult& Hit : HitResults)
+		{
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 15.f, 12, LaserColor, false, -1.f, 0, 1.5f);
+		}
+	}
+	DrawDebugLine(GetWorld(), StartLocation, LaserEnd, LaserColor, false, -1.f, 0, LaserThickness);
 }
+
 void ALaserWeapon::GiveDamageToActor(AActor* HitActor)
 {
 	if (!HitActor)

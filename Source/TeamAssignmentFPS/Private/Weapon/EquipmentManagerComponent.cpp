@@ -91,7 +91,7 @@ void UEquipmentManagerComponent::CacheInventoryComponent()
 
 void UEquipmentManagerComponent::SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue)
 {
-	if (!WeaponQuickSlot)
+	/*if (!WeaponQuickSlot)
 	{
 		UE_LOG(Equipment_Manager_Log, Error,
 			TEXT("UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys -> WeaponQuickSlot is invalid"));
@@ -112,7 +112,9 @@ void UEquipmentManagerComponent::SwitchWeapon_PC_NumbKeys(uint8 NumbKeyValue)
 	UE_LOG(Equipment_Manager_Log, Log,
 		TEXT(" UEquipmentManagerComponent::SwtichWeapon_PC_NumbKeys-> %d Weapon Setting is completed.")
 		,NumbKeyValue);
-	SetCurrentEquipmentPlacement(Placement);// set location to the hodling location; just in case
+	SetCurrentEquipmentPlacement(Placement);// set location to the hodling location; just in case*/
+	// temp
+	SwitchWeaponByNumber(NumbKeyValue);
 }
 
 void UEquipmentManagerComponent::GetNextEquipmentSlot(EEquipmentType Type, bool bIsDirectionRight)
@@ -359,6 +361,8 @@ bool UEquipmentManagerComponent::PutActorIntoSlot(uint8 SlotIndex, EEquipmentTyp
 	}
 
 	EquipmentMap->Add(SlotIndex,NewEquipment);
+
+	// now deactivate them
 	return true;
 }
 
@@ -394,6 +398,12 @@ void UEquipmentManagerComponent::EquipNewEquipment(AActor* NewEquipment)
 		UE_LOG(Equipment_Manager_Log, Log,
 			TEXT("UEquipmentManagerComponent::EquipNewEquipment -> Previous equipment unequipped"));
 		IEquipmentInterface::Execute_OnUnequipped(CurrentEquipment);
+		
+	}
+	else
+	{
+		UE_LOG(Equipment_Manager_Log, Log,
+			TEXT("UEquipmentManagerComponent::EquipNewEquipment -> This is the first equipment"));
 	}
 
 	// Set new
@@ -427,7 +437,9 @@ void UEquipmentManagerComponent::EquipNewEquipment(AActor* NewEquipment)
 	{
 		UE_LOG(Equipment_Manager_Log, Log,
 	TEXT("UEquipmentManagerComponent::EquipNewEquipment -> New equipment equipped"));
-		IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);
+
+		ActivateOrDeactivate(true, CurrentEquipment);//default first
+		IEquipmentInterface::Execute_OnEquipped(CurrentEquipment);// do interface next
 	}
 	else
 	{
@@ -435,38 +447,59 @@ void UEquipmentManagerComponent::EquipNewEquipment(AActor* NewEquipment)
 	}
 }
 
-void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot,
-	uint8 CurrentSlotIndex)
+void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight)
 {
-	if (QuickSlot.IsEmpty())
-	{
+	if (TempWeaponQuickSlot.IsEmpty())
 		return;
-	}
 
+	// Get sorted slot indices
 	TArray<uint8> SlotIndices;
-	QuickSlot.GetKeys(SlotIndices);
+	TempWeaponQuickSlot.GetKeys(SlotIndices);
 	SlotIndices.Sort();
 
-	uint8 NextSlotIndex=CurrentSlotIndex;
-	int32 SlotCount=SlotIndices.Num();
-	
-	for (uint8 i=0;i<SlotCount;i++)
+	// Find current index in the sorted array
+	int32 CurrentIndexInArray = SlotIndices.IndexOfByKey(CurrentWeaponSlotIndex);
+	if (CurrentIndexInArray == INDEX_NONE)
+		CurrentIndexInArray = 0;
+
+	// Calculate next index
+	int32 NextIndex = bIsRight 
+		? (CurrentIndexInArray + 1) % SlotIndices.Num() 
+		: (CurrentIndexInArray - 1 + SlotIndices.Num()) % SlotIndices.Num();
+
+	uint8 NextSlotKey = SlotIndices[NextIndex];
+	AActor* NextEquipment = TempWeaponQuickSlot[NextSlotKey];
+
+	if (NextEquipment)
 	{
-		if (bIsRight)
+		CurrentWeaponSlotIndex = NextSlotKey; // Update current slot
+		EquipNewEquipment(NextEquipment);
+		UE_LOG(Equipment_Manager_Log, Log, 
+			TEXT("Switched to weapon in slot %d: %s"), CurrentWeaponSlotIndex, *NextEquipment->GetName());
+	}
+}
+
+
+void UEquipmentManagerComponent::SwitchWeaponByNumber(uint8 SlotNumber)
+{
+	if (TempWeaponQuickSlot.Contains(SlotNumber))
+	{
+		AActor* Weapon = TempWeaponQuickSlot[SlotNumber];
+		if (Weapon)
 		{
-			NextSlotIndex=(NextSlotIndex+1)%SlotCount;// so that remaining becomes the first
+			CurrentWeaponSlotIndex = SlotNumber;
+			EquipNewEquipment(Weapon);
 		}
 		else
 		{
-			NextSlotIndex=(NextSlotIndex-1)%SlotCount;
+			UE_LOG(Equipment_Manager_Log, Warning,
+				TEXT("SwitchWeaponByNumber -> Slot %d is empty"), SlotNumber);
 		}
-
-		uint8 NextSlotIndexIndex=SlotIndices[NextSlotIndex];
-		AActor* NextEquipment= QuickSlot[NextSlotIndexIndex];
-
-		if (!NextEquipment) continue;
-
-		EquipNewEquipment(NextEquipment);
+	}
+	else
+	{
+		UE_LOG(Equipment_Manager_Log, Warning,
+			TEXT("SwitchWeaponByNumber -> Invalid slot %d"), SlotNumber);
 	}
 }
 
@@ -476,6 +509,30 @@ void UEquipmentManagerComponent::SwitchFromItemToWeapon()
 
 	EquipNewEquipment(CurrentWeapon);
 	//
+}
+
+bool UEquipmentManagerComponent::InitializeTempWeaponSlot(AActor* WeaponActor, uint8 SlotIndex)
+{
+	if (!WeaponActor)
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("InitializeTempWeaponSlot -> WeaponActor is null"));
+		return false;
+	}
+
+	if (!WeaponActor->Implements<UEquipmentInterface>())
+	{
+		UE_LOG(Equipment_Manager_Log, Error, TEXT("InitializeTempWeaponSlot -> WeaponActor does not implement EquipmentInterface"));
+		return false;
+	}
+
+	// do deactivation in here for default first
+	ActivateOrDeactivate(false,WeaponActor);
+	
+	// Deactivate the weapon via interface
+	IEquipmentInterface::Execute_OnUnequipped(WeaponActor);
+	PutActorIntoSlot(SlotIndex, EEquipmentType::Weapon, WeaponActor);
+
+	return true;
 }
 
 
@@ -590,22 +647,37 @@ void UEquipmentManagerComponent::SetCurrentEquipmentPlacement(USceneComponent* N
 
 void UEquipmentManagerComponent::SwitchWeapon_PC_MouseWheel(const FInputActionValue& Value)
 {
-	float ScrollValue = Value.Get<float>();
+	/*float ScrollValue = Value.Get<float>();
 	if (FMath::IsNearlyZero(ScrollValue))//not enough scroll movement
 		return;
 	
 	const bool bScrollUp = (ScrollValue > 0.f);
 
 	EEquipmentType TargetType=bIsHoldingMouseRightButton? EEquipmentType::Item:EEquipmentType::Weapon;
-	GetNextEquipmentSlot(TargetType,bScrollUp);
+	GetNextEquipmentSlot(TargetType,bScrollUp);*/// them
+
+	// temp
+	float ScrollValue = Value.Get<float>();
+	if (FMath::IsNearlyZero(ScrollValue))
+		return;
+
+	bool bScrollUp = ScrollValue > 0.f;
+	SwitchToNextSlot(bScrollUp);
 }
 
 void UEquipmentManagerComponent::SwitchWeapon_GP(const FInputActionValue& Value)
 {
-	float InputValue = Value.Get<float>();
+	/*float InputValue = Value.Get<float>();
 	bool bIsNextOrPrevious =( InputValue > 0);
 
-	GetNextEquipmentSlot(EEquipmentType::Weapon, bIsNextOrPrevious);
+	GetNextEquipmentSlot(EEquipmentType::Weapon, bIsNextOrPrevious);*/
+	// temp
+
+	float InputValue = Value.Get<float>();
+	if (FMath::IsNearlyZero(InputValue)) return;
+
+	bool bNext = InputValue > 0;
+	SwitchToNextSlot(bNext);
 }
 
 void UEquipmentManagerComponent::TriggerInput_Reload(const FInputActionValue& Value)

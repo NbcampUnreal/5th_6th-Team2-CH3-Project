@@ -123,20 +123,24 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void EquipNewEquipment(AActor* NewEquipment);
-	void SwitchToNextSlot(bool bIsRight, TMap<uint8, AActor*>& QuickSlot, uint8 CurrentSlotIndex);
+
+	
+	void SwitchToNextSlot(bool bIsRight);
+	void SwitchWeaponByNumber(uint8 SlotNumber);
 
 	void SwitchFromItemToWeapon();// current item to current weapon( triggered by weapon related interaction key)
 
 	
+	UFUNCTION(BlueprintCallable, Category="Equipment | Temp")// this is for deactivating spawend actor and put them to the slot
+	bool InitializeTempWeaponSlot(AActor* WeaponActor, uint8 SlotIndex);
 
-
+	UFUNCTION(BlueprintCallable, Category="Equipment | Temp")
+	AActor* GetFirstWeaponFromQuickSlot() const {return (TempWeaponQuickSlot.IsEmpty())? nullptr: TempWeaponQuickSlot[0];}
 
 	
 	///	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Temp For Weapon Test
-	UFUNCTION(BlueprintCallable, Category = "Temp Testing")// to put the weapon in the character
-	void SetCurrentEquipment(AActor* Equipment) {CurrentEquipment=Equipment;}
 
+	
 	UFUNCTION(BlueprintCallable, Category="Equipment")// this is to populate the quickslots from the inventory
 	bool AddEquipmentFromInventory(int32 EquipmentID, EEquipmentType Type);
 	
@@ -171,12 +175,28 @@ public:
 	UFUNCTION()
 	void SwtichWeapon_GP_Previous(const FInputActionValue& Value)// gamepad Left face button
 	{ GetNextEquipmentSlot(EEquipmentType::Weapon, false);}*/
-	UFUNCTION()
+
+	
+	/*UFUNCTION()
 	void SwtichItem_GP_Next(const FInputActionValue& Value)
 	{ GetNextEquipmentSlot(EEquipmentType::Item, true);}
 	UFUNCTION()
 	void SwtichItem_GP_Previous(const FInputActionValue& Value)
-	{ GetNextEquipmentSlot(EEquipmentType::Item, false);}
+	{ GetNextEquipmentSlot(EEquipmentType::Item, false);}*/
+
+
+	// temp --> now just for weapon
+	
+	UFUNCTION()
+	void SwtichItem_GP_Next(const FInputActionValue& Value)
+	{ SwitchToNextSlot(true);}
+	UFUNCTION()
+	void SwtichItem_GP_Previous(const FInputActionValue& Value)
+	{ SwitchToNextSlot(false);}
+
+
+
+	
 	
 	//---- Weapn and Item Interaction ----//----------------------------------------------------------------------------
 
