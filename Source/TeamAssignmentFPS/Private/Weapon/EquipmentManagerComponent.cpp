@@ -449,6 +449,8 @@ void UEquipmentManagerComponent::EquipNewEquipment(AActor* NewEquipment)
 
 void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight)
 {
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT(" UEquipmentManagerComponent::SwitchToNextSlot-> Switch function called"));
 	if (TempWeaponQuickSlot.IsEmpty())
 		return;
 
@@ -482,6 +484,9 @@ void UEquipmentManagerComponent::SwitchToNextSlot(bool bIsRight)
 
 void UEquipmentManagerComponent::SwitchWeaponByNumber(uint8 SlotNumber)
 {
+	UE_LOG(Equipment_Manager_Log, Log,
+		TEXT(" UEquipmentManagerComponent::SwitchWeaponByNumber-> Switch function called"));
+	
 	if (TempWeaponQuickSlot.Contains(SlotNumber))
 	{
 		AActor* Weapon = TempWeaponQuickSlot[SlotNumber];
