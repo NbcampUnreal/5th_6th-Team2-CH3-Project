@@ -28,7 +28,7 @@ AFuelWeaponBase::AFuelWeaponBase()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
 
-	CurrentFuel = MaxFuel;
+	
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +36,7 @@ void AFuelWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CurrentFuel = MaxFuel;
 }
 
 void AFuelWeaponBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -56,6 +57,7 @@ void AFuelWeaponBase::OnInputHoldStart_Implementation()
 		PlayFiringFailedEffect();
 	}
 }
+
 
 void AFuelWeaponBase::OnInputRelease_Implementation()
 {
@@ -138,6 +140,9 @@ void AFuelWeaponBase::Tick(float DeltaTime)
 			RecoverFuel(DeltaTime);
 		}
 	}
+
+	// update fuel alpha value
+	FuelAlpha=FMath::Clamp((CurrentFuel / MaxFuel),0.f, 1.f);
 }
 
 void AFuelWeaponBase::FireWeapon()

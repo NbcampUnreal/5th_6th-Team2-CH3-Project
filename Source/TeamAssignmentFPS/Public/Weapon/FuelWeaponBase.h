@@ -65,6 +65,8 @@ protected:
 	
 	bool bIsFiring = false;
 
+	float FuelAlpha = 1.f;// 0~1
+
 	/// Visual elements
 
 	//	Mesh
@@ -98,7 +100,7 @@ protected:
 	
 	//Input Reaction
 	virtual void OnInputHoldStart_Implementation() override;
-	virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
+	//virtual void OnInputHoldUpdate_Implementation(float InputValue) override;
 	virtual void OnInputRelease_Implementation() override;
 	//Equipment
 	virtual void OnEquipped_Implementation() override;
@@ -116,5 +118,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void FireWeapon();// while it is clicked
-	virtual void StopFiringWeapon();// stop the 
+	virtual void StopFiringWeapon();// stop the
+
+	UFUNCTION(BlueprintPure)
+	float GetFuelAlpha()const {return FuelAlpha;}
 };
